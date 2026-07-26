@@ -611,8 +611,8 @@
                         if (uId) { localStorage.setItem('usuario_id', uId); setCookie('usuario_id', uId); }
                         if (uDados) { localStorage.setItem('usuario_dados', uDados); setCookie('usuario_dados', uDados); }
 
-                        // Redirecionamento limpo para a Área do Aluno
-                        let targetUrl = 'area_aluno';
+                        // Redirecionamento direto para a Área do Aluno
+                        let targetUrl = 'area_aluno.html';
                         if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname.includes('vercel.app')) {
                             targetUrl = 'area_aluno.html';
                         }

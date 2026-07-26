@@ -747,6 +747,90 @@
                 gap: 12px;
             }
         }
+
+        /* Toast Notifications Minimalistas */
+        #toast-container {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+            width: calc(100% - 32px);
+            max-width: 480px;
+        }
+
+        .toast {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 500;
+            line-height: 1.4;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            animation: toastSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes toastSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .toast.success {
+            background: rgba(16, 185, 129, 0.95);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toast.error {
+            background: rgba(225, 29, 72, 0.95);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toast.info {
+            background: rgba(15, 23, 42, 0.92);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .toast-text {
+            flex: 1;
+        }
+
+        .toast-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .toast-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
     </style>
     
     <!-- Diagnóstico de erros visível na tela -->
@@ -1035,12 +1119,12 @@
                     <div class="field-row">
                         <div class="field-group">
                             <label for="altura">Altura (cm) <span class="req">*</span></label>
-                            <input type="number" id="altura" name="altura" min="30" max="250" step="1" required placeholder="Ex.: 170">
+                            <input type="number" id="altura" name="altura" min="50" max="250" step="1" required placeholder="Ex.: 170">
                             <div class="hint">Informe sua altura em centímetros. Exemplo: 165</div>
                         </div>
                         <div class="field-group">
                             <label for="peso">Peso (kg) <span class="req">*</span></label>
-                            <input type="number" id="peso" name="peso" min="1" max="400" step="0.1" required placeholder="Ex.: 62.5">
+                            <input type="number" id="peso" name="peso" min="15" max="250" step="0.1" required placeholder="Ex.: 62.5">
                             <div class="hint">Informe seu peso em quilogramas. Exemplo: 58.0</div>
                         </div>
                         <div class="field-group">
@@ -1390,7 +1474,7 @@
                     <div class="pergunta-titulo">1 — Faz uso de algum medicamento contínuo?</div>
                     <div class="radio-visual">
                         <label><input type="radio" name="uso_medicacao" value="Sim" required> Sim</label>
-                        <label><input type="radio" name="uso_medicacao" value="Nao" required> Não</label>
+                        <label><input type="radio" name="uso_medicacao" value="Nao" required checked> Não</label>
                     </div>
                     <div id="det_uso_medicacao" class="pergunta-detalhe" style="display:none;">
                         <label>Qual(is) medicamento(s)? <span class="req">*</span></label>
@@ -1404,7 +1488,7 @@
                     <div class="pergunta-titulo">2 — Possui alergia a algum medicamento?</div>
                     <div class="radio-visual">
                         <label><input type="radio" name="possui_alergias" value="Sim" required> Sim</label>
-                        <label><input type="radio" name="possui_alergias" value="Nao" required> Não</label>
+                        <label><input type="radio" name="possui_alergias" value="Nao" required checked> Não</label>
                     </div>
                     <div id="det_possui_alergias" class="pergunta-detalhe" style="display:none;">
                         <label>Qual(is) medicamento(s)? <span class="req">*</span></label>
@@ -1418,7 +1502,7 @@
                     <div class="pergunta-titulo">3 — Possui plano de saúde?</div>
                     <div class="radio-visual">
                         <label><input type="radio" name="plano_saude" value="Sim" required> Sim</label>
-                        <label><input type="radio" name="plano_saude" value="Nao" required> Não</label>
+                        <label><input type="radio" name="plano_saude" value="Nao" required checked> Não</label>
                     </div>
                     <div id="det_plano_saude" class="pergunta-detalhe" style="display:none;">
                         <label>Qual o plano de saúde? <span class="req">*</span></label>
@@ -1432,7 +1516,7 @@
                     <div class="pergunta-titulo">4 — Faz algum acompanhamento ou tratamento médico regular?</div>
                     <div class="radio-visual">
                         <label><input type="radio" name="acompan_medico" value="Sim" required> Sim</label>
-                        <label><input type="radio" name="acompan_medico" value="Nao" required> Não</label>
+                        <label><input type="radio" name="acompan_medico" value="Nao" required checked> Não</label>
                     </div>
                     <div id="det_acompan_medico" class="pergunta-detalhe" style="display:none;">
                         <label>Especifique o tratamento/acompanhamento: <span class="req">*</span></label>
@@ -1446,7 +1530,7 @@
                     <div class="pergunta-titulo">5 — Possui alguma restrição médica para prática de atividades físicas?</div>
                     <div class="radio-visual">
                         <label><input type="radio" name="restricao_fisica" value="Sim" required> Sim</label>
-                        <label><input type="radio" name="restricao_fisica" value="Nao" required> Não</label>
+                        <label><input type="radio" name="restricao_fisica" value="Nao" required checked> Não</label>
                     </div>
                     <div id="det_restricao_fisica" class="pergunta-detalhe" style="display:none;">
                         <label>Especifique a restrição: <span class="req">*</span></label>
@@ -1460,7 +1544,7 @@
                     <div class="pergunta-titulo">6 — Possui alguma deficiência ou necessidade especial?</div>
                     <div class="radio-visual">
                         <label><input type="radio" name="necessidade_especial" value="Sim" required> Sim</label>
-                        <label><input type="radio" name="necessidade_especial" value="Nao" required> Não</label>
+                        <label><input type="radio" name="necessidade_especial" value="Nao" required checked> Não</label>
                     </div>
                     <div id="det_necessidade_especial" class="pergunta-detalhe" style="display:none;">
                         <label>Especifique a deficiência / necessidade: <span class="req">*</span></label>
@@ -1832,23 +1916,23 @@
        UTILITÁRIOS
     ════════════════════════════════════════════════════════════════ */
     function mostrarMensagem(tipo, texto) {
-        var div = document.getElementById('mensagem-geral');
-        if (div) {
-            if (!texto) { div.innerHTML = ''; return; }
-            var cls = tipo === 'erro' ? 'alert alert-error' : 'alert alert-success';
-            div.innerHTML = '<div style="padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13.5px;' +
-                (tipo === 'erro' ? 'background:#fef2f2;color:#991b1b;border:1px solid #fecaca;' : 'background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;') + '">' + texto + '</div>';
-        }
         if (!texto) return;
         var container = document.getElementById('toast-container');
+        if (!container) return;
+        
+        container.querySelectorAll('.toast').forEach(function(t){ t.remove(); });
+        
         var toast = document.createElement('div');
         toast.className = 'toast ' + (tipo === 'erro' ? 'error' : tipo === 'info' ? 'info' : 'success');
-        toast.innerHTML = '<div class="toast-text">' + texto + '</div>' +
+        var iconHtml = tipo === 'erro' ? '⚠️ ' : tipo === 'info' ? 'ℹ️ ' : '✅ ';
+        
+        toast.innerHTML = '<span style="font-size:15px;flex-shrink:0;">' + iconHtml + '</span>' +
+            '<div class="toast-text">' + texto + '</div>' +
             '<button type="button" class="toast-close" aria-label="Fechar">×</button>';
-        container.querySelectorAll('.toast').forEach(function(t){ t.remove(); });
+            
         container.appendChild(toast);
         toast.querySelector('.toast-close').addEventListener('click', function(){ toast.remove(); });
-        setTimeout(function(){ if (toast.parentNode) toast.remove(); }, tipo === 'erro' ? 12000 : 7000);
+        setTimeout(function(){ if (toast.parentNode) toast.remove(); }, 3500);
     }
 
     function cpfSoNum(v){ return (v||'').replace(/\D/g,''); }
@@ -3132,23 +3216,56 @@
                 var navBtns = document.querySelector('.nav-buttons');
                 if(navBtns) navBtns.style.display = 'none';
                 
+                var nomeAluno = (document.getElementById('nome_aluno') || {}).value || 'Aluno';
+                var cpfAluno = (document.getElementById('cpf_aluno') || {}).value || '';
+                var numProtocolo = 'MAT-' + Math.floor(100000 + Math.random() * 900000);
+                var dataAtual = new Date().toLocaleDateString('pt-BR');
+
+                window.gerarComprovantePDF = function() {
+                    var win = window.open('', '_blank');
+                    win.document.write('<html><head><title>Comprovante de Matrícula - INTEGRA</title>' +
+                        '<style>body{font-family:sans-serif;padding:30px;color:#1e293b;line-height:1.6;}' +
+                        '.header{text-align:center;border-bottom:2px solid #10b981;padding-bottom:15px;margin-bottom:25px;}' +
+                        '.title{font-size:22px;color:#065f46;margin-bottom:4px;font-weight:bold;}' +
+                        '.subtitle{font-size:13px;color:#64748b;}' +
+                        '.box{background:#f8fafc;border:1px solid #e2e8f0;padding:20px;border-radius:10px;margin-bottom:20px;}' +
+                        '.row{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;}' +
+                        '.label{font-weight:bold;color:#475569;}' +
+                        '.footer{text-align:center;font-size:12px;color:#94a3b8;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:15px;}' +
+                        '@media print{.btn-print{display:none;}}</style></head><body>' +
+                        '<div class="header"><div class="title">INTEGRA — PLATAFORMA UNIFICADA DE GESTÃO</div>' +
+                        '<div class="subtitle">COMPROVANTE OFICIAL DE MATRÍCULA</div></div>' +
+                        '<div class="box">' +
+                        '<div class="row"><span class="label">Protocolo de Matrícula:</span> <span>' + numProtocolo + '</span></div>' +
+                        '<div class="row"><span class="label">Data de Conclusão:</span> <span>' + dataAtual + '</span></div>' +
+                        '<div class="row"><span class="label">Nome do Aluno:</span> <span>' + nomeAluno + '</span></div>' +
+                        '<div class="row"><span class="label">CPF do Aluno:</span> <span>' + cpfAluno + '</span></div>' +
+                        '</div>' +
+                        '<p style="font-size:13px;color:#64748b;text-align:center;">Este comprovante atesta a conclusão da solicitação de matrícula no sistema central INTEGRA.</p>' +
+                        '<div style="text-align:center;margin-top:30px;"><button class="btn-print" onclick="window.print()" style="background:#10b981;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Imprimir / Salvar em PDF</button></div>' +
+                        '<div class="footer">Grupo de Apoio Social aos Cultivadores da Terra e Prevenção da Natureza - GASCTPNA</div>' +
+                        '</body></html>');
+                    win.document.close();
+                };
+
                 var loginCard = document.querySelector('.login-card');
                 if(loginCard) {
                     var successDiv = document.createElement('div');
-                    var msgRedir = (window.location.protocol !== 'file:') ? 'Redirecionando para a página principal...' : 'Formulário finalizado com sucesso.';
-                    successDiv.innerHTML = '<div style="text-align:center;padding:40px 20px;">' +
-                        '<div style="font-size:48px;margin-bottom:20px;">🎉</div>' +
-                        '<h2 style="color:var(--primary);margin-bottom:10px;">Matrícula Concluída!</h2>' +
-                        '<p style="color:var(--muted);line-height:1.6;">' + msgRedir + '</p>' +
-                        '</div>';
+                    successDiv.innerHTML = '<div style="text-align:center;padding:40px 20px;max-width:540px;margin:0 auto;">' +
+                        '<div style="font-size:56px;margin-bottom:16px;">🎉</div>' +
+                        '<h2 style="color:var(--primary,#10b981);font-size:24px;font-weight:800;margin-bottom:10px;">Matrícula Concluída com Sucesso!</h2>' +
+                        '<p style="color:#64748b;font-size:14px;line-height:1.6;margin-bottom:24px;">Sua solicitação de matrícula foi registrada sob o protocolo <strong>' + numProtocolo + '</strong>.</p>' +
+                        '<div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto;">' +
+                        '<button type="button" onclick="gerarComprovantePDF()" style="background:#10b981;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(16,185,129,0.35);">📄 Baixar Comprovante em PDF</button>' +
+                        '<a href="area_aluno.html" style="background:#2563eb;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(37,99,235,0.35);">🏠 Voltar para a Área do Aluno</a>' +
+                        '</div></div>';
                     loginCard.appendChild(successDiv);
                 }
 
-                if (window.location.protocol !== 'file:') {
-                    setTimeout(function(){
-                        window.location.href = 'login';
-                    }, 2500);
-                }
+                // Dispara a visualização/impressão automática do comprovante em PDF
+                setTimeout(function(){
+                    gerarComprovantePDF();
+                }, 800);
             })
             .catch(function(err) {
                 console.error('Erro no envio da matrícula:', err);

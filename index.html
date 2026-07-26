@@ -611,16 +611,13 @@
                         if (uId) { localStorage.setItem('usuario_id', uId); setCookie('usuario_id', uId); }
                         if (uDados) { localStorage.setItem('usuario_dados', uDados); setCookie('usuario_dados', uDados); }
 
-                        // Redirecionamento Inteligente para o Subdomínio do Projeto
-                        let targetUrl = 'https://gasctpna.plataformaintegra.com.br/area_aluno.html';
+                        // Redirecionamento limpo para a Área do Aluno
+                        let targetUrl = 'area_aluno';
                         if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname.includes('vercel.app')) {
                             targetUrl = 'area_aluno.html';
                         }
 
-                        const sessionPayload = { uNome, uPrimeiroNome, uTelefone, uEmail, uId, uDados, password };
-                        const encodedSession = btoa(encodeURIComponent(JSON.stringify(sessionPayload)));
-
-                        window.location.href = `${targetUrl}#session=${encodedSession}`;
+                        window.location.href = targetUrl;
                     } else if (respText.includes('senha incorreta')) {
                         showLoginError('Senha incorreta. Por favor, verifique sua senha e tente novamente.');
                         btnSubmit.disabled = false;

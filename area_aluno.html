@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Área do Participante — INTEGRA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Favicon & Ícone da Aba -->
+  <link rel="icon" type="image/png" href="logo_integra.png">
+  <link rel="shortcut icon" type="image/png" href="logo_integra.png">
+  <link rel="apple-touch-icon" href="logo_integra.png">
+
+  <!-- Meta Tags para Pré-visualização do Link no WhatsApp, Telegram e Redes Sociais -->
+  <meta name="description" content="Área do Participante — INTEGRA Plataforma Unificada">
+  <meta property="og:title" content="Área do Participante — INTEGRA">
+  <meta property="og:description" content="Painel de controle e área do aluno.">
+  <meta property="og:image" content="https://portalintegra.com.br/logo_integra.png">
+  <meta property="og:url" content="https://portalintegra.com.br/area_aluno">
+  <meta property="og:type" content="website">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root{
+      --ib-blue:#10b981;
+      --ib-blue-dark:#059669;
+      --ib-blue-soft:#ecfdf5;
+      --ib-navy:#064e3b;
+      --ib-text:#1e293b;
+      --ib-muted:#64748b;
+      --ib-bg:#f8fafc;
+      --ib-line:#e2e8f0;
+      --ib-shadow:0 10px 30px rgba(6,78,59,.04);
+      --ib-font: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0;overflow-x:hidden;width:100%;}
+    body{
+      font-family:var(--ib-font);
+      background:
+        radial-gradient(circle at top left, rgba(16,185,129,.06), transparent 28%),
+        linear-gradient(180deg, #f9fbff 0%, var(--ib-bg) 100%);
+      color:var(--ib-text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .al-main{max-width:1200px; width:100%; margin:0 auto; padding:28px 24px 34px; flex:1}
+
+    /* ── Conteúdo ── */
+    .al-ui-clean, .al-ui-clean * { font-family: Inter, Arial, Helvetica, sans-serif; }
+    .al-ui-clean { color: #0f172a; }
+    .al-ui-clean .al-section { margin-top: 34px; }
+    .al-ui-clean .al-section-title {
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 32px; font-weight: 900; letter-spacing: -.03em; color: #064e3b;
+    }
+    .al-ui-clean .al-card {
+      border-radius: 24px; background: #fff; border: 1px solid #e2e8f0;
+      box-shadow: 0 12px 30px rgba(6,78,59,.03);
+    }
+    .al-ui-clean .al-empty { text-align: center; padding: 40px 20px; }
+    .al-ui-clean .al-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.8; }
+    .al-ui-clean .al-empty p { color: #64748b; font-size: 16px; font-weight: 500; margin-bottom: 24px; }
+    .al-ui-clean .al-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 28px; border-radius: 16px; font-weight: 800; text-decoration: none;
+      cursor: pointer; transition: all .2s ease-in-out; font-size: 15px; border: none;
+    }
+    .al-ui-clean .al-btn-primary { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 6px 14px rgba(16, 185, 129, 0.2); }
+    .al-ui-clean .al-btn-primary:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-1px); }
+    .al-ui-clean .al-intro { margin-bottom: 22px; }
+    .al-ui-clean .al-intro h2 { font-size: 26px; font-weight: 900; color: #064e3b; margin: 0 0 6px; letter-spacing: -.02em; }
+    .al-ui-clean .al-intro p { font-size: 15px; color: #64748b; margin: 0; }
+    
+    footer.al-footer{ text-align:center; padding:20px; font-size:12px; color:var(--ib-muted); }
+
+    /* Topbar Estilos Isolados */
+    .al-topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.94); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(16,185,129,.15); padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    .al-topbar-left, .al-topbar-right { display: flex; align-items: center; gap: 14px; }
+    .al-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; }
+    .al-topbar-logo img {
+      height: 38px;
+      display: block;
+      filter: drop-shadow(0 2px 5px rgba(249, 115, 22, 0.15));
+      animation: logoGlowPulseSmall 8s ease-in-out infinite;
+    }
+    @keyframes logoGlowPulseSmall {
+      0%, 100% { filter: drop-shadow(0 2px 5px rgba(249, 115, 22, 0.2)); }
+      50% { filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.4)); }
+    }
+    .al-brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      background: linear-gradient(120deg, #f97316 0%, #eab308 25%, #10b981 50%, #06b6d4 75%, #f97316 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shineGradient 5s linear infinite;
+    }
+    @keyframes shineGradient {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+    .al-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #059669); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800; overflow: hidden;
+      box-shadow: 0 6px 14px rgba(16,185,129,.18); border: 2px solid #fff;
+    }
+    .al-avatar-clickable { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+    .al-avatar-clickable:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(16,185,129,.24); }
+    .al-user-info { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
+    .al-user-name { font-size: 13px; font-weight: 800; color: #064e3b; line-height: 1.2; }
+    .al-user-role { font-size: 11px; color: #64748b; font-weight: 700; line-height: 1.2; }
+    .al-topbar-logout {
+      text-decoration: none; border: 1px solid #dbe3ef; background: #fff; color: #475569;
+      padding: 9px 14px; border-radius: 12px; font-size: 12px; font-weight: 800;
+      cursor: pointer; transition: all .15s ease;
+    }
+    .al-topbar-logout:hover { border-color: #a7f3d0; background: #ecfdf5; color: #10b981; }
+
+    /* Modais */
+    .al-modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 16px; }
+    .al-modal { background: #fff; width: 100%; max-width: 480px; border-radius: 24px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); font-family: Inter, Arial, sans-serif; max-height: 90vh; overflow-y: auto; }
+    .al-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 18px; color: #064e3b; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+    .al-modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; padding: 0; }
+    .al-upload-area { border: 2px dashed #cbd5e1; border-radius: 16px; padding: 30px 20px; text-align: center; background: #f8fafc; }
+    .al-btn-tb { display: inline-flex; align-items: center; justify-content: center; padding: 14px 32px; border-radius: 16px; font-weight: 800; border: none; cursor: pointer; background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 6px 14px rgba(16, 185, 129, 0.2); }
+    .al-btn-tb:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-1px); }
+    
+    @media (max-width: 768px) { .al-topbar { padding: 12px 16px; } .al-main{padding:20px 16px 28px} }
+    @media (max-width: 520px) {
+      .al-topbar { padding: 10px 12px; }
+      .al-topbar-left { gap: 8px; }
+      .al-topbar-logo img { height: 32px; }
+      .al-brand-title { font-size: 14px; }
+      .al-user-role { display: none; }
+      .al-user-name { font-size: 12px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .al-avatar { width: 36px; height: 36px; font-size: 14px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(16,185,129,.25); }
+      .al-topbar-logout { padding: 6px 10px; font-size: 11.5px; border-radius: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="al-topbar">
+    <div class="al-topbar-left">
+      <a href="area_aluno.html" class="al-brand">
+        <span class="al-topbar-logo">
+          <img src="logo_integra.png" onerror="this.onerror=null; this.src='http://3.141.142.62:8000/storage/v1/object/public/INTEGRA/logo_integra.png';" alt="INTEGRA">
+        </span>
+        <span class="al-brand-title">INTEGRA</span>
+      </a>
+    </div>
+    <div class="al-topbar-right">
+      <div class="al-user-info">
+        <div class="al-user-name" id="display-topbar-name">Participante</div>
+        <div class="al-user-role">Painel do Aluno</div>
+      </div>
+      <div class="al-avatar al-avatar-clickable" id="display-avatar-icon" onclick="openAvatarModal()" title="Adicionar foto">P</div>
+      <button type="button" class="al-topbar-logout" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <!-- Modal Foto de Perfil -->
+  <div class="al-modal-overlay" id="avatarModalOverlay" onclick="closeAvatarModal()" style="display:none">
+    <div class="al-modal" onclick="event.stopPropagation()">
+      <div class="al-modal-header">
+        <strong>Foto de Perfil</strong>
+        <button type="button" class="al-modal-close" onclick="closeAvatarModal()">×</button>
+      </div>
+      <div class="al-modal-body">
+        <form onsubmit="salvarAvatar(event)">
+          <div class="al-upload-area">
+            <p style="font-weight:700;color:#0f1a3e;margin-bottom:8px">Selecione uma foto</p>
+            <input type="file" id="inputAvatarFile" accept="image/jpeg,image/png,image/webp" style="width: 100%;">
+            <div style="font-size:11px;color:#64748b;margin-top:10px">JPG, PNG ou WEBP. Máximo 2MB.</div>
+          </div>
+          <div style="text-align:center;margin-top:20px">
+            <button type="submit" class="al-btn-tb">Salvar Foto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ficha de Dados do Aluno -->
+  <div class="al-modal-overlay" id="dadosModalOverlay" onclick="closeDadosModal()" style="display:none">
+    <div class="al-modal" onclick="event.stopPropagation()">
+      <div class="al-modal-header">
+        <strong><i data-lucide="file-text"></i> Meus Dados Cadastrados</strong>
+        <button type="button" class="al-modal-close" onclick="closeDadosModal()">×</button>
+      </div>
+      <div class="al-modal-body" id="dadosModalContent">
+        <!-- Preenchido via JS -->
+      </div>
+    </div>
+  </div>
+
+  <main class="al-main">
+    <div class="al-ui-clean">
+
+      <div class="al-intro">
+        <h2 id="display-welcome-title">Olá, Participante!</h2>
+        <p>Bem-vindo(a) ao seu Painel do Aluno.</p>
+      </div>
+
+      <div class="al-section">
+        <div class="al-section-title">Minha Matrícula</div>
+        <div class="al-card">
+          <div class="al-empty">
+            <div class="al-empty-icon">🎓</div>
+            <p>Gerencie sua matrícula de aluno ou consulte seus dados cadastrados.</p>
+            
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+              <a href="matricula.html" class="al-btn al-btn-primary">Fazer minha matrícula</a>
+              <button type="button" id="btn-consultar-matriculas" class="al-btn" style="display: none; background:#0f172a; color:#fff; box-shadow: 0 6px 14px rgba(15,23,42,0.15);" onclick="buscarEMostrarMatricula()">
+                <i data-lucide="file-text"></i> Consultar Matrículas
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="al-footer">
+    Grupo de Apoio Social aos Cultivadores da Terra e Prevenção da Natureza - GASCTPNA
+  </footer>
+
+  <script>
+    if (window.lucide) { lucide.createIcons(); }
+
+    function openAvatarModal()  { document.getElementById('avatarModalOverlay').style.display = 'flex'; }
+    function closeAvatarModal() { document.getElementById('avatarModalOverlay').style.display = 'none'; }
+    
+    function closeDadosModal()  { document.getElementById('dadosModalOverlay').style.display = 'none'; }
+
+    function sanitizeText(str) {
+      if (!str) return '';
+      const temp = document.createElement('div');
+      temp.textContent = str;
+      return temp.innerHTML;
+    }
+
+    function setCookie(name, val, days = 30) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+      let domainAttr = '';
+      if (window.location.hostname.includes('plataformaintegra.com.br')) {
+        domainAttr = ';domain=.plataformaintegra.com.br';
+      }
+      document.cookie = `${name}=${encodeURIComponent(val)};expires=${d.toUTCString()};path=/${domainAttr};SameSite=Lax`;
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for(let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+      }
+      return '';
+    }
+
+    function getStoredVal(key) {
+      return localStorage.getItem(key) || getCookie(key) || '';
+    }
+
+    // Processar hash de sessão se vier do portal de login central (plataformaintegra.com.br)
+    (function checkURLSession() {
+      if (window.location.hash && window.location.hash.includes('session=')) {
+        try {
+          const raw = window.location.hash.split('session=')[1].split('&')[0];
+          const decoded = JSON.parse(decodeURIComponent(atob(raw)));
+          
+          if (decoded.uNome) { localStorage.setItem('usuario_nome', decoded.uNome); setCookie('usuario_nome', decoded.uNome); }
+          if (decoded.uPrimeiroNome) { localStorage.setItem('usuario_primeiro_nome', decoded.uPrimeiroNome); setCookie('usuario_primeiro_nome', decoded.uPrimeiroNome); }
+          if (decoded.uTelefone) { localStorage.setItem('usuario_telefone', decoded.uTelefone); setCookie('usuario_telefone', decoded.uTelefone); }
+          if (decoded.uEmail) {
+            localStorage.setItem('usuario_email', decoded.uEmail);
+            localStorage.setItem('email_conta', decoded.uEmail);
+            setCookie('usuario_email', decoded.uEmail);
+            setCookie('email_conta', decoded.uEmail);
+          }
+          if (decoded.password) {
+            localStorage.setItem('usuario_senha', decoded.password);
+            setCookie('usuario_senha', decoded.password);
+          }
+          if (decoded.uId) { localStorage.setItem('usuario_id', decoded.uId); setCookie('usuario_id', decoded.uId); }
+          if (decoded.uDados) { localStorage.setItem('usuario_dados', decoded.uDados); setCookie('usuario_dados', decoded.uDados); }
+          
+          history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        } catch(e) {
+          console.error('Erro ao decodificar sessão da URL:', e);
+        }
+      }
+    })();
+
+    const userName = getStoredVal('usuario_nome');
+    const userPrimeiroNome = getStoredVal('usuario_primeiro_nome');
+    const userEmail = getStoredVal('usuario_email') || getStoredVal('email_conta');
+
+    let candidateName = userPrimeiroNome || (userName.trim() ? userName.trim().split(' ')[0] : '');
+    if (!candidateName || /^\d+$/.test(candidateName)) {
+      candidateName = userEmail ? userEmail.split('@')[0] : 'Participante';
+    }
+    let firstName = candidateName;
+    if (firstName && firstName !== 'Participante') {
+      firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+    }
+    firstName = sanitizeText(firstName);
+
+    document.getElementById('display-topbar-name').textContent = firstName;
+    document.getElementById('display-welcome-title').textContent = `Olá, ${firstName}!`;
+
+    const firstLetter = firstName.charAt(0).toUpperCase() || 'P';
+    const avatarEl = document.getElementById('display-avatar-icon');
+    
+    const savedAvatar = localStorage.getItem('avatar_base64');
+    if (savedAvatar) {
+      avatarEl.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    } else {
+      avatarEl.textContent = firstLetter;
+    }
+
+    function salvarAvatar(e) {
+      e.preventDefault();
+      const input = document.getElementById('inputAvatarFile');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          localStorage.setItem('avatar_base64', evt.target.result);
+          avatarEl.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+          closeAvatarModal();
+        };
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        closeAvatarModal();
+      }
+    }
+
+    async function verificarSePossuiMatricula() {
+      const btnConsultar = document.getElementById('btn-consultar-matriculas');
+      if (!btnConsultar) return;
+
+      // 1. Exibir de imediato se já houver cache local válido
+      const localDados = localStorage.getItem('usuario_dados');
+      if (localDados && localDados !== '[object Object]') {
+        const parsed = extrairJSON(localDados);
+        const list = obterListaDeMatriculas(parsed);
+        if (list && list.length > 0) {
+          btnConsultar.style.display = 'inline-flex';
+        }
+      }
+
+      // 2. Sempre fazer uma nova consulta atualizada no servidor (webhook loginaluno) ao carregar/recarregar a página
+      const username = getStoredVal('usuario_email') || getStoredVal('email_conta');
+      const password = getStoredVal('usuario_senha');
+
+      if (username) {
+        try {
+          const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+          const res = await fetch(url);
+          const text = await res.text();
+          const clean = text.trim();
+
+          if (clean && clean.toLowerCase().includes('login aprovado')) {
+            const parsed = extrairJSON(clean);
+            const list = obterListaDeMatriculas(parsed);
+            if (list && list.length > 0) {
+              localStorage.setItem('usuario_dados', clean);
+              btnConsultar.style.display = 'inline-flex';
+              return;
+            }
+          }
+          btnConsultar.style.display = 'none';
+        } catch (err) {
+          console.error('Erro ao atualizar matrículas do loginaluno:', err);
+        }
+      }
+    }
+
+    verificarSePossuiMatricula();
+
+    async function buscarEMostrarMatricula() {
+      const modal = document.getElementById('dadosModalOverlay');
+      const bodyEl = document.getElementById('dadosModalContent');
+      modal.style.display = 'flex';
+      
+      const localDados = localStorage.getItem('usuario_dados');
+      if (localDados && localDados !== '[object Object]' && localDados.trim().length > 0) {
+        const parsed = extrairJSON(localDados);
+        const list = obterListaDeMatriculas(parsed);
+        if (list && list.length > 0) {
+          renderizarListaMatriculas(localDados);
+          return;
+        }
+      }
+
+      bodyEl.innerHTML = `
+        <div style="text-align:center;padding:34px 16px;">
+          <div style="font-size:16px;font-weight:800;color:#059669;margin-bottom:8px;">Buscando suas matrículas...</div>
+          <div style="font-size:13px;color:#64748b;">Aguarde enquanto carregamos seus dados.</div>
+        </div>
+      `;
+
+      const username = getStoredVal('usuario_email') || getStoredVal('email_conta');
+      const password = getStoredVal('usuario_senha');
+
+      try {
+        const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+        const res = await fetch(url);
+        const text = await res.text();
+        const clean = text.trim();
+
+        if (clean && clean.toLowerCase().includes('login aprovado')) {
+          localStorage.setItem('usuario_dados', clean);
+          renderizarListaMatriculas(clean);
+        } else {
+          bodyEl.innerHTML = '<div style="text-align:center;padding:24px;color:#64748b;font-weight:600;">Nenhuma matrícula encontrada para este perfil.</div>';
+        }
+      } catch (err) {
+        console.error('Erro ao buscar matrículas no loginaluno:', err);
+        bodyEl.innerHTML = '<div style="color:#ef4444;text-align:center;padding:20px;font-weight:600;">Erro ao consultar webhook do servidor.</div>';
+      }
+    }
+
+    function extrairJSON(text) {
+      if (!text) return null;
+      try { return JSON.parse(text); } catch(e) {}
+
+      const startBracket = text.indexOf('[');
+      const startBrace = text.indexOf('{');
+      let startIdx = -1;
+      if (startBracket !== -1 && startBrace !== -1) startIdx = Math.min(startBracket, startBrace);
+      else if (startBracket !== -1) startIdx = startBracket;
+      else if (startBrace !== -1) startIdx = startBrace;
+
+      if (startIdx !== -1) {
+        const jsonSub = text.substring(startIdx).trim();
+        try { return JSON.parse(jsonSub); } catch(e) {
+          const lastBracket = jsonSub.lastIndexOf(']');
+          const lastBrace = jsonSub.lastIndexOf('}');
+          const endIdx = Math.max(lastBracket, lastBrace);
+          if (endIdx !== -1) {
+            try { return JSON.parse(jsonSub.substring(0, endIdx + 1)); } catch(e2) {}
+          }
+        }
+      }
+      return null;
+    }
+
+    function obterListaDeMatriculas(parsed) {
+      if (!parsed) return [];
+      let rawList = [];
+      
+      if (Array.isArray(parsed)) {
+        parsed.forEach(item => {
+          if (item && item.matriculas && Array.isArray(item.matriculas)) {
+            rawList.push(...item.matriculas);
+          } else if (item && typeof item === 'object') {
+            rawList.push(item);
+          }
+        });
+      } else if (typeof parsed === 'object') {
+        if (parsed.matriculas && Array.isArray(parsed.matriculas)) {
+          rawList.push(...parsed.matriculas);
+        } else {
+          rawList.push(parsed);
+        }
+      }
+
+      return rawList.filter(m => m && typeof m === 'object' && (m.id || m.aluno_nome || m.nome_aluno || m.nome || m.name));
+    }
+
+    function renderizarListaMatriculas(rawText) {
+      const bodyEl = document.getElementById('dadosModalContent');
+      let html = '';
+
+      try {
+        let parsed = extrairJSON(rawText);
+        if (!parsed) throw new Error('JSON não pôde ser isolado.');
+
+        let matriculas = obterListaDeMatriculas(parsed);
+
+        if (Array.isArray(matriculas) && matriculas.length > 0) {
+          // Ordenar pelo ID mais alto no topo (matrícula mais recente primeiro)
+          matriculas.sort((a, b) => (parseInt(b.id) || 0) - (parseInt(a.id) || 0));
+
+          html += `<div style="margin-bottom:14px;font-size:13px;font-weight:700;color:#059669;display:flex;align-items:center;gap:6px;">
+            <i data-lucide="users"></i> ${matriculas.length} Aluno(s) / Matrícula(s) encontrada(s):
+          </div>`;
+          
+          html += '<div style="display:flex;flex-direction:column;gap:10px;">';
+          matriculas.forEach((mat, idx) => {
+            const matId = mat.id || (idx + 1);
+            const nomeAluno = mat.aluno_nome || mat.nome_aluno || mat.nome || mat.name || 'Aluno Cadastrado';
+
+            html += `<div style="padding:14px 16px;background:#f8fafc;border-radius:16px;border:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 2px 6px rgba(0,0,0,0.02);">
+              <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;">
+                <div style="font-size:15px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  ${sanitizeText(nomeAluno)}
+                </div>
+                <div style="font-size:11.5px;font-weight:700;color:#059669;display:flex;align-items:center;gap:6px;">
+                  <span>Matrícula #${matId}</span>
+                  ${mat.status ? `<span style="background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:4px;font-size:10px;">${mat.status}</span>` : ''}
+                </div>
+              </div>
+
+              <button type="button" class="al-btn al-btn-primary" style="padding:8px 16px;font-size:13px;border-radius:12px;flex-shrink:0;white-space:nowrap;" onclick="carregarRespostasAluno('${matId}')">
+                <i data-lucide="eye"></i> Visualizar
+              </button>
+            </div>`;
+          });
+          html += '</div>';
+        } else {
+          html = '<div style="text-align:center;padding:20px;color:#64748b;">Nenhuma matrícula vinculada encontrada.</div>';
+        }
+      } catch(e) {
+        console.error('Erro ao renderizar lista de matrículas:', e);
+        html = `<div style="padding:16px;background:#f8fafc;border-radius:14px;font-weight:700;color:#0f172a;">${sanitizeText(rawText)}</div>`;
+      }
+
+      bodyEl.innerHTML = html;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function carregarRespostasAluno(matId) {
+      const email = localStorage.getItem('usuario_email') || localStorage.getItem('email_conta') || '';
+      const bodyEl = document.getElementById('dadosModalContent');
+      
+      bodyEl.innerHTML = `
+        <div style="text-align:center;padding:34px 16px;">
+          <div style="font-size:16px;font-weight:800;color:#059669;margin-bottom:8px;">Buscando ficha da Matrícula #${matId}...</div>
+          <div style="font-size:13px;color:#64748b;">Aguarde o carregamento das respostas.</div>
+        </div>
+      `;
+
+      try {
+        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}&email=${encodeURIComponent(email)}`;
+        const res = await fetch(url);
+        const text = await res.text();
+        
+        let htmlContent = `
+          <div style="margin-bottom:14px;">
+            <button type="button" onclick="buscarEMostrarMatricula()" style="background:#f1f5f9;border:1px solid #cbd5e1;padding:6px 12px;border-radius:10px;font-size:12.5px;font-weight:700;color:#475569;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+              <i data-lucide="arrow-left"></i> Voltar às Matrículas
+            </button>
+          </div>
+          <div style="font-size:15px;font-weight:800;color:#064e3b;margin-bottom:12px;">Ficha da Matrícula #${matId}</div>
+        `;
+
+        if (text && text.trim().length > 0) {
+          try {
+            let parsed = extrairJSON(text) || JSON.parse(text);
+            let item = Array.isArray(parsed) ? (parsed[0] || {}) : parsed;
+            currentMatriculaItem = item;
+
+            const EXCLUDED_KEYS = [
+              'id', 'projeto_id', 'cidade_id', 'bairro_id', 'modalidade_id', 'nucleo_id',
+              'portal_usuario_id', 'email_conta', 'telefone_conta', 'validation_token',
+              'lgpd_aceite', 'lgpd_aceite_em', 'lgpd_versao', 'aceite_veracidade',
+              'aceite_veracidade_em', 'aceite_veracidade_versao', 'chk_usar_nome_social',
+              'documentos_urls', 'rede_social_tipo', 'rede_social_link', 'instagram',
+              'tiktok', 'facebook', 'youtube', 'twitter_x'
+            ];
+
+            const LABELS_MAP = {
+              created_at: "Data do Cadastro",
+              status: "Status",
+              origem_cadastro: "Origem do Cadastro",
+              turma: "Turma",
+              turno: "Turno",
+              aluno_cpf: "CPF do Aluno",
+              aluno_nome: "Nome Completo",
+              nome_social: "Nome Social",
+              data_nascimento: "Data de Nascimento",
+              sexo: "Gênero",
+              idade: "Idade",
+              altura: "Altura (cm)",
+              peso: "Peso (kg)",
+              tamanho_calcado: "Calçado",
+              tamanho_camisa: "Camisa",
+              tamanho_calca: "Bermuda / Calça",
+              raca: "Raça / Etnia",
+              naturalidade: "Naturalidade",
+              escolaridade: "Escolaridade",
+              cep: "CEP",
+              endereco: "Endereço",
+              numero: "Número",
+              complemento: "Complemento",
+              bairro: "Bairro",
+              cidade: "Cidade",
+              uf: "UF / Estado",
+              faixa_salarial: "Faixa Salarial",
+              whatsapp: "WhatsApp / Telefone",
+              profissao: "Profissão",
+              email: "E-mail",
+              resp_cpf: "CPF do Responsável",
+              resp_nome: "Nome do Responsável",
+              resp_nome_social: "Nome Social do Resp.",
+              resp_data_nasc: "Data Nasc. do Resp.",
+              resp_sexo: "Gênero do Resp.",
+              resp_raca: "Raça do Resp.",
+              resp_email: "E-mail do Resp.",
+              resp_whatsapp: "WhatsApp do Resp.",
+              resp_escolaridade: "Escolaridade do Resp.",
+              resp_profissao: "Profissão do Resp.",
+              uso_medicacao: "Uso de Medicação",
+              uso_medicacao_detalhes: "Detalhes da Medicação",
+              possui_alergias: "Possui Alergias",
+              possui_alergias_detalhes: "Detalhes das Alergias",
+              plano_saude: "Plano de Saúde",
+              plano_saude_detalhes: "Detalhes do Plano",
+              acompan_medico: "Acompanhamento Médico",
+              acompan_medico_detalhes: "Detalhes do Acompanhamento",
+              restricao_fisica: "Restrição Física",
+              restricao_fisica_detalhes: "Detalhes da Restrição",
+              necessidade_especial: "Necessidade Especial",
+              necessidade_especial_detalhes: "Detalhes da Necessidade",
+              deseja_laudo: "Anexou Laudo / Documento"
+            };
+
+            htmlContent += `
+              <button type="button" class="al-btn al-btn-primary" style="background:#059669;color:#fff;width:100%;padding:12px;font-size:14px;border-radius:12px;margin-bottom:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(5,150,105,0.2);" onclick="baixarComprovanteInscricao()">
+                <i data-lucide="download"></i> Baixar Comprovante de Inscrição
+              </button>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+            `;
+            
+            let countValid = 0;
+            for (let key in item) {
+              const val = item[key];
+              
+              if (EXCLUDED_KEYS.includes(key)) continue;
+              if (val === null || val === undefined || val === false || val === '') continue;
+              if (typeof val === 'string' && (val.trim() === '' || val.trim() === '=')) continue;
+
+              countValid++;
+              let labelKey = LABELS_MAP[key] || key.replace(/_/g, ' ').toUpperCase();
+              let displayVal = val;
+
+              if ((key === 'data_nascimento' || key === 'resp_data_nasc') && typeof val === 'string' && val.includes('-')) {
+                const parts = val.split('-');
+                if (parts.length === 3) displayVal = `${parts[2]}/${parts[1]}/${parts[0]}`;
+              }
+
+              htmlContent += `
+                <div style="padding:10px 14px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+                  <span style="font-size:11.5px;font-weight:800;color:#64748b;text-transform:uppercase;">${labelKey}</span>
+                  <span style="font-size:14px;font-weight:700;color:#0f172a;text-align:right;">${sanitizeText(String(displayVal))}</span>
+                </div>
+              `;
+            }
+
+            if (countValid === 0) {
+              htmlContent += '<div style="padding:20px;text-align:center;color:#64748b;">Nenhuma informação adicional encontrada.</div>';
+            }
+
+            htmlContent += `
+              </div>
+              <button type="button" class="al-btn al-btn-primary" style="background:#059669;color:#fff;width:100%;padding:12px;font-size:14px;border-radius:12px;margin-top:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(5,150,105,0.2);" onclick="baixarComprovanteInscricao()">
+                <i data-lucide="download"></i> Baixar Comprovante de Inscrição
+              </button>
+            `;
+          } catch(e) {
+            const formattedLines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && l !== '[object Object]');
+            htmlContent += '<div style="display:flex;flex-direction:column;gap:8px;">';
+            formattedLines.forEach(line => {
+              htmlContent += `<div style="padding:12px 14px;background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;font-size:14px;font-weight:700;color:#0f172a;">${sanitizeText(line)}</div>`;
+            });
+            htmlContent += '</div>';
+          }
+        } else {
+          htmlContent += '<div style="padding:20px;text-align:center;color:#64748b;">Nenhuma resposta encontrada para esta matrícula.</div>';
+        }
+
+        bodyEl.innerHTML = htmlContent;
+        if (window.lucide) lucide.createIcons();
+
+      } catch (err) {
+        console.error('Erro ao buscar respostas da matrícula:', err);
+        bodyEl.innerHTML = `
+          <div style="margin-bottom:14px;">
+            <button type="button" onclick="buscarEMostrarMatricula()" style="background:#f1f5f9;border:1px solid #cbd5e1;padding:6px 12px;border-radius:10px;font-size:12.5px;font-weight:700;color:#475569;cursor:pointer;">
+              ← Voltar às Matrículas
+            </button>
+          </div>
+          <div style="color:#ef4444;text-align:center;padding:20px;font-weight:600;">Erro ao consultar webhook do servidor.</div>
+        `;
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login';
+    }
+
+    function baixarComprovanteInscricao() {
+      if (!currentMatriculaItem) return;
+      const mat = currentMatriculaItem;
+      const valToken = mat.validation_token || ('VAL-' + (mat.id || '4186') + '-' + Date.now().toString(36).toUpperCase());
+
+      const printWin = window.open('', '_blank');
+      if (!printWin) {
+        alert('Por favor, permita pop-ups no seu navegador para baixar o comprovante.');
+        return;
+      }
+
+      const printDoc = printWin.document;
+
+      const nomeAluno = mat.aluno_nome || mat.nome_aluno || mat.nome || mat.name || 'Aluno Cadastrado';
+      const cpfAluno = mat.aluno_cpf || mat.cpf_aluno || mat.cpf || mat.aluno_cpf_num || '---';
+      const dataNasc = mat.data_nascimento || mat.data_nasc || mat.nascimento || '---';
+      const sexo = mat.sexo || mat.genero || mat.aluno_sexo || '---';
+      const raca = mat.raca || mat.etnia || mat.aluno_raca || '---';
+      const escolaridade = mat.escolaridade || mat.escolaridade_aluno || '---';
+      const cidade = mat.cidade || mat.cidade_nome || mat.municipio || '---';
+      const bairro = mat.bairro || mat.bairro_nome || '---';
+      const telefone = mat.whatsapp || mat.telefone || mat.celular || '---';
+      const email = mat.email || mat.email_aluno || '---';
+
+      printDoc.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <title>Comprovante de Inscrição - Matrícula #${mat.id || ''}</title>
+          <style>
+            @page { size: A4; margin: 12mm; }
+            body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #0f172a; line-height: 1.4; padding: 15px; background: #fff; }
+            .no-print { text-align: right; margin-bottom: 15px; }
+            .btn-print { background: #059669; color: #ffffff; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; box-shadow: 0 4px 12px rgba(5,150,105,0.2); }
+            .header-title { text-align: center; font-size: 18px; text-transform: uppercase; margin-bottom: 6px; color: #0f172a; font-weight: 800; letter-spacing: 0.5px; }
+            .header-meta { text-align: center; font-weight: 700; font-size: 11px; margin-bottom: 16px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; }
+            .section-box { border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; margin-bottom: 12px; background: #fff; }
+            .section-title { font-weight: 800; font-size: 11.5px; text-transform: uppercase; margin-bottom: 8px; color: #059669; border-bottom: 1.5px solid #ecfdf5; padding-bottom: 4px; letter-spacing: 0.5px; }
+            .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .row { margin-bottom: 4px; }
+            .label { font-weight: 700; color: #64748b; font-size: 10.5px; text-transform: uppercase; }
+            .val { font-weight: 700; color: #0f172a; }
+            .qr-container { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 18px; padding: 16px; border: 2px dashed #059669; border-radius: 14px; background: #f0fdf4; text-align: center; }
+            .qr-code img { width: 140px; height: 140px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; padding: 6px; }
+            .qr-token { font-family: monospace; font-size: 12px; font-weight: 800; margin-top: 8px; color: #047857; letter-spacing: 1px; }
+            @media print {
+              .no-print { display: none !important; }
+              body { padding: 0; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print">
+            <button type="button" class="btn-print" onclick="window.print()">🖨️ Imprimir / Salvar em PDF</button>
+          </div>
+
+          <div class="header-title">FICHA CADASTRAL DE MATRÍCULA</div>
+          <div class="header-meta">
+            Matrícula Nº: ${mat.id || '---'} &nbsp;|&nbsp; Projeto: ${mat.projeto_nome || 'GASCTPNA'} &nbsp;|&nbsp; Turno: ${mat.turno || '---'} &nbsp;|&nbsp; Data: ${mat.created_at ? new Date(mat.created_at).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR')}
+          </div>
+
+          <div class="section-box">
+            <div class="section-title">1. DADOS DO ALUNO(A)</div>
+            <div class="row"><span class="label">Nome completo:</span> <span class="val" style="font-size:13px;">${nomeAluno}</span></div>
+            <div class="grid-3" style="margin-top:6px;">
+              <div><span class="label">CPF:</span> <span class="val">${cpfAluno}</span></div>
+              <div><span class="label">Data de Nasc.:</span> <span class="val">${dataNasc}</span></div>
+              <div><span class="label">Idade:</span> <span class="val">${mat.idade || '---'}</span></div>
+              <div><span class="label">Sexo:</span> <span class="val">${sexo}</span></div>
+              <div><span class="label">Raça:</span> <span class="val">${raca}</span></div>
+              <div><span class="label">Escolaridade:</span> <span class="val">${escolaridade}</span></div>
+            </div>
+            <div class="grid-2" style="margin-top:6px;">
+              <div><span class="label">Telefone:</span> <span class="val">${telefone}</span></div>
+              <div><span class="label">E-mail:</span> <span class="val">${email}</span></div>
+              <div><span class="label">Endereço:</span> <span class="val">${mat.endereco || ''}, Nº ${mat.numero || ''} ${mat.complemento || ''}</span></div>
+              <div><span class="label">Cidade/Bairro:</span> <span class="val">${cidade} - ${bairro}</span></div>
+            </div>
+            <div class="grid-3" style="margin-top:8px;background:#f8fafc;padding:8px;border-radius:8px;">
+              <div><span class="label">Camiseta:</span> <span class="val">${mat.tamanho_camisa || '---'}</span></div>
+              <div><span class="label">Bermuda/Calça:</span> <span class="val">${mat.tamanho_calca || '---'}</span></div>
+              <div><span class="label">Calçado:</span> <span class="val">${mat.tamanho_calcado || '---'}</span></div>
+              <div><span class="label">Altura:</span> <span class="val">${mat.altura ? mat.altura + ' cm' : '---'}</span></div>
+              <div><span class="label">Peso:</span> <span class="val">${mat.peso ? mat.peso + ' kg' : '---'}</span></div>
+            </div>
+          </div>
+
+          ${mat.resp_nome ? `
+          <div class="section-box">
+            <div class="section-title">2. DADOS DO RESPONSÁVEL DO ALUNO(A)</div>
+            <div class="row"><span class="label">Nome completo:</span> <span class="val">${mat.resp_nome}</span></div>
+            <div class="grid-3" style="margin-top:4px;">
+              <div><span class="label">CPF:</span> <span class="val">${mat.resp_cpf || '---'}</span></div>
+              <div><span class="label">Telefone:</span> <span class="val">${mat.resp_whatsapp || '---'}</span></div>
+              <div><span class="label">E-mail:</span> <span class="val">${mat.resp_email || '---'}</span></div>
+            </div>
+          </div>
+          ` : ''}
+
+          <div class="section-box">
+            <div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>
+            <p style="font-size:10px;color:#475569;margin:0;">
+              Perante a integral gratuidade desse serviço, confirmo e declaro ter ciência e aceite dos termos de participação, compromisso e veracidade das informações prestadas nesta matrícula.
+            </p>
+          </div>
+
+          <div class="qr-container">
+            <div style="font-size:12px;font-weight:bold;color:#0f172a;margin-bottom:8px;text-transform:uppercase;">Comprovante de Autenticidade Digital</div>
+            <div class="qr-code">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(valToken)}" alt="QR Code Validation Token" />
+            </div>
+            <div class="qr-token">VALIDATION TOKEN: ${valToken}</div>
+          </div>
+        </body>
+        </html>
+      `);
+      printDoc.close();
+    }
+  </script>
+</body>
+</html>

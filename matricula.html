@@ -1152,10 +1152,17 @@
                             <label for="tamanho_camisa">Tamanho da Camisa <span class="req">*</span></label>
                             <select id="tamanho_camisa" name="tamanho_camisa" required>
                                 <option value="">Selecione</option>
+                                <option value="8">8 (Infantil)</option>
                                 <option value="10">10 (Infantil)</option>
+                                <option value="12">12 (Infantil)</option>
                                 <option value="14">14 (Infantil)</option>
+                                <option value="16">16 (Infantil)</option>
+                                <option value="PP">PP (Adulto)</option>
+                                <option value="P">P (Adulto)</option>
                                 <option value="M">M (Adulto)</option>
+                                <option value="G">G (Adulto)</option>
                                 <option value="GG">GG (Adulto)</option>
+                                <option value="G2">G2 (Tamanho Especial / Extra Grande)</option>
                             </select>
                             <div class="hint">Tamanho da camisa do uniforme.</div>
                         </div>
@@ -3274,7 +3281,16 @@
                 
                 var nomeAluno = (document.getElementById('nome_aluno') || {}).value || 'Aluno';
                 var cpfAluno = (document.getElementById('cpf_aluno') || {}).value || '';
-                var numProtocolo = 'MAT-' + Math.floor(100000 + Math.random() * 900000);
+                
+                // Número de Matrícula 100% Numérico e Único (Dia + Mês + Hora + Minuto + Segundo + MS)
+                var agoraMat = new Date();
+                var diaM = String(agoraMat.getDate()).padStart(2, '0');
+                var mesM = String(agoraMat.getMonth() + 1).padStart(2, '0');
+                var horaM = String(agoraMat.getHours()).padStart(2, '0');
+                var minM = String(agoraMat.getMinutes()).padStart(2, '0');
+                var segM = String(agoraMat.getSeconds()).padStart(2, '0');
+                var msM = String(agoraMat.getMilliseconds()).padStart(3, '0').slice(-2);
+                var numMatricula = diaM + mesM + horaM + minM + segM + msM; // Ex.: 260719354289 (12 dígitos numéricos)
                 var dataAtual = new Date().toLocaleDateString('pt-BR');
 
                 window.gerarComprovantePDF = function() {
@@ -3292,7 +3308,7 @@
                         '<div class="header"><div class="title">INTEGRA — PLATAFORMA UNIFICADA DE GESTÃO</div>' +
                         '<div class="subtitle">COMPROVANTE OFICIAL DE MATRÍCULA</div></div>' +
                         '<div class="box">' +
-                        '<div class="row"><span class="label">Protocolo de Matrícula:</span> <span>' + numProtocolo + '</span></div>' +
+                        '<div class="row"><span class="label">Número de Matrícula:</span> <span>' + numMatricula + '</span></div>' +
                         '<div class="row"><span class="label">Data de Conclusão:</span> <span>' + dataAtual + '</span></div>' +
                         '<div class="row"><span class="label">Nome do Aluno:</span> <span>' + nomeAluno + '</span></div>' +
                         '<div class="row"><span class="label">CPF do Aluno:</span> <span>' + cpfAluno + '</span></div>' +
@@ -3310,7 +3326,7 @@
                     successDiv.innerHTML = '<div style="text-align:center;padding:40px 20px;max-width:540px;margin:0 auto;">' +
                         '<div style="font-size:56px;margin-bottom:16px;">🎉</div>' +
                         '<h2 style="color:var(--primary,#10b981);font-size:24px;font-weight:800;margin-bottom:10px;">Matrícula Concluída com Sucesso!</h2>' +
-                        '<p style="color:#64748b;font-size:14px;line-height:1.6;margin-bottom:24px;">Sua solicitação de matrícula foi registrada sob o protocolo <strong>' + numProtocolo + '</strong>.</p>' +
+                        '<p style="color:#64748b;font-size:14px;line-height:1.6;margin-bottom:24px;">Sua solicitação de matrícula foi registrada sob o Número de Matrícula <strong>' + numMatricula + '</strong>.</p>' +
                         '<div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto;">' +
                         '<button type="button" onclick="gerarComprovantePDF()" style="background:#10b981;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(16,185,129,0.35);">📄 Baixar Comprovante em PDF</button>' +
                         '<a href="area_aluno.html" style="background:#2563eb;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(37,99,235,0.35);">🏠 Voltar para a Área do Aluno</a>' +

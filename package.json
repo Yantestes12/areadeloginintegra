@@ -4,6 +4,6 @@
   "private": true,
   "description": "Portal Central INTEGRA",
   "scripts": {
-    "start": "npx serve -s ."
+    "start": "npx serve ."
   }
 }

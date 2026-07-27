@@ -1152,17 +1152,11 @@
                             <label for="tamanho_camisa">Tamanho da Camisa <span class="req">*</span></label>
                             <select id="tamanho_camisa" name="tamanho_camisa" required>
                                 <option value="">Selecione</option>
-                                <option value="8">8 (Infantil)</option>
                                 <option value="10">10 (Infantil)</option>
-                                <option value="12">12 (Infantil)</option>
                                 <option value="14">14 (Infantil)</option>
-                                <option value="16">16 (Infantil)</option>
-                                <option value="PP">PP (Adulto)</option>
-                                <option value="P">P (Adulto)</option>
                                 <option value="M">M (Adulto)</option>
-                                <option value="G">G (Adulto)</option>
                                 <option value="GG">GG (Adulto)</option>
-                                <option value="G2">G2 (Tamanho Especial / Extra Grande)</option>
+                                <option value="G2">G2 (Adulto)</option>
                             </select>
                             <div class="hint">Tamanho da camisa do uniforme.</div>
                         </div>
@@ -3295,27 +3289,130 @@
 
                 window.gerarComprovantePDF = function() {
                     var win = window.open('', '_blank');
-                    win.document.write('<html><head><title>Comprovante de Matrícula - INTEGRA</title>' +
-                        '<style>body{font-family:sans-serif;padding:30px;color:#1e293b;line-height:1.6;}' +
-                        '.header{text-align:center;border-bottom:2px solid #10b981;padding-bottom:15px;margin-bottom:25px;}' +
-                        '.title{font-size:22px;color:#065f46;margin-bottom:4px;font-weight:bold;}' +
-                        '.subtitle{font-size:13px;color:#64748b;}' +
-                        '.box{background:#f8fafc;border:1px solid #e2e8f0;padding:20px;border-radius:10px;margin-bottom:20px;}' +
-                        '.row{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;}' +
-                        '.label{font-weight:bold;color:#475569;}' +
-                        '.footer{text-align:center;font-size:12px;color:#94a3b8;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:15px;}' +
-                        '@media print{.btn-print{display:none;}}</style></head><body>' +
-                        '<div class="header"><div class="title">INTEGRA — PLATAFORMA UNIFICADA DE GESTÃO</div>' +
-                        '<div class="subtitle">COMPROVANTE OFICIAL DE MATRÍCULA</div></div>' +
-                        '<div class="box">' +
-                        '<div class="row"><span class="label">Número de Matrícula:</span> <span>' + numMatricula + '</span></div>' +
-                        '<div class="row"><span class="label">Data de Conclusão:</span> <span>' + dataAtual + '</span></div>' +
-                        '<div class="row"><span class="label">Nome do Aluno:</span> <span>' + nomeAluno + '</span></div>' +
-                        '<div class="row"><span class="label">CPF do Aluno:</span> <span>' + cpfAluno + '</span></div>' +
-                        '</div>' +
-                        '<p style="font-size:13px;color:#64748b;text-align:center;">Este comprovante atesta a conclusão da solicitação de matrícula no sistema central INTEGRA.</p>' +
-                        '<div style="text-align:center;margin-top:30px;"><button class="btn-print" onclick="window.print()" style="background:#10b981;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Imprimir / Salvar em PDF</button></div>' +
-                        '<div class="footer">Grupo de Apoio Social aos Cultivadores da Terra e Prevenção da Natureza - GASCTPNA</div>' +
+                    var getV = function(id) {
+                        var el = document.getElementById(id);
+                        return el ? (el.value || '').trim() : '';
+                    };
+                    var getR = function(name) {
+                        var el = document.querySelector('input[name="' + name + '"]:checked');
+                        return el ? el.value : 'Não';
+                    };
+
+                    var nAluno = getV('nome_aluno') || getV('TextNumCPF') || 'Aluno';
+                    var cAluno = getV('cpf_aluno') || getV('TextNumCPF');
+                    var dNasc = getV('data_nascimento');
+                    var gen = getV('genero_aluno') || 'Não informado';
+                    var raca = getV('raca_cor') || 'Não informado';
+                    var alt = getV('altura') ? getV('altura') + ' cm' : 'Não informado';
+                    var pes = getV('peso') ? getV('peso') + ' kg' : 'Não informado';
+                    var tCamisa = getV('tamanho_camisa') || 'Não informado';
+                    var tCalcado = getV('tamanho_calcado') || 'Não informado';
+                    var tCalca = getV('tamanho_calca') || 'Não informado';
+
+                    var tel = getV('telefone_aluno') || getV('celular_aluno');
+                    var email = getV('email_aluno');
+                    var cep = getV('cep');
+                    var logr = getV('logradouro') + (getV('numero') ? ', ' + getV('numero') : '');
+                    var bairro = getV('bairro');
+                    var cid = getV('cidade');
+                    var uf = getV('estado');
+
+                    var projSel = document.querySelector('input[name="projeto_id"]:checked');
+                    var proj = (projSel && projSel.parentNode ? projSel.parentNode.innerText : '') || getV('projeto_nome') || 'Projeto GASCTPNA';
+                    var nucSel = document.querySelector('input[name="nucleo_id_radio"]:checked');
+                    var nuc = (nucSel && nucSel.parentNode ? nucSel.parentNode.innerText : '') || getV('nucleo_nome') || 'Núcleo Central';
+                    var turSel = document.querySelector('input[name="turno_escolhido_radio"]:checked');
+                    var tur = (turSel ? turSel.value : '') || getV('turno_escolhido') || 'Manhã';
+
+                    var uMed = getR('uso_medicacao') + (getV('uso_medicacao_detalhes') ? ' (' + getV('uso_medicacao_detalhes') + ')' : '');
+                    var pAlerg = getR('possui_alergias') + (getV('possui_alergias_detalhes') ? ' (' + getV('possui_alergias_detalhes') + ')' : '');
+                    var pSaude = getR('plano_saude') + (getV('plano_saude_detalhes') ? ' (' + getV('plano_saude_detalhes') + ')' : '');
+                    var aMed = getR('acompan_medico') + (getV('acompan_medico_detalhes') ? ' (' + getV('acompan_medico_detalhes') + ')' : '');
+                    var rFis = getR('restricao_fisica') + (getV('restricao_fisica_detalhes') ? ' (' + getV('restricao_fisica_detalhes') + ')' : '');
+                    var nEsp = getR('necessidade_especial') + (getV('necessidade_especial_detalhes') ? ' (' + getV('necessidade_especial_detalhes') + ')' : '');
+
+                    var nResp = getV('nome_responsavel');
+                    var cResp = getV('cpf_responsavel');
+                    var parResp = getV('grau_parentesco');
+                    var tResp = getV('telefone_responsavel');
+
+                    var timestampExato = new Date().toLocaleString('pt-BR');
+                    var instSlug = 'gasctpna';
+                    var projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'gasctpna';
+                    var urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
+                    var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
+
+                    win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
+                        '<style>@page{size:A4;margin:10mm 12mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
+                        'body{font-family:sans-serif;font-size:10.5pt;color:#0f172a;line-height:1.35;background:#fff;padding:10px;}' +
+                        '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #10b981;padding-bottom:8px;margin-bottom:10px;}' +
+                        '.logo-box{display:flex;align-items:center;gap:8px;}.logo-box img{max-height:38px;border-radius:4px;}.logo-sep{font-size:16px;color:#94a3b8;font-weight:bold;}' +
+                        '.header-titles{text-align:right;}.main-title{font-size:14pt;font-weight:800;color:#065f46;margin:0;}.sub-title{font-size:9.5pt;color:#64748b;font-weight:600;}' +
+                        '.section-box{border:1px solid #cbd5e1;border-radius:6px;margin-bottom:8px;padding:8px 10px;background:#f8fafc;}' +
+                        '.section-title{font-size:10pt;font-weight:800;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:3px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}' +
+                        '.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 12px;}' +
+                        '.field-item{font-size:9.5pt;}.field-label{font-weight:700;color:#475569;}.field-value{color:#0f172a;}' +
+                        '.qr-banner{display:flex;align-items:center;gap:12px;background:#f1f5f9;border:1px dashed #0284c7;border-radius:6px;padding:8px 10px;margin-top:6px;margin-bottom:6px;}' +
+                        '.qr-banner img{width:64px;height:64px;border-radius:4px;}' +
+                        '.aceite-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 10px;margin-top:12px;margin-bottom:20px;}' +
+                        '.aceite-title{font-size:9.5pt;font-weight:800;color:#166534;margin-bottom:4px;text-transform:uppercase;}' +
+                        '.aceite-item{font-size:8.5pt;color:#14532d;font-family:monospace;line-height:1.4;}' +
+                        '.signatures-row{display:flex;justify-content:space-around;margin-top:25px;padding-top:10px;}' +
+                        '.sig-block{text-align:center;width:42%;}.sig-line{border-top:1.5px solid #334155;margin-bottom:4px;}.sig-label{font-size:10pt;font-weight:800;color:#0f172a;text-transform:uppercase;}' +
+                        '.page-break{page-break-before:always;}@media print{.no-print{display:none!important;}}</style></head><body>' +
+                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+                        '<div class="header-titles"><div class="main-title">INTEGRA — PLATAFORMA UNIFICADA</div><div class="sub-title">FICHA OFICIAL DE MATRÍCULA — PÁGINA 1 DE 2</div></div></div>' +
+                        '<div class="section-box" style="background:#e0f2fe;border-color:#bae6fd;"><div class="grid-2">' +
+                        '<div class="field-item"><span class="field-label">Número de Matrícula:</span> <span class="field-value" style="font-weight:bold;font-size:11pt;color:#0369a1;">' + numMatricula + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Data/Hora de Registro:</span> <span class="field-value">' + timestampExato + '</span></div></div></div>' +
+                        '<div class="section-box"><div class="section-title">1. Dados Pessoais do Aluno</div><div class="grid-2">' +
+                        '<div class="field-item"><span class="field-label">Nome Completo:</span> <span class="field-value">' + nAluno + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">CPF:</span> <span class="field-value">' + (cAluno || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Data de Nascimento:</span> <span class="field-value">' + (dNasc || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Gênero:</span> <span class="field-value">' + gen + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Raça / Etnia:</span> <span class="field-value">' + raca + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Altura:</span> <span class="field-value">' + alt + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Peso:</span> <span class="field-value">' + pes + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Tamanho da Camisa:</span> <span class="field-value" style="font-weight:bold;">' + tCamisa + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Nº do Calçado:</span> <span class="field-value">' + tCalcado + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Tamanho da Bermuda:</span> <span class="field-value">' + tCalca + '</span></div></div></div>' +
+                        '<div class="section-box"><div class="section-title">2. Contato e Endereço</div><div class="grid-2">' +
+                        '<div class="field-item"><span class="field-label">Telefone / Celular:</span> <span class="field-value">' + (tel || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">E-mail:</span> <span class="field-value">' + (email || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">CEP:</span> <span class="field-value">' + (cep || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Endereço:</span> <span class="field-value">' + (logr || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Bairro:</span> <span class="field-value">' + (bairro || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Cidade / UF:</span> <span class="field-value">' + cid + ' / ' + uf + '</span></div></div></div>' +
+                        '<div class="section-box"><div class="section-title">3. Opções do Projeto e Núcleo</div><div class="grid-3">' +
+                        '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + proj + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Núcleo:</span> <span class="field-value">' + nuc + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Turno:</span> <span class="field-value">' + tur + '</span></div></div></div>' +
+                        '<div class="qr-banner"><img src="' + qrApi + '" alt="QR Code Autenticador"><div>' +
+                        '<div style="font-weight:bold;font-size:10pt;color:#0284c7;">QR CODE DE AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>' +
+                        '<div style="font-size:8.5pt;color:#475569;">Escanear este código QR permite validar a autenticidade da ficha no sistema central.</div>' +
+                        '<div style="font-size:8.5pt;font-family:monospace;color:#0369a1;margin-top:2px;">' + urlAutenticador + '</div></div></div>' +
+                        '<div class="page-break"></div>' +
+                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+                        '<div class="header-titles"><div class="main-title">INTEGRA — PLATAFORMA UNIFICADA</div><div class="sub-title">FICHA OFICIAL DE MATRÍCULA — PÁGINA 2 DE 2</div></div></div>' +
+                        '<div class="section-box"><div class="section-title">4. Histórico Médico e Saúde do Participante</div><div class="grid-2">' +
+                        '<div class="field-item"><span class="field-label">1. Medicamento Contínuo:</span> <span class="field-value">' + uMed + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">2. Alergia a Medicamento:</span> <span class="field-value">' + pAlerg + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">3. Plano de Saúde:</span> <span class="field-value">' + pSaude + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">4. Tratamento Médico:</span> <span class="field-value">' + aMed + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">5. Restrição Física:</span> <span class="field-value">' + rFis + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">6. Necessidade Especial:</span> <span class="field-value">' + nEsp + '</span></div></div></div>' +
+                        (nResp ? ('<div class="section-box"><div class="section-title">5. Responsável Legal (Aluno Menor de Idade)</div><div class="grid-2">' +
+                        '<div class="field-item"><span class="field-label">Nome do Responsável:</span> <span class="field-value">' + nResp + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">CPF do Responsável:</span> <span class="field-value">' + (cResp || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Grau de Parentesco:</span> <span class="field-value">' + (parResp || 'Não informado') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Telefone de Contato:</span> <span class="field-value">' + (tResp || 'Não informado') + '</span></div></div></div>') : '') +
+                        '<div class="aceite-box"><div class="aceite-title">✓ REGISTRO DE ACEITE DIGITAL E VERACIDADE DE DADOS</div>' +
+                        '<div class="aceite-item">• LGPD: ACEITO em ' + timestampExato + ' - Versão v1</div>' +
+                        '<div class="aceite-item">• Veracidade dos Dados: ACEITO em ' + timestampExato + ' - Versão v1</div>' +
+                        '<div class="aceite-item">• Origem do Cadastro: Portal do Aluno (plataformaintegra.com.br)</div></div>' +
+                        '<div class="signatures-row"><div class="sig-block"><div class="sig-line"></div><div class="sig-label">Responsável</div></div>' +
+                        '<div class="sig-block"><div class="sig-line"></div><div class="sig-label">Coordenador</div></div></div>' +
+                        '<div class="no-print" style="text-align:center;margin-top:30px;"><button onclick="window.print()" style="background:#10b981;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Salvar em PDF / Imprimir Ficha</button></div>' +
                         '</body></html>');
                     win.document.close();
                 };

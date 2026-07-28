@@ -320,16 +320,33 @@
             body, html {
                 height: auto;
                 min-height: 100vh;
+                min-height: 100dvh;
                 overflow-x: hidden !important;
                 overflow-y: auto !important;
             }
             .visual-side { display: none; }
             .login-side {
                 width: 100%;
+                max-width: 480px;
                 min-height: 100vh;
+                min-height: 100dvh;
                 box-shadow: none;
                 border-left: none;
-                padding: 36px 20px;
+                padding: 24px 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto;
+            }
+            .brand-header {
+                margin-bottom: 18px;
+            }
+            .brand-symbol {
+                height: 80px;
+            }
+            .brand-text-logo {
+                height: 28px;
             }
         }
     </style>
@@ -349,7 +366,7 @@
     <div class="login-side">
         <div class="brand-header">
             <img class="brand-symbol" src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA Símbolo">
-            <img class="brand-text-logo" src="logo_integra_texto.png" alt="INTEGRA">
+            <img class="brand-text-logo" src="logo_integra_texto.png?v=4" alt="INTEGRA">
             <p class="brand-subtitle">Plataforma Unificada de Gestão</p>
         </div>
 

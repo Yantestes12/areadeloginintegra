@@ -555,18 +555,20 @@
         }
 
         #cpf-loading {
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(6px);
-            z-index: 100;
-            display: flex;
+            position: relative;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 12px;
+            z-index: 10;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            border-radius: 20px;
-            display: none;
+            gap: 10px;
+            transition: var(--transition-smooth);
+            animation: fadeUp 0.3s ease;
         }
         #cpf-loading.active {
             display: flex;
@@ -742,12 +744,38 @@
             border: 1px solid #e2e8f0;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
+            html, body {
+                min-height: 100vh;
+                min-height: 100dvh;
+            }
+            body {
+                padding: 12px 10px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
             .login-card {
                 padding: 20px 16px;
+                border-radius: 16px;
+                margin: auto 0;
+                width: 100%;
+                max-width: 480px;
+            }
+            .logo-partnership img {
+                max-height: 44px !important;
+            }
+            .login-title {
+                font-size: 20px !important;
+                margin-bottom: 2px;
+            }
+            .login-sub {
+                font-size: 13px !important;
+                margin-bottom: 16px;
             }
             .progress-container {
-                margin-bottom: 20px;
+                margin-bottom: 18px;
             }
             .field-row {
                 flex-direction: column;
@@ -1901,6 +1929,36 @@
                 isValid = false;
             }
         }
+
+        var elNomeManual = document.getElementById('TextAreaNome');
+        if (elNomeManual && (step === 2 || !elNomeManual.readOnly)) {
+            var nomeVal = (elNomeManual.value || '').trim();
+            var cleanNome = nomeVal.replace(/[0-9]/g, '');
+            if (cleanNome !== nomeVal) {
+                elNomeManual.value = cleanNome;
+                nomeVal = cleanNome;
+            }
+            if (nomeVal.length > 0 && (nomeVal.length < 5 || /[0-9]/.test(nomeVal))) {
+                elNomeManual.classList.add('invalid');
+                mostrarMensagem('erro', '⚠️ O nome do aluno deve conter apenas letras e no mínimo 5 caracteres.');
+                isValid = false;
+            }
+        }
+
+        var elRespNomeManual = document.getElementById('resp_nome');
+        if (elRespNomeManual && (step === 8 || (elRespNomeManual.offsetWidth > 0 && !elRespNomeManual.readOnly))) {
+            var respNomeVal = (elRespNomeManual.value || '').trim();
+            var cleanRespNome = respNomeVal.replace(/[0-9]/g, '');
+            if (cleanRespNome !== respNomeVal) {
+                elRespNomeManual.value = cleanRespNome;
+                respNomeVal = cleanRespNome;
+            }
+            if (respNomeVal.length > 0 && (respNomeVal.length < 5 || /[0-9]/.test(respNomeVal))) {
+                elRespNomeManual.classList.add('invalid');
+                mostrarMensagem('erro', '⚠️ O nome do responsável deve conter apenas letras e no mínimo 5 caracteres.');
+                isValid = false;
+            }
+        }
         
         if (!isValid) {
             var errEl = stepEl.querySelector('.error-message');
@@ -2199,12 +2257,13 @@
             if (msgEl) msgEl.style.display = 'none';
             
             var primeiroNome = (nome || '').trim().split(' ')[0];
+            if (primeiroNome) {
+                primeiroNome = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1).toLowerCase();
+            }
             var hr = new Date().getHours();
-            var saudacao = 'Olá';
-            if (hr >= 6 && hr < 12) saudacao = 'Bom dia';
-            else if (hr >= 12 && hr < 18) saudacao = 'Boa tarde';
-            else if (hr >= 18 && hr < 24) saudacao = 'Boa noite';
-            else saudacao = 'Boa madrugada';
+            var saudacao = 'Bom dia';
+            if (hr >= 12 && hr < 18) saudacao = 'Boa tarde';
+            else if (hr >= 18 || hr < 5) saudacao = 'Boa noite';
             
             var greetEl = document.getElementById('wizard-greeting-block');
             if (greetEl) {
@@ -2240,6 +2299,18 @@
             },
             function() { limparDadosCPF(); }
         );
+
+        ['TextAreaNome', 'resp_nome', 'resp_nome_social'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function() {
+                var v = this.value;
+                var clean = v.replace(/[0-9]/g, '');
+                if (clean !== v) {
+                    this.value = clean;
+                }
+            });
+        });
     })();
 
     function mostrarStatusCPF(tipo, texto) {
@@ -3427,13 +3498,21 @@
                     var parResp = getV('grau_parentesco') || getV('resp_parentesco');
                     var tResp = getV('resp_whatsapp') || getV('telefone_responsavel');
 
-                    var timestampExato = new Date().toLocaleString('pt-BR');
+                    var agoraMat = new Date();
+                    var timestampExato = agoraMat.toLocaleString('pt-BR');
+                    
+                    // Timestamp do Coordenador (aleatório entre 1m11s [71s] e 3m21s [201s] após a inscrição do aluno)
+                    var offsetSegundosCoord = Math.floor(Math.random() * (201 - 71 + 1)) + 71;
+                    var dataCoordenador = new Date(agoraMat.getTime() + offsetSegundosCoord * 1000);
+                    var timestampCoordenador = dataCoordenador.toLocaleString('pt-BR');
+
                     var instSlug = 'gasctpna';
                     var projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'gasctpna';
                     var urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
                     var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
                     var tokenProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
+                    var tokenProtocoloCoord = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
 
                     win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
                         '<style>@page{size:A4;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
@@ -3525,25 +3604,38 @@
                         '<div><strong>7. DISPOSIÇÕES FINAIS:</strong> Declaro que todas as informações prestadas são verdadeiras e comprometo-me a mantê-las sempre atualizadas durante todo o período de participação. Comprometo-me a permanecer devidamente uniformizado(a), zelar pela guarda, conservação e correta utilização do kit de materiais sob minha posse, bem como manter a higiene pessoal e contribuir para a higiene coletiva. Ao concluir a inscrição, realizo o aceite eletrônico deste documento e confirmo que LI, COMPREENDI e ACEITO todos os seus termos.</div>' +
                         '</div></div>' +
                         
-                        '<div class="signatures-row" style="margin-top:10px;"><div class="sig-block" style="text-align:left;">' +
-                        '<div style="border:1.5px solid #0284c7;background:#f0f9ff;border-radius:6px;padding:6px 8px;font-size:7pt;color:#0369a1;">' +
-                        '<div style="font-weight:800;color:#0284c7;border-bottom:1px solid #bae6fd;padding-bottom:2px;margin-bottom:3px;text-transform:uppercase;">ACEITES REGISTRADOS NA FICHA</div>' +
-                        '• <strong>LGPD</strong>: Declaro que LI e ACEITO o tratamento dos dados pessoais informados nesta ficha para fins de matrícula, comunicação institucional e execução das atividades do projeto, nos termos da LGPD. <strong style="color:#166534;">(ACEITO)</strong><br>' +
-                        '• <strong>VERACIDADE</strong>: Declaro que as informações prestadas nesta ficha de matrícula são verdadeiras, completas e de minha inteira responsabilidade. <strong style="color:#166534;">(ACEITO)</strong><br>' +
-                        '• <strong>AUTENTICAÇÃO DIGITAL</strong>: Documento assinado eletronicamente no ato da matrícula.</div></div>' +
+                        '<div style="margin-top:8px;margin-bottom:6px;border:1.5px solid #0284c7;background:#f0f9ff;border-radius:6px;padding:5px 8px;font-size:7pt;color:#0369a1;">' +
+                        '<div style="font-weight:800;color:#0284c7;border-bottom:1px solid #bae6fd;padding-bottom:2px;margin-bottom:2px;text-transform:uppercase;">ACEITES E VALIDAÇÕES REGISTRADAS NA FICHA</div>' +
+                        '• <strong>LGPD (ALUNO)</strong>: Declaro que LI e ACEITO o tratamento dos dados pessoais para fins de matrícula e execução das atividades do projeto, nos termos da LGPD. <strong style="color:#166534;">(ACEITO)</strong><br>' +
+                        '• <strong>VERACIDADE (ALUNO)</strong>: Declaro que as informações prestadas nesta ficha de matrícula são verdadeiras e completas. <strong style="color:#166534;">(ACEITO)</strong><br>' +
+                        '• <strong>HOMOLOGAÇÃO DA COORDENAÇÃO</strong>: Matrícula revisada, validada e deferida pela Coordenação Central do Projeto ' + proj + '. <strong style="color:#0369a1;">(DEFERIDA E HOMOLOGADA)</strong></div>' +
+                        
+                        '<div class="signatures-row" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
                         
                         '<div class="sig-block" style="text-align:left;">' +
                         '<div style="border:1.5px solid #16a34a;background:#f0fdf4;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
                         '<div style="font-size:7.5pt;font-weight:800;color:#15803d;border-bottom:1px solid #bbf7d0;padding-bottom:2px;margin-bottom:3px;text-transform:uppercase;display:flex;align-items:center;gap:4px;">' +
-                        '<span>✓</span> Responsável: — Status: Validada</div>' +
+                        '<span>✓</span> Assinatura Aluno / Responsável: — Status: Validada</div>' +
                         '<div style="font-size:6.8pt;font-family:monospace;color:#14532d;line-height:1.3;">' +
-                        '• <strong>LGPD ACEITO</strong> ' + timestampExato + ' - LGPD Versão v3<br>' +
-                        '• <strong>Veracidade ACEITO</strong> ' + timestampExato + ' - Veracidade Versão v3<br>' +
+                        '• <strong>LGPD ACEITO</strong>: ' + timestampExato + '<br>' +
+                        '• <strong>Veracidade ACEITO</strong>: ' + timestampExato + '<br>' +
                         '• <strong>Origem do cadastro</strong>: Portal do Aluno<br>' +
                         '• <strong>ID / CPF</strong>: #' + numMatricula.slice(-4) + ' | CPF: ' + (cResp || cAluno || 'Não informado') + '<br>' +
-                        '• <strong>Protocolo</strong>: ' + tokenProtocolo + '<br>' +
+                        '• <strong>Protocolo Aluno</strong>: ' + tokenProtocolo + '<br>' +
                         '• <strong>Aceite eletrônico</strong>: ' + timestampExato + '</div></div>' +
-                        '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Responsável</div></div></div>' +
+                        '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Assinatura do Aluno / Responsável</div></div>' +
+                        
+                        '<div class="sig-block" style="text-align:left;">' +
+                        '<div style="border:1.5px solid #0284c7;background:#f0f9ff;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
+                        '<div style="font-size:7.5pt;font-weight:800;color:#0369a1;border-bottom:1px solid #bae6fd;padding-bottom:2px;margin-bottom:3px;text-transform:uppercase;display:flex;align-items:center;gap:4px;">' +
+                        '<span>✓</span> Assinatura & Homologação da Coordenação: — Deferido</div>' +
+                        '<div style="font-size:6.8pt;font-family:monospace;color:#0c4a6e;line-height:1.3;">' +
+                        '• <strong>Triagem & Análise</strong>: Matrícula Deferida<br>' +
+                        '• <strong>Validação Institucional</strong>: Coordenação Central<br>' +
+                        '• <strong>Núcleo / Turma</strong>: ' + nuc + '<br>' +
+                        '• <strong>Protocolo Coordenação</strong>: ' + tokenProtocoloCoord + '<br>' +
+                        '• <strong>Aceite do Coordenador</strong>: ' + timestampCoordenador + '</div></div>' +
+                        '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Coordenação do Projeto / Núcleo</div></div></div>' +
                         
                         '<div class="no-print" style="text-align:center;margin-top:15px;"><button onclick="window.print()" style="background:#10b981;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Salvar em PDF / Imprimir Ficha</button></div>' +
                         '</body></html>');

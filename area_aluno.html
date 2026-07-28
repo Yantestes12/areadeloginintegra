@@ -318,8 +318,13 @@
     }
     firstName = sanitizeText(firstName);
 
+    const hr = new Date().getHours();
+    let saudacao = 'Bom dia';
+    if (hr >= 12 && hr < 18) saudacao = 'Boa tarde';
+    else if (hr >= 18 || hr < 5) saudacao = 'Boa noite';
+
     document.getElementById('display-topbar-name').textContent = firstName;
-    document.getElementById('display-welcome-title').textContent = `Olá, ${firstName}!`;
+    document.getElementById('display-welcome-title').textContent = `${saudacao}, ${firstName}!`;
 
     const firstLetter = firstName.charAt(0).toUpperCase() || 'P';
     const avatarEl = document.getElementById('display-avatar-icon');

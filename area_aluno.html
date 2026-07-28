@@ -372,7 +372,7 @@
 
       if (username) {
         try {
-          const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+          const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&instituicao=GASCTPNA&instituto=GASCTPNA`;
           const res = await fetch(url);
           const text = await res.text();
           const clean = text.trim();
@@ -421,7 +421,7 @@
       const password = getStoredVal('usuario_senha');
 
       try {
-        const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+        const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&instituicao=GASCTPNA&instituto=GASCTPNA`;
         const res = await fetch(url);
         const text = await res.text();
         const clean = text.trim();
@@ -550,7 +550,7 @@
       `;
 
       try {
-        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}&email=${encodeURIComponent(email)}`;
+        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}&email=${encodeURIComponent(email)}&instituicao=GASCTPNA&instituto=GASCTPNA`;
         const res = await fetch(url);
         const text = await res.text();
         

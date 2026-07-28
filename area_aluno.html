@@ -88,30 +88,20 @@
       font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
     }
     .al-topbar-left, .al-topbar-right { display: flex; align-items: center; gap: 14px; }
-    .al-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; }
+    .al-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; }
     .al-topbar-logo img {
       height: 38px;
+      width: auto;
+      object-fit: contain;
       display: block;
-      filter: drop-shadow(0 2px 5px rgba(249, 115, 22, 0.15));
-      animation: logoGlowPulseSmall 8s ease-in-out infinite;
+      border-radius: 6px;
     }
-    @keyframes logoGlowPulseSmall {
-      0%, 100% { filter: drop-shadow(0 2px 5px rgba(249, 115, 22, 0.2)); }
-      50% { filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.4)); }
-    }
-    .al-brand-title {
+    .al-logo-separator {
       font-size: 16px;
-      font-weight: 800;
-      background: linear-gradient(120deg, #f97316 0%, #eab308 25%, #10b981 50%, #06b6d4 75%, #f97316 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shineGradient 5s linear infinite;
-    }
-    @keyframes shineGradient {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
+      color: #94a3b8;
+      font-weight: 700;
+      user-select: none;
+      padding: 0 2px;
     }
     .al-avatar {
       width: 40px; height: 40px; border-radius: 50%;
@@ -145,8 +135,8 @@
     @media (max-width: 520px) {
       .al-topbar { padding: 10px 12px; }
       .al-topbar-left { gap: 8px; }
-      .al-topbar-logo img { height: 32px; }
-      .al-brand-title { font-size: 14px; }
+      .al-topbar-logo img { height: 30px; }
+      .al-logo-separator { font-size: 13px; }
       .al-user-role { display: none; }
       .al-user-name { font-size: 12px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .al-avatar { width: 36px; height: 36px; font-size: 14px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(16,185,129,.25); }
@@ -160,9 +150,12 @@
     <div class="al-topbar-left">
       <a href="area_aluno.html" class="al-brand">
         <span class="al-topbar-logo">
-          <img src="logo_integra.png" onerror="this.onerror=null; this.src='http://3.141.142.62:8000/storage/v1/object/public/INTEGRA/logo_integra.png';" alt="INTEGRA">
+          <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA">
         </span>
-        <span class="al-brand-title">INTEGRA</span>
+        <span class="al-logo-separator">×</span>
+        <span class="al-topbar-logo">
+          <img src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="GASCTPNA">
+        </span>
       </a>
     </div>
     <div class="al-topbar-right">

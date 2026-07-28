@@ -890,7 +890,7 @@
 
     <div class="login-card">
         <div class="logo-partnership">
-            <img src="logo_integra.png" alt="INTEGRA" style="max-height: 55px; width: auto; border-radius:8px;">
+            <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA" style="max-height: 55px; width: auto; border-radius:8px;">
             <span class="logo-separator">×</span>
             <img src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="GASCTPNA" style="max-height: 55px; width: auto; border-radius:8px;">
         </div>
@@ -1184,7 +1184,7 @@
                     <div class="field-row">
                         <div class="field-group">
                             <label>Raça / Cor</label>
-                            <select name="raca">
+                            <select name="raca" id="raca">
                                 <option value="">Selecione</option>
                                 <option value="Negra">Negra</option>
                                 <option value="Branca">Branca</option>
@@ -1206,7 +1206,7 @@
                     <div class="field-row">
                         <div class="field-group">
                             <label>Escolaridade</label>
-                            <select name="escolaridade">
+                            <select name="escolaridade" id="escolaridade">
                                 <option value="">Selecione</option>
                                 <option value="Ensino Fundamental">Ensino Fundamental (1º ao 9º ano)</option>
                                 <option value="Ensino Médio">Ensino Médio (1ª à 3ª série)</option>
@@ -1243,25 +1243,25 @@
             <div class="field-row">
                 <div class="field-group" style="flex:0 0 100px;">
                     <label>Número <span class="req">*</span></label>
-                    <input type="text" name="numero" required>
+                    <input type="text" name="numero" id="numero" required>
                 </div>
                 <div class="field-group">
                     <label>Complemento</label>
-                    <input type="text" name="complemento" placeholder="Apto, Bloco…">
+                    <input type="text" name="complemento" id="complemento" placeholder="Apto, Bloco…">
                 </div>
                 <div class="field-group">
                     <label>Bairro <span class="req">*</span></label>
-                    <input type="text" name="bairro" required>
+                    <input type="text" name="bairro" id="bairro" required>
                 </div>
             </div>
             <div class="field-row">
                 <div class="field-group">
                     <label>Cidade <span class="req">*</span></label>
-                    <input type="text" name="cidade" required>
+                    <input type="text" name="cidade" id="cidade" required>
                 </div>
                 <div class="field-group" style="flex:0 0 70px;">
                     <label>UF <span class="req">*</span></label>
-                    <input type="text" name="uf" maxlength="2" required>
+                    <input type="text" name="uf" id="uf" maxlength="2" required>
                 </div>
             </div>
         </div>
@@ -1376,8 +1376,15 @@
 
                 <div class="field-row">
                     <div class="field-group">
-                        <label>Nome social do Responsável (opcional)</label>
-                        <input type="text" name="resp_nome_social" id="resp_nome_social" placeholder="Como prefere ser chamado(a)">
+                        <label>Grau de Parentesco <span class="req">*</span></label>
+                        <select name="grau_parentesco" id="grau_parentesco" required>
+                            <option value="">Selecione…</option>
+                            <option value="Mãe">Mãe</option>
+                            <option value="Pai">Pai</option>
+                            <option value="Tutor(a) Legal">Tutor(a) Legal</option>
+                            <option value="Avô / Avó">Avô / Avó</option>
+                            <option value="Outro">Outro Responsável</option>
+                        </select>
                     </div>
                     <div class="field-group">
                         <label>Data de nascimento <span class="req">*</span></label>
@@ -1414,7 +1421,7 @@
                 <div class="field-row">
                     <div class="field-group">
                         <label>E-mail do Responsável</label>
-                        <input type="email" name="resp_email" placeholder="email@dominio.com">
+                        <input type="email" name="resp_email" id="resp_email" placeholder="email@dominio.com">
                     </div>
                     <div class="field-group">
                         <label>WhatsApp do Responsável <span class="req">*</span></label>
@@ -2310,10 +2317,10 @@
     }
     function buscarCEP(valor){
         var cep = (valor||'').replace(/\D/g,'');
-        var end = document.getElementById('endereco');
-        var bairro = document.querySelector('input[name="bairro"]');
-        var cidade = document.querySelector('input[name="cidade"]');
-        var uf     = document.querySelector('input[name="uf"]');
+        var end = document.getElementById('endereco') || document.querySelector('input[name="endereco"]');
+        var bairro = document.getElementById('bairro') || document.querySelector('input[name="bairro"]');
+        var cidade = document.getElementById('cidade') || document.querySelector('input[name="cidade"]');
+        var uf     = document.getElementById('uf') || document.querySelector('input[name="uf"]');
         if(cep.length===8){
             if(end) end.value='Carregando…';
             fetch('https://w.ibrase.com.br/webhook/consultarcep?cep='+cep)
@@ -2329,7 +2336,7 @@
                     if(bairro) bairro.value = info.bairro || '';
                     if(cidade) cidade.value = info.localidade || info.cidade || '';
                     if(uf)     uf.value     = info.uf || info.estado || '';
-                    var num = document.querySelector('input[name="numero"]');
+                    var num = document.getElementById('numero') || document.querySelector('input[name="numero"]');
                     if(num && rua) num.focus();
                 }).catch(function(){alert('Erro ao buscar CEP.');limparCamposEndereco();});
         } else if(cep!==''){
@@ -3289,9 +3296,21 @@
 
                 window.gerarComprovantePDF = function() {
                     var win = window.open('', '_blank');
-                    var getV = function(id) {
-                        var el = document.getElementById(id);
-                        return el ? (el.value || '').trim() : '';
+                    var getV = function(idOrName) {
+                        if (!idOrName) return '';
+                        var el = document.getElementById(idOrName);
+                        if (!el) {
+                            el = document.querySelector('input[name="' + idOrName + '"]') ||
+                                 document.querySelector('select[name="' + idOrName + '"]') ||
+                                 document.querySelector('textarea[name="' + idOrName + '"]');
+                        }
+                        if (el) {
+                            if (el.tagName === 'SELECT') {
+                                return (el.options && el.selectedIndex >= 0 && el.value !== '') ? (el.options[el.selectedIndex].text || el.value || '').trim() : '';
+                            }
+                            return (el.value || '').trim();
+                        }
+                        return '';
                     };
                     var getR = function(name) {
                         var el = document.querySelector('input[name="' + name + '"]:checked');
@@ -3339,31 +3358,47 @@
                         }
                     };
 
-                    var nAluno = getV('nome_aluno') || getV('TextNumCPF') || 'Aluno';
-                    var cAluno = getV('cpf_aluno') || getV('TextNumCPF');
-                    var dNasc = getV('data_nascimento');
+                    var nAluno = getV('nome_aluno') || getV('nome') || getV('TextAreaNome') || getV('TextNumCPF') || 'Aluno';
+                    var cAluno = getV('cpf_aluno') || getV('cpf') || getV('TextNumCPF');
+                    var dNasc = getV('data_nascimento') || getV('TextDataNasc');
                     var idadeCalc = calcularIdade(dNasc);
                     
                     var selectSexo = document.querySelector('select[name="sexo"]') || document.getElementById('sexo_step2');
-                    var gen = (selectSexo ? selectSexo.value : '') || getV('genero_aluno') || 'Não informado';
+                    var gen = (selectSexo && selectSexo.value ? selectSexo.options[selectSexo.selectedIndex].text : '') || getV('genero_aluno') || getV('sexo') || 'Não informado';
                     
                     var selectEscolaridade = document.querySelector('select[name="escolaridade"]');
-                    var escolaridadeVal = (selectEscolaridade ? selectEscolaridade.value : '') || getV('escolaridade') || 'Não informada';
+                    var escolaridadeVal = (selectEscolaridade && selectEscolaridade.value ? selectEscolaridade.options[selectEscolaridade.selectedIndex].text : '') || getV('escolaridade') || 'Não informada';
 
-                    var raca = getV('raca_cor') || 'Não informado';
+                    var selectRaca = document.querySelector('select[name="raca"]');
+                    var raca = (selectRaca && selectRaca.value ? selectRaca.options[selectRaca.selectedIndex].text : '') || getV('raca') || getV('raca_cor') || getV('etnia') || 'Não informado';
+
                     var alt = getV('altura') ? getV('altura') + ' cm' : 'Não informado';
                     var pes = getV('peso') ? getV('peso') + ' kg' : 'Não informado';
                     var tCamisa = getV('tamanho_camisa') || 'Não informado';
                     var tCalcado = getV('tamanho_calcado') || 'Não informado';
                     var tCalca = getV('tamanho_calca') || 'Não informado';
 
-                    var tel = getV('telefone_aluno') || getV('celular_aluno');
-                    var email = getV('email_aluno');
-                    var cep = getV('cep');
-                    var logr = getV('logradouro') + (getV('numero') ? ', ' + getV('numero') : '');
-                    var bairro = getV('bairro');
-                    var cid = getV('cidade');
-                    var uf = getV('estado');
+                    var tel = getV('whatsapp') || getV('telefone_aluno') || getV('celular_aluno') || getV('telefone') || getV('celular') || getV('resp_whatsapp');
+                    var email = getV('email') || getV('email_aluno') || getV('email_conta') || getV('resp_email');
+                    var cep = getV('cep') || getV('cep_aluno');
+                    
+                    var endRua = getV('endereco') || getV('logradouro') || getV('rua');
+                    var endNum = getV('numero');
+                    var logr = endRua ? (endRua + (endNum ? ', Nº ' + endNum : '')) : '';
+
+                    var bairroInput = getV('bairro');
+                    var selectBairro = document.querySelector('select[name="bairro_id"]');
+                    var bairroSelectText = (selectBairro && selectBairro.selectedIndex >= 0) ? selectBairro.options[selectBairro.selectedIndex].text : '';
+                    bairroSelectText = cleanText(bairroSelectText).replace(/Selecione.*$/gi, '').trim();
+                    var bairro = bairroInput || bairroSelectText || '';
+
+                    var cidInput = getV('cidade');
+                    var selectCid = document.querySelector('select[name="cidade_id"]');
+                    var cidSelectText = (selectCid && selectCid.selectedIndex >= 0) ? selectCid.options[selectCid.selectedIndex].text : '';
+                    cidSelectText = cleanText(cidSelectText).replace(/Selecione.*$/gi, '').trim();
+                    var cid = cidInput || cidSelectText || '';
+
+                    var uf = getV('uf') || getV('estado') || '';
 
                     var projSel = document.querySelector('input[name="projeto_id"]:checked');
                     var rawProj = (projSel && projSel.parentNode ? projSel.parentNode.innerText : '') || getV('projeto_nome') || 'GASCTPNA';
@@ -3375,7 +3410,10 @@
 
                     var turSel = document.querySelector('input[name="turno_escolhido_radio"]:checked');
                     var tur = (turSel ? turSel.value : '') || getV('turno_escolhido') || 'Manhã';
-                    var modalidade = getV('modalidade_esportiva') || 'Futebol / Esporte Comunitário';
+
+                    var modCardSel = document.querySelector('.mod-card.selected');
+                    var modalidadeRaw = (modCardSel ? modCardSel.getAttribute('data-nome') : '') || getV('modalidade_esportiva') || getV('modalidade_nome') || getV('modalidade') || 'Futebol';
+                    var modalidade = modalidadeRaw.replace(/\s*\/\s*Esporte Comunitário/gi, '').trim();
 
                     var uMed = formatSaude('uso_medicacao', 'uso_medicacao_detalhes');
                     var pAlerg = formatSaude('possui_alergias', 'possui_alergias_detalhes');
@@ -3384,10 +3422,10 @@
                     var rFis = formatSaude('restricao_fisica', 'restricao_fisica_detalhes');
                     var nEsp = formatSaude('necessidade_especial', 'necessidade_especial_detalhes');
 
-                    var nResp = getV('nome_responsavel');
-                    var cResp = getV('cpf_responsavel') || cAluno;
-                    var parResp = getV('grau_parentesco');
-                    var tResp = getV('telefone_responsavel');
+                    var nResp = getV('resp_nome') || getV('nome_responsavel');
+                    var cResp = getV('resp_cpf') || getV('cpf_responsavel');
+                    var parResp = getV('grau_parentesco') || getV('resp_parentesco');
+                    var tResp = getV('resp_whatsapp') || getV('telefone_responsavel');
 
                     var timestampExato = new Date().toLocaleString('pt-BR');
                     var instSlug = 'gasctpna';
@@ -3446,7 +3484,7 @@
                         '<div class="field-item"><span class="field-label">CEP:</span> <span class="field-value">' + (cep || 'Não informado') + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Endereço:</span> <span class="field-value">' + (logr || 'Não informado') + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Bairro:</span> <span class="field-value">' + (bairro || 'Não informado') + '</span></div>' +
-                        '<div class="field-item"><span class="field-label">Cidade / UF:</span> <span class="field-value">' + cid + ' / ' + uf + '</span></div></div></div>' +
+                        '<div class="field-item"><span class="field-label">Cidade / UF:</span> <span class="field-value">' + (cid ? cid + (uf ? ' / ' + uf : '') : (uf || 'Não informada')) + '</span></div></div></div>' +
                         
                         '<div class="section-box"><div class="section-title">4. Histórico Médico e Saúde do Participante</div><div class="grid-2">' +
                         '<div class="field-item"><span class="field-label">1. Medicamento Contínuo:</span> <span class="field-value">' + uMed + '</span></div>' +

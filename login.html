@@ -105,24 +105,32 @@
         /* Bloco da Identidade Visual no Formulário */
         .brand-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .brand-logo {
-            height: 195px;
+        .brand-symbol {
+            height: 95px;
             width: auto;
-            max-width: 360px;
             object-fit: contain;
-            margin-top: 0;
-            margin-bottom: 6px;
+            margin-bottom: 10px;
             display: block;
-            /* Otimização de GPU para garantir alta fluidez na execução do GIF */
+            /* GPU hardware acceleration para animação do GIF 100% fluida */
             transform: translateZ(0);
             backface-visibility: hidden;
             will-change: transform;
+            pointer-events: none;
+        }
+
+        .brand-text-logo {
+            height: 32px;
+            width: auto;
+            max-width: 220px;
+            object-fit: contain;
+            margin-bottom: 6px;
+            display: block;
             pointer-events: none;
         }
 
@@ -130,6 +138,7 @@
             font-size: 13.5px;
             color: #64748b;
             font-weight: 500;
+            margin-top: 2px;
         }
 
         form {
@@ -338,7 +347,8 @@
     <!-- Lado Direito: Formulário de Login Central -->
     <div class="login-side">
         <div class="brand-header">
-            <img class="brand-logo" src="logo_integra_animada.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA">
+            <img class="brand-symbol" src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA Símbolo">
+            <img class="brand-text-logo" src="logo_integra_texto.png" alt="INTEGRA">
             <p class="brand-subtitle">Plataforma Unificada de Gestão</p>
         </div>
 

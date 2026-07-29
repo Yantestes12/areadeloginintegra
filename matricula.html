@@ -2709,11 +2709,17 @@ window.dadosRecentesCPF = null;
                     card.appendChild(title);
                     card.appendChild(range);
                     card.appendChild(desc);
+                    
                     if (jaInscrito) {
-                        var tagInscrito = document.createElement('div');
-                        tagInscrito.style.cssText = 'color:#dc2626;font-size:12px;font-weight:800;margin-top:6px;background:#fef2f2;padding:4px 8px;border-radius:6px;display:inline-block;';
-                        tagInscrito.textContent = '⚠️ Você já está inscrito neste projeto.';
-                        card.appendChild(tagInscrito);
+                        var tag = document.createElement('div');
+                        tag.style.cssText = 'color:#dc2626;font-size:12px;font-weight:800;margin-top:8px;background:#fef2f2;border:1px solid #fca5a5;padding:6px 10px;border-radius:8px;display:inline-block;';
+                        tag.innerHTML = '⚠️ <strong>Indisponível:</strong> Você já possui matrícula ativa neste projeto.';
+                        card.appendChild(tag);
+                    } else if (!dentroFaixa) {
+                        var tagIdade = document.createElement('div');
+                        tagIdade.style.cssText = 'color:#c2410c;font-size:12px;font-weight:800;margin-top:8px;background:#fff7ed;border:1px solid #ffedd5;padding:6px 10px;border-radius:8px;display:inline-block;';
+                        tagIdade.innerHTML = '⚠️ <strong>Indisponível para sua idade:</strong> Exige de ' + min + ' a ' + max + ' anos (Sua idade: ' + idade + ' anos).';
+                        card.appendChild(tagIdade);
                     }
                     
                     radio.addEventListener('change', function() {

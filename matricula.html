@@ -1764,6 +1764,8 @@
     var currentStep = 1;
     var totalSteps = 10;
     var alunoMenorDeIdade = false;
+window.projetosInscritosCPF = [];
+window.dadosRecentesCPF = null;
     var manualMode = false;
 
     function ativandoManual(el) {
@@ -2169,6 +2171,12 @@
                     }
                     var ok = data.status === true || data.status === 'sucesso' || data.ok === true || data.success === true;
                     var d = data.result || data.dados || data;
+                    if (data && data.projetos_inscritos_ids && Array.isArray(data.projetos_inscritos_ids)) {
+                        window.projetosInscritosCPF = data.projetos_inscritos_ids;
+                    }
+                    if (data && data.dados_recentes) {
+                        window.dadosRecentesCPF = data.dados_recentes;
+                    }
                     if (ok && d) {
                         var nome = (d.nome_da_pf || d.nome || d.NOME || '').trim();
                         var nasc = (d.data_nascimento || d.nascimento || d.dt_nascimento || '').trim();
@@ -2224,6 +2232,48 @@
         if (manualEl) manualEl.style.display = 'none';
     }
 
+    
+    function aplicarAutopreenchimentoDadosRecentes(d) {
+        if (!d) return;
+        function setVal(id, val) {
+            if (val === null || val === undefined || val === '') return;
+            var el = document.getElementById(id);
+            if (el) {
+                el.value = val;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+        setVal('cep', d.cep);
+        setVal('endereco', d.endereco);
+        setVal('numero', d.numero);
+        setVal('complemento', d.complemento);
+        setVal('bairro', d.bairro);
+        setVal('cidade', d.cidade);
+        setVal('uf', d.uf);
+        setVal('email', d.email);
+        setVal('whatsapp', d.whatsapp);
+        setVal('faixa_salarial', d.faixa_salarial);
+        setVal('profissao', d.profissao);
+        setVal('raca', d.raca);
+        setVal('naturalidade', d.naturalidade);
+        setVal('escolaridade', d.escolaridade);
+        setVal('resp_cpf', d.resp_cpf);
+        setVal('resp_nome', d.resp_nome);
+        setVal('resp_whatsapp', d.resp_whatsapp);
+        setVal('resp_email', d.resp_email);
+        setVal('resp_data_nasc', d.resp_data_nasc);
+        setVal('resp_sexo', d.resp_sexo);
+        setVal('resp_raca', d.resp_raca);
+        setVal('resp_escolaridade', d.resp_escolaridade);
+        setVal('resp_profissao', d.resp_profissao);
+        setVal('tamanho_camisa', d.tamanho_camisa);
+        setVal('tamanho_calca', d.tamanho_calca);
+        setVal('tamanho_calcado', d.tamanho_calcado);
+        setVal('altura', d.altura);
+        setVal('peso', d.peso);
+    }
+
     function preencherDadosCPF(d) {
         var inputNome  = document.getElementById('TextAreaNome');
         var inputData  = document.getElementById('TextDataNasc');
@@ -2254,6 +2304,9 @@
         loadingLabel: 'Consultando CPF na Receita Federal',
         onSucesso: function(nome, nasc, mensagem) {
             preencherDadosCPF({ nome: nome, data_nascimento: nasc });
+            if (window.dadosRecentesCPF) {
+                aplicarAutopreenchimentoDadosRecentes(window.dadosRecentesCPF);
+            }
             var msgEl = document.getElementById('msg-cpf-status');
             if (msgEl) msgEl.style.display = 'none';
             
@@ -2627,7 +2680,8 @@
                     var max = p.idade_max !== null && p.idade_max !== undefined ? parseInt(p.idade_max) : 999;
                     var dentroFaixa = (idade >= min && max >= idade);
                     
-                    if (!dentroFaixa) {
+                    var jaInscrito = (window.projetosInscritosCPF || []).map(Number).includes(parseInt(p.id));
+                    if (!dentroFaixa || jaInscrito) {
                         card.className += ' disabled';
                     } else {
                         temAtivo = true;
@@ -2637,7 +2691,7 @@
                     radio.type = 'radio';
                     radio.name = 'projeto_id';
                     radio.value = p.id;
-                    if (!dentroFaixa) radio.disabled = true;
+                    if (!dentroFaixa || jaInscrito) radio.disabled = true;
                     
                     var title = document.createElement('div');
                     title.className = 'projeto-name';
@@ -2655,6 +2709,12 @@
                     card.appendChild(title);
                     card.appendChild(range);
                     card.appendChild(desc);
+                    if (jaInscrito) {
+                        var tagInscrito = document.createElement('div');
+                        tagInscrito.style.cssText = 'color:#dc2626;font-size:12px;font-weight:800;margin-top:6px;background:#fef2f2;padding:4px 8px;border-radius:6px;display:inline-block;';
+                        tagInscrito.textContent = '⚠️ Você já está inscrito neste projeto.';
+                        card.appendChild(tagInscrito);
+                    }
                     
                     radio.addEventListener('change', function() {
                         var cards = container.querySelectorAll('.projeto-card');

@@ -542,14 +542,19 @@
         }
 
         .wizard-greeting-wrap {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 14px;
-            background: #ecfdf5;
-            border: 1px dashed #a7f3d0;
-            border-radius: 12px;
+            text-align: left;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            padding: 0;
+            background: transparent;
+            border: none;
         }
         .wizard-greeting-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #065f46;
+            margin-bottom: 2px;
+        }
             font-size: 20px;
             font-weight: 800;
             color: #059669;
@@ -1865,10 +1870,10 @@ window.dadosRecentesCPF = null;
         var btnNext = document.getElementById('btnNext');
         var btnSubmit = document.getElementById('btnSubmit');
 
-        // No passo 1 (CPF), ocultamos todos os botões de navegação globais!
+        // No passo 1 (CPF), ocultamos apenas o botão voltar
         if (currentStep === 1) {
             btnBack.style.display = 'none';
-            btnNext.style.display = 'none';
+            btnNext.style.display = 'flex';
             btnSubmit.style.display = 'none';
         } else {
             btnBack.style.display = 'flex';
@@ -2207,8 +2212,12 @@ window.dadosRecentesCPF = null;
                         }
                         if (nome || nasc) {
                             buscando = false;
-                            mostrarLoadingCPF(false);
+                            var txtEl = document.getElementById('cpf-loading-text');
+                            if (txtEl) txtEl.innerHTML = '<span style="color:#16a34a;font-weight:800;">✅ CPF localizado!</span>';
                             opts.onSucesso(nome, nasc, data.message || data.mensagem);
+                            setTimeout(function() {
+                                mostrarLoadingCPF(false);
+                            }, 450);
                             return;
                         }
                     }
@@ -2381,6 +2390,7 @@ window.dadosRecentesCPF = null;
                 greetEl.style.display = 'block';
                 greetEl.innerHTML = '<div class="wizard-greeting-wrap">'
                     + '<h2 class="wizard-greeting-title">🎉 ' + saudacao + ', ' + primeiroNome + '!</h2>'
+                    + '<div style="font-size:13px;color:#64748b;font-weight:500;margin-top:2px;">CPF verificado com sucesso. Prossiga com o cadastro.</div>'
                     + '</div>';
             }
             

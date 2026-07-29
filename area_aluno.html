@@ -10,7 +10,11 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=3">
   <link rel="apple-touch-icon" href="favicon-192.png?v=3">
 
-  <!-- Meta Tags para Pré-visualização do Link no WhatsApp, Telegram e Redes Sociais -->
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="INTEGRA">
+  <meta name="theme-color" content="#10b981">
   <meta name="description" content="Área do Participante — INTEGRA Plataforma Unificada">
   <meta property="og:title" content="Área do Participante — INTEGRA">
   <meta property="og:description" content="Painel de controle e área do aluno.">
@@ -168,24 +172,26 @@
     </div>
   </div>
 
-  <!-- Modal Foto de Perfil -->
+  <!-- Modal Instalar App INTEGRA -->
   <div class="al-modal-overlay" id="avatarModalOverlay" onclick="closeAvatarModal()" style="display:none">
-    <div class="al-modal" onclick="event.stopPropagation()">
-      <div class="al-modal-header">
-        <strong>Foto de Perfil</strong>
-        <button type="button" class="al-modal-close" onclick="closeAvatarModal()">×</button>
+    <div class="al-modal" onclick="event.stopPropagation()" style="max-width:440px;text-align:center;">
+      <div class="al-modal-header" style="justify-content:center;position:relative;">
+        <strong style="font-size:18px;color:#064e3b;display:flex;align-items:center;gap:8px;">
+          <img src="logo_integra_simbolo.gif" onerror="this.src='logo_integra.png';" style="height:26px;border-radius:4px;">
+          Instalar App INTEGRA
+        </strong>
+        <button type="button" class="al-modal-close" onclick="closeAvatarModal()" style="position:absolute;right:0;">×</button>
       </div>
-      <div class="al-modal-body">
-        <form onsubmit="salvarAvatar(event)">
-          <div class="al-upload-area">
-            <p style="font-weight:700;color:#0f1a3e;margin-bottom:8px">Selecione uma foto</p>
-            <input type="file" id="inputAvatarFile" accept="image/jpeg,image/png,image/webp" style="width: 100%;">
-            <div style="font-size:11px;color:#64748b;margin-top:10px">JPG, PNG ou WEBP. Máximo 2MB.</div>
-          </div>
-          <div style="text-align:center;margin-top:20px">
-            <button type="submit" class="al-btn-tb">Salvar Foto</button>
-          </div>
-        </form>
+      <div class="al-modal-body" style="padding:10px 4px;">
+        <p style="font-size:13.5px;color:#475569;margin-bottom:16px;line-height:1.4;">
+          Instale o aplicativo da <strong>Plataforma INTEGRA</strong> na tela inicial do seu celular para acessar suas matrículas com 1 clique!
+        </p>
+        <div id="pwa-install-container"></div>
+        <div style="margin-top:18px;">
+          <button type="button" class="al-btn-tb" id="btn-pwa-trigger" onclick="dispararInstalacaoPWA()" style="width:100%;font-size:15px;padding:12px 18px;">
+            📲 Instalar Aplicativo no Celular
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -701,6 +707,71 @@
           </div>
           <div style="color:#ef4444;text-align:center;padding:20px;font-weight:600;">Erro ao consultar webhook do servidor.</div>
         `;
+      }
+    }
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function openAvatarModal() {
+      var overlay = document.getElementById('avatarModalOverlay');
+      var container = document.getElementById('pwa-install-container');
+      var btnTrigger = document.getElementById('btn-pwa-trigger');
+      if (overlay) overlay.style.display = 'flex';
+      
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var isAndroid = /Android/.test(navigator.userAgent);
+      
+      if (isIOS) {
+        if (container) {
+          container.innerHTML = '<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:16px;text-align:left;">'
+            + '<div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">📱 Como instalar no iPhone (Safari):</div>'
+            + '<ol style="margin:0;padding-left:20px;font-size:13px;color:#15803d;line-height:1.5;">'
+            + '<li>Toque no ícone de <strong>Compartilhar</strong> (📤 na barra inferior do Safari).</li>'
+            + '<li>Role as opções e toque em <strong>"Adicionar à Tela de Início"</strong> (➕).</li>'
+            + '<li>Toque em <strong>Adicionar</strong> no canto superior.</li>'
+            + '</ol></div>';
+        }
+        if (btnTrigger) btnTrigger.style.display = 'none';
+      } else if (isAndroid) {
+        if (container) {
+          container.innerHTML = '<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:16px;text-align:left;">'
+            + '<div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">🤖 Instalar no Android (Chrome):</div>'
+            + '<p style="font-size:13px;color:#15803d;margin:0;line-height:1.4;">'
+            + 'Clique no botão abaixo ou toque nos <strong>3 pontinhos (⋮)</strong> no canto do seu navegador e escolha <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.'
+            + '</p></div>';
+        }
+        if (btnTrigger) btnTrigger.style.display = 'block';
+      } else {
+        if (container) {
+          container.innerHTML = '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:16px;text-align:center;">'
+            + '<p style="font-size:13px;color:#475569;margin:0;">'
+            + 'Acesse esta página pelo navegador do seu celular (Android ou iPhone) para instalar o aplicativo direto na tela inicial!'
+            + '</p></div>';
+        }
+        if (btnTrigger) btnTrigger.style.display = 'block';
+      }
+    }
+
+    function closeAvatarModal() {
+      var overlay = document.getElementById('avatarModalOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    function dispararInstalacaoPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            alert('Aplicativo INTEGRA instalado com sucesso!');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        alert("No seu navegador, toque no menu de opções (⋮ ou 📤) e escolha 'Adicionar à tela inicial'.");
       }
     }
 

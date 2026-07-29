@@ -1910,20 +1910,44 @@ window.dadosRecentesCPF = null;
         if (!stepEl) return true;
         
         var isValid = true;
-        var inputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
         
+        // 1. Validar grupos de Radio Buttons obrigatórios (ex: Renda Mensal, Sexo, Saúde)
+        var radioGroups = {};
+        stepEl.querySelectorAll('input[type="radio"][required]').forEach(function(radio) {
+            if (radio.name) radioGroups[radio.name] = true;
+        });
+        for (var name in radioGroups) {
+            var checked = stepEl.querySelector('input[type="radio"][name="' + name + '"]:checked');
+            var firstRadio = stepEl.querySelector('input[name="' + name + '"]');
+            var groupWrap = firstRadio ? (firstRadio.closest('.pergunta-item, .form-group, .pergunta-opcoes') || firstRadio.parentNode) : null;
+            if (!checked) {
+                isValid = false;
+                if (groupWrap) groupWrap.style.border = '1.5px solid #ef4444';
+            } else {
+                if (groupWrap) groupWrap.style.border = '';
+            }
+        }
+
+        // 2. Validar inputs de texto, select e checkboxes obrigatórios
+        var inputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
         inputs.forEach(function(input) {
+            if (input.type === 'radio') return;
             var isVisible = input.offsetWidth > 0 || input.offsetHeight > 0;
             if (isVisible) {
-                var value = input.value.trim();
-                if (input.id === 'cep' && value.replace(/\D/g, '').length < 8) {
-                    input.classList.add('invalid');
-                    isValid = false;
-                } else if (!value) {
+                if (input.type === 'checkbox' && !input.checked) {
                     input.classList.add('invalid');
                     isValid = false;
                 } else {
-                    input.classList.remove('invalid');
+                    var value = input.value.trim();
+                    if (input.id === 'cep' && value.replace(/\D/g, '').length < 8) {
+                        input.classList.add('invalid');
+                        isValid = false;
+                    } else if (!value) {
+                        input.classList.add('invalid');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('invalid');
+                    }
                 }
             }
         });
@@ -1991,6 +2015,7 @@ window.dadosRecentesCPF = null;
         }
         
         if (!isValid) {
+            mostrarMensagem('erro', '⚠️ Por favor, responda a todas as perguntas obrigatórias (*) antes de avançar.');
             var errEl = stepEl.querySelector('.error-message');
             if (errEl) errEl.style.display = 'flex';
         } else {

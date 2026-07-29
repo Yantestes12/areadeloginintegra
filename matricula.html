@@ -1706,10 +1706,6 @@
             Declaro, sob as penas da lei, que todas as informações prestadas neste formulário são verdadeiras e estou ciente de que a omissão ou falsidade poderá implicar no cancelamento da matrícula e demais medidas cabíveis, conforme o ECA e a legislação vigente.
           </span>
                 </label>
-            </div>
-            <button type="submit" class="btn-submit-final">
-                ✅ Concluir Matrícula
-            </button>
         </div>
 
     
@@ -2960,10 +2956,12 @@ window.dadosRecentesCPF = null;
                             lista.querySelectorAll('.mod-card').forEach(function(c){
                                 c.classList.remove('selected');
                                 c.style.borderColor='#e2e8f0'; c.style.background='#fff';
+                                var tEl = c.querySelector('div:last-child'); if (tEl) tEl.style.color = '#0f172a';
                                 c.querySelector('.mod-radio').innerHTML=iconCircle();
                             });
                             this.classList.add('selected');
                             this.style.borderColor='var(--primary)'; this.style.background='#ecfdf5';
+                            var tElSelf = this.querySelector('div:last-child'); if (tElSelf) tElSelf.style.color = '#065f46';
                             this.querySelector('.mod-radio').innerHTML=iconCheck();
                             if(hidMod) hidMod.value=this.getAttribute('data-id');
                             carregarNucleo(pId, bId, parseInt(this.getAttribute('data-id')));
@@ -3219,7 +3217,7 @@ window.dadosRecentesCPF = null;
                 +'min-width:180px;flex:1;color:var(--text-main);">'
                 +'<div class="mod-radio" style="flex-shrink:0;">'+iconCircle()+'</div>'
                 +'<div style="font-size:24px;line-height:1;">'+icone+'</div>'
-                +'<div style="font-weight:800;font-size:15px;color:#fff;">'+m.nome+'</div>'
+                +'<div style="font-weight:800;font-size:15px;color:#0f172a;">'+m.nome+'</div>'
                 +'</div>';
         }
 

@@ -1278,9 +1278,9 @@
                     <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em;">👤 Identificação Pessoal</div>
                     <div class="field-row">
                         <div class="field-group">
-                            <label>Raça / Cor</label>
-                            <select name="raca" id="raca">
-                                <option value="">Selecione</option>
+                            <label for="raca">Raça / Cor <span class="req">*</span></label>
+                            <select name="raca" id="raca" required>
+                                <option value="">Selecione…</option>
                                 <option value="Negra">Negra</option>
                                 <option value="Branca">Branca</option>
                                 <option value="Parda">Parda</option>
@@ -1292,8 +1292,8 @@
 
                     <div class="field-row">
                         <div class="field-group" style="flex:1;">
-                            <label>UF de Nascimento</label>
-                            <select id="naturalidade_uf" onchange="if(window.carregarCidadesIBGENaturalidade) window.carregarCidadesIBGENaturalidade(this.value);">
+                            <label for="naturalidade_uf">UF de Nascimento <span class="req">*</span></label>
+                            <select id="naturalidade_uf" required onchange="if(window.carregarCidadesIBGENaturalidade) window.carregarCidadesIBGENaturalidade(this.value);">
                                 <option value="">Selecione a UF</option>
                                 <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
                                 <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
@@ -1307,8 +1307,8 @@
                             </select>
                         </div>
                         <div class="field-group" style="flex:2;">
-                            <label for="naturalidade">Cidade de Nascimento (Naturalidade)</label>
-                            <select id="naturalidade_cidade" onchange="document.getElementById('naturalidade').value=this.value;" disabled>
+                            <label for="naturalidade_cidade">Cidade de Nascimento (Naturalidade) <span class="req">*</span></label>
+                            <select id="naturalidade_cidade" required onchange="document.getElementById('naturalidade').value=this.value;" disabled>
                                 <option value="">Selecione a UF primeiro</option>
                             </select>
                             <input type="hidden" name="naturalidade" id="naturalidade" value="">
@@ -1317,9 +1317,9 @@
 
                     <div class="field-row">
                         <div class="field-group">
-                            <label>Escolaridade</label>
-                            <select name="escolaridade" id="escolaridade">
-                                <option value="">Selecione</option>
+                            <label for="escolaridade">Escolaridade <span class="req">*</span></label>
+                            <select name="escolaridade" id="escolaridade" required>
+                                <option value="">Selecione…</option>
                                 <option value="Ensino Fundamental">Ensino Fundamental (1º ao 9º ano)</option>
                                 <option value="Ensino Médio">Ensino Médio (1ª à 3ª série)</option>
                                 <option value="Graduacao">Ensino Superior / Graduação</option>
@@ -1341,39 +1341,39 @@
         <!-- Endereço -->
         <div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border);">
             <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em;">📍 Endereço</div>
-            <div class="field-row">
-                <div class="field-group" style="flex:0 0 140px;">
-                    <label>CEP <span class="req">*</span></label>
+            <div class="field-row" style="display:flex;gap:10px;margin-bottom:10px;">
+                <div class="field-group" style="flex:0 0 130px;">
+                    <label style="margin-bottom:4px;">CEP <span class="req">*</span></label>
                     <input type="text" name="cep" id="cep" maxlength="9" placeholder="00000-000"
                            inputmode="numeric" onblur="buscarCEP(this.value);" required>
                 </div>
-                <div class="field-group">
-                    <label>Logradouro (Rua / Av.) <span class="req">*</span></label>
-                    <input type="text" name="endereco" id="endereco" required>
+                <div class="field-group" style="flex:1;">
+                    <label style="margin-bottom:4px;">Logradouro (Rua / Av.) <span class="req">*</span></label>
+                    <input type="text" name="endereco" id="endereco" required placeholder="Preenchido via CEP">
                 </div>
             </div>
-            <div class="field-row">
-                <div class="field-group" style="flex:0 0 100px;">
-                    <label>Número <span class="req">*</span></label>
-                    <input type="text" name="numero" id="numero" required>
+            <div class="field-row" style="display:flex;gap:10px;margin-bottom:10px;">
+                <div class="field-group" style="flex:0 0 90px;">
+                    <label style="margin-bottom:4px;">Número <span class="req">*</span></label>
+                    <input type="text" name="numero" id="numero" required placeholder="Nº">
                 </div>
-                <div class="field-group">
-                    <label>Complemento</label>
+                <div class="field-group" style="flex:1;">
+                    <label style="margin-bottom:4px;">Complemento</label>
                     <input type="text" name="complemento" id="complemento" placeholder="Apto, Bloco…">
                 </div>
-                <div class="field-group">
-                    <label>Bairro <span class="req">*</span></label>
-                    <input type="text" name="bairro" id="bairro" required>
+                <div class="field-group" style="flex:1.2;">
+                    <label style="margin-bottom:4px;">Bairro <span class="req">*</span></label>
+                    <input type="text" name="bairro" id="bairro" required placeholder="Preenchido via CEP">
                 </div>
             </div>
-            <div class="field-row">
-                <div class="field-group">
-                    <label>Cidade <span class="req">*</span></label>
-                    <input type="text" name="cidade" id="cidade" required>
+            <div class="field-row" style="display:flex;gap:10px;margin-bottom:10px;">
+                <div class="field-group" style="flex:1;">
+                    <label style="margin-bottom:4px;">Cidade <span class="req">*</span></label>
+                    <input type="text" name="cidade" id="cidade" required placeholder="Preenchido via CEP">
                 </div>
-                <div class="field-group" style="flex:0 0 70px;">
-                    <label>UF <span class="req">*</span></label>
-                    <input type="text" name="uf" id="uf" maxlength="2" required>
+                <div class="field-group" style="flex:0 0 80px;">
+                    <label style="margin-bottom:4px;">UF <span class="req">*</span></label>
+                    <input type="text" name="uf" id="uf" maxlength="2" required placeholder="UF" style="text-transform:uppercase;">
                 </div>
             </div>
         </div>
@@ -2406,6 +2406,7 @@ window.dadosRecentesCPF = null;
         setVal('bairro', d.bairro);
         setVal('cidade', d.cidade);
         setVal('uf', d.uf);
+        if (typeof travarCamposEndereco === 'function') travarCamposEndereco();
         setVal('email', d.email);
         setVal('whatsapp', d.whatsapp);
         setVal('faixa_salarial', d.faixa_salarial);
@@ -2641,12 +2642,27 @@ window.dadosRecentesCPF = null;
     })();
 
     /* ════════════════════════════════════════════════════════════════
-       ENDEREÇO (CEP)
+       ENDEREÇO (CEP) — Trava automática dos campos preenchidos
     ════════════════════════════════════════════════════════════════ */
     function limparCamposEndereco(){
         ['endereco','bairro','cidade','uf'].forEach(function(n){
             var el = document.getElementById(n) || document.querySelector('input[name="'+n+'"]');
-            if(el) el.value='';
+            if(el) {
+                el.value = '';
+                el.readOnly = false;
+                el.style.backgroundColor = '';
+                el.style.cursor = '';
+            }
+        });
+    }
+    function travarCamposEndereco(){
+        ['endereco','bairro','cidade','uf'].forEach(function(n){
+            var el = document.getElementById(n) || document.querySelector('input[name="'+n+'"]');
+            if(el && el.value.trim() !== '') {
+                el.readOnly = true;
+                el.style.backgroundColor = '#f1f5f9';
+                el.style.cursor = 'not-allowed';
+            }
         });
     }
     function buscarCEP(valor){
@@ -2670,8 +2686,12 @@ window.dadosRecentesCPF = null;
                     if(bairro) bairro.value = info.bairro || '';
                     if(cidade) cidade.value = info.localidade || info.cidade || '';
                     if(uf)     uf.value     = info.uf || info.estado || '';
+                    
+                    // Trava automaticamente os campos trazidos pela API de CEP
+                    travarCamposEndereco();
+
                     var num = document.getElementById('numero') || document.querySelector('input[name="numero"]');
-                    if(num && rua) num.focus();
+                    if(num) num.focus();
                 }).catch(function(){alert('Erro ao buscar CEP.');limparCamposEndereco();});
         } else if(cep!==''){
             alert('CEP inválido.');limparCamposEndereco();

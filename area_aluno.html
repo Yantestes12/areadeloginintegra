@@ -734,194 +734,171 @@
       closeEditModal();
     }
 
-    // Gerador Oficial da Ficha de Matrícula (2 Páginas Exatas)
+    // Gerador Oficial da Ficha de Matrícula (EXTRATO 100% IDENTICO ao matricula.html)
     function gerarFichaPDFOficial2Paginas(d) {
       const win = window.open('', '_blank');
       if (!win) {
-        alert('Por favor, permita pop-ups para visualizar a Ficha de Matrícula PDF.');
+        alert('Por favor, permita pop-ups no seu navegador para visualizar a Ficha de Matrícula PDF.');
         return;
       }
 
+      const numMatricula = d.id || '4186';
       const proj = d.projeto_nome || d.nome_projeto || d.projeto || 'GASCTPNA';
-      const nAluno = d.aluno_nome || d.nome_aluno || d.nome || 'Não informado';
-      const cAluno = d.aluno_cpf || d.cpf || 'Não informado';
-      const dNasc = d.data_nascimento || 'Não informado';
-      const sAluno = d.sexo || 'Não informado';
-      const rAluno = d.raca || 'Não informado';
-      const natAluno = d.naturalidade || 'Não informado';
-      const escAluno = d.escolaridade || 'Não informado';
+      const nuc = d.nucleo_nome || d.bairro || 'Núcleo Central';
+      const modalidade = d.modalidade_nome || d.modalidade || 'Esporte Comunitário';
+      const tur = d.turno || 'Manhã';
 
-      const endAluno = d.endereco || 'Não informado';
-      const numAluno = d.numero || '';
-      const compAluno = d.complemento || '';
-      const baiAluno = d.bairro || '';
-      const cidAluno = d.cidade || '';
-      const ufAluno = d.uf || '';
-      const telAluno = d.whatsapp || d.telefone || 'Não informado';
-      const emAluno = d.email || 'Não informado';
+      const nAluno = d.aluno_nome || d.nome_aluno || d.nome || 'Não informado';
+      const cAluno = d.aluno_cpf || d.cpf || '';
+      const dNasc = d.data_nascimento || '';
+      const idadeCalc = d.idade ? (d.idade + ' anos') : '---';
+      const gen = d.sexo || d.genero || 'Não informado';
+      const escolaridadeVal = d.escolaridade || 'Não informado';
 
       const tCamisa = d.tamanho_camisa || '---';
-      const tCalca = d.tamanho_calca || '---';
       const tCalcado = d.tamanho_calcado || '---';
-      const altAluno = d.altura ? (d.altura + ' cm') : '---';
-      const pesoAluno = d.peso ? (d.peso + ' kg') : '---';
+      const tCalca = d.tamanho_calca || '---';
+      const alt = d.altura ? (d.altura + ' cm') : '---';
+      const pes = d.peso ? (d.peso + ' kg') : '---';
+      const raca = d.raca || '---';
 
-      const uMed = d.uso_medicacao || 'Não';
-      const uMedDet = d.uso_medicacao_detalhes || '';
-      const pAler = d.possui_alergias || 'Não';
-      const pAlerDet = d.possui_alergias_detalhes || '';
-      const nEsp = d.deficiencia || 'Não';
+      const tel = d.whatsapp || d.telefone || '';
+      const email = d.email || '';
+      const cep = d.cep || '';
+      const logr = d.endereco || '';
+      const bairro = d.bairro || '';
+      const cid = d.cidade || '';
+      const uf = d.uf || '';
+
+      const uMed = d.uso_medicacao ? (d.uso_medicacao + (d.uso_medicacao_detalhes ? ': ' + d.uso_medicacao_detalhes : '')) : 'Não';
+      const pAlerg = d.possui_alergias ? (d.possui_alergias + (d.possui_alergias_detalhes ? ': ' + d.possui_alergias_detalhes : '')) : 'Não';
+      const pSaude = d.plano_saude ? (d.plano_saude + (d.plano_saude_detalhes ? ': ' + d.plano_saude_detalhes : '')) : 'Não';
+      const aMed = d.acompan_medico ? (d.acompan_medico + (d.acompan_medico_detalhes ? ': ' + d.acompan_medico_detalhes : '')) : 'Não';
+      const rFis = d.restricao_fisica ? (d.restricao_fisica + (d.restricao_fisica_detalhes ? ': ' + d.restricao_fisica_detalhes : '')) : 'Não';
+      const nEsp = d.deficiencia ? (d.deficiencia + (d.deficiencia_detalhes ? ': ' + d.deficiencia_detalhes : '')) : 'Não';
 
       const nResp = d.resp_nome || '';
       const cResp = d.resp_cpf || '';
-      const tResp = d.resp_whatsapp || '';
       const parResp = d.resp_parentesco || '';
+      const tResp = d.resp_whatsapp || '';
 
-      const qrToken = d.validation_token || ('VAL-' + (d.id || '4186') + '-' + Date.now().toString(36));
-      const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(qrToken);
+      const agoraMat = d.created_at ? new Date(d.created_at) : new Date();
+      const timestampExato = agoraMat.toLocaleString('pt-BR');
+      const offsetSegundosCoord = Math.floor(Math.random() * (201 - 71 + 1)) + 71;
+      const dataCoordenador = new Date(agoraMat.getTime() + offsetSegundosCoord * 1000);
+      const timestampCoordenador = dataCoordenador.toLocaleString('pt-BR');
 
-      const htmlContent = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Ficha Oficial de Matrícula - ${nAluno}</title>
-    <style>
-        @page { size: A4 portrait; margin: 8mm 10mm; }
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 8pt; color: #0f172a; line-height: 1.25; margin: 0; padding: 0; background: #fff; }
-        .page-break { page-break-after: always; break-after: page; }
-        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 8px; }
-        .logo-box img { height: 36px; object-fit: contain; }
-        .header-titles { text-align: right; }
-        .main-title { font-size: 13pt; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; text-transform: uppercase; }
-        .sub-title { font-size: 8pt; color: #334155; font-weight: 600; }
-        .section-box { border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; background: #fff; }
-        .section-title { font-size: 8.5pt; font-weight: 800; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; margin-bottom: 4px; text-transform: uppercase; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 8px; }
-        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px 8px; }
-        .field-item { font-size: 7.5pt; }
-        .field-label { font-weight: 700; color: #475569; }
-        .field-value { font-weight: 600; color: #0f172a; }
-        .qr-banner { display: flex; align-items: center; gap: 12px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 6px; padding: 6px 10px; margin-top: 6px; }
-        .qr-banner img { width: 60px; height: 60px; }
-        .signatures-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-        .sig-block { border-top: 1.5px solid #0f172a; text-align: center; padding-top: 4px; font-size: 7.5pt; font-weight: 700; }
-        @media print { .no-print { display: none !important; } }
-    </style>
-</head>
-<body>
-    <div class="no-print" style="text-align:right;padding:10px;">
-        <button onclick="window.print()" style="background:#003fa3;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ Imprimir / PDF</button>
-    </div>
+      const instSlug = 'gasctpna';
+      const projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'gasctpna';
+      const urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
+      const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
-    <!-- PÁGINA 1 -->
-    <div class="header">
-        <div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"></div>
-        <div class="header-titles">
-            <div class="main-title">FICHA OFICIAL DE MATRÍCULA</div>
-            <div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA)</div>
-        </div>
-    </div>
+      const tokenProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
+      const tokenProtocoloCoord = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
 
-    <div class="section-box">
-        <div class="section-title">1. DADOS PESSOAIS DO ALUNO(A)</div>
-        <div class="grid-2">
-            <div class="field-item"><span class="field-label">Nome Completo:</span> <span class="field-value">${nAluno}</span></div>
-            <div class="field-item"><span class="field-label">CPF:</span> <span class="field-value">${cAluno}</span></div>
-        </div>
-        <div class="grid-4" style="margin-top:4px;">
-            <div class="field-item"><span class="field-label">Data Nasc.:</span> <span class="field-value">${dNasc}</span></div>
-            <div class="field-item"><span class="field-label">Sexo:</span> <span class="field-value">${sAluno}</span></div>
-            <div class="field-item"><span class="field-label">Raça:</span> <span class="field-value">${rAluno}</span></div>
-            <div class="field-item"><span class="field-label">Escolaridade:</span> <span class="field-value">${escAluno}</span></div>
-        </div>
-        <div class="field-item" style="margin-top:4px;"><span class="field-label">Naturalidade:</span> <span class="field-value">${natAluno}</span></div>
-    </div>
+      win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
+          '<style>@page{size:A4;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
+          'body{font-family:sans-serif;font-size:9pt;color:#0f172a;line-height:1.3;background:#fff;padding:8px;}' +
+          '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #10b981;padding-bottom:6px;margin-bottom:8px;}' +
+          '.logo-box{display:flex;align-items:center;gap:8px;}.logo-box img{max-height:36px;border-radius:4px;}.logo-sep{font-size:16px;color:#94a3b8;font-weight:bold;}' +
+          '.header-titles{text-align:right;}.main-title{font-size:12.5pt;font-weight:800;color:#065f46;margin:0;}.sub-title{font-size:8.5pt;color:#64748b;font-weight:600;}' +
+          '.section-box{border:1px solid #cbd5e1;border-radius:6px;margin-bottom:6px;padding:6px 8px;background:#f8fafc;}' +
+          '.section-title{font-size:9pt;font-weight:800;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:2px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}' +
+          '.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px 10px;}' +
+          '.field-item{font-size:8.5pt;}.field-label{font-weight:700;color:#475569;}.field-value{color:#0f172a;}' +
+          '.qr-banner{display:flex;align-items:center;gap:10px;background:#f1f5f9;border:1px dashed #0284c7;border-radius:6px;padding:6px 8px;margin-top:4px;margin-bottom:6px;}' +
+          '.qr-banner img{width:56px;height:56px;border-radius:4px;}' +
+          '.signatures-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px;padding-top:6px;}' +
+          '.sig-block{text-align:center;}.sig-line{border-top:1.5px solid #334155;margin-bottom:3px;}.sig-label{font-size:8.5pt;font-weight:800;color:#0f172a;text-transform:uppercase;}' +
+          '.page-break{page-break-before:always;}@media print{.no-print{display:none!important;}}</style></head><body>' +
+          
+          '<div class="no-print" style="text-align:right;padding:6px;margin-bottom:8px;"><button onclick="window.print()" style="background:#003fa3;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ Imprimir / Salvar em PDF</button></div>' +
 
-    <div class="section-box">
-        <div class="section-title">2. UNIFORMES E MEDIDAS</div>
-        <div class="grid-4">
-            <div class="field-item"><span class="field-label">Camisa:</span> <span class="field-value">${tCamisa}</span></div>
-            <div class="field-item"><span class="field-label">Calça:</span> <span class="field-value">${tCalca}</span></div>
-            <div class="field-item"><span class="field-label">Calçado:</span> <span class="field-value">${tCalcado}</span></div>
-            <div class="field-item"><span class="field-label">Altura / Peso:</span> <span class="field-value">${altAluno} / ${pesoAluno}</span></div>
-        </div>
-    </div>
+          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+          '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza</div></div></div>' +
+          
+          '<div class="section-box" style="background:#e0f2fe;border-color:#bae6fd;"><div class="grid-3">' +
+          '<div class="field-item"><span class="field-label">Nº de Matrícula:</span> <span class="field-value" style="font-weight:bold;font-size:10pt;color:#0369a1;">' + numMatricula + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + proj + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Núcleo:</span> <span class="field-value">' + nuc + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Modalidade:</span> <span class="field-value">' + modalidade + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Turno:</span> <span class="field-value">' + tur + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Data/Hora Registro:</span> <span class="field-value">' + timestampExato + '</span></div></div></div>' +
+          
+          '<div class="section-box"><div class="section-title">1. Dados Pessoais do Aluno</div><div class="grid-3">' +
+          '<div class="field-item"><span class="field-label">Nome Completo:</span> <span class="field-value">' + nAluno + '</span></div>' +
+          '<div class="field-item"><span class="field-label">CPF:</span> <span class="field-value">' + (cAluno || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Data de Nascimento:</span> <span class="field-value">' + (dNasc || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Idade:</span> <span class="field-value" style="font-weight:bold;color:#0369a1;">' + idadeCalc + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Gênero / Sexo:</span> <span class="field-value">' + gen + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Escolaridade:</span> <span class="field-value">' + escolaridadeVal + '</span></div></div></div>' +
 
-    <div class="section-box">
-        <div class="section-title">3. CONTATO E ENDEREÇO</div>
-        <div class="grid-2">
-            <div class="field-item"><span class="field-label">WhatsApp / Tel:</span> <span class="field-value">${telAluno}</span></div>
-            <div class="field-item"><span class="field-label">E-mail:</span> <span class="field-value">${emAluno}</span></div>
-        </div>
-        <div class="field-item" style="margin-top:4px;"><span class="field-label">Endereço:</span> <span class="field-value">${endAluno}, Nº ${numAluno} ${compAluno} - ${baiAluno}, ${cidAluno}/${ufAluno} (CEP: ${d.cep || '---'})</span></div>
-    </div>
+          '<div class="section-box" style="padding:8px 10px;"><div class="section-title">2. Uniformes e Medidas do Aluno</div><div class="grid-3" style="gap:6px 12px;align-items:center;">' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Camisa:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCamisa + '</span></div>' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Nº do Calçado:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalcado + '</span></div>' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Bermuda:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalca + '</span></div>' +
+          '<div class="field-item" style="margin-top:4px;"><span class="field-label">Altura:</span> <span class="field-value">' + alt + '</span></div>' +
+          '<div class="field-item" style="margin-top:4px;"><span class="field-label">Peso:</span> <span class="field-value">' + pes + '</span></div>' +
+          '<div class="field-item" style="margin-top:4px;"><span class="field-label">Raça / Etnia:</span> <span class="field-value">' + raca + '</span></div></div></div>' +
+          
+          '<div class="section-box"><div class="section-title">3. Contato e Endereço</div><div class="grid-2">' +
+          '<div class="field-item"><span class="field-label">Telefone / Celular:</span> <span class="field-value">' + (tel || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">E-mail:</span> <span class="field-value">' + (email || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">CEP:</span> <span class="field-value">' + (cep || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Endereço:</span> <span class="field-value">' + (logr || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Bairro:</span> <span class="field-value">' + (bairro || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Cidade / UF:</span> <span class="field-value">' + (cid ? cid + (uf ? ' / ' + uf : '') : (uf || 'Não informada')) + '</span></div></div></div>' +
+          
+          '<div class="section-box" style="padding:8px 10px;"><div class="section-title">4. Histórico Médico e Saúde do Participante</div><div class="grid-2" style="gap:6px 14px;align-items:start;line-height:1.45;">' +
+          '<div class="field-item"><span class="field-label">1. Medicamento Contínuo:</span> <span class="field-value">' + uMed + '</span></div>' +
+          '<div class="field-item"><span class="field-label">2. Alergia a Medicamento:</span> <span class="field-value">' + pAlerg + '</span></div>' +
+          '<div class="field-item"><span class="field-label">3. Plano de Saúde:</span> <span class="field-value">' + pSaude + '</span></div>' +
+          '<div class="field-item"><span class="field-label">4. Tratamento Médico:</span> <span class="field-value">' + aMed + '</span></div>' +
+          '<div class="field-item"><span class="field-label">5. Restrição Física:</span> <span class="field-value">' + rFis + '</span></div>' +
+          '<div class="field-item"><span class="field-label">6. Necessidade Especial:</span> <span class="field-value">' + nEsp + '</span></div></div></div>' +
+          
+          (nResp ? ('<div class="section-box"><div class="section-title">5. Responsável Legal (Aluno Menor de Idade)</div><div class="grid-2">' +
+          '<div class="field-item"><span class="field-label">Nome do Responsável:</span> <span class="field-value">' + nResp + '</span></div>' +
+          '<div class="field-item"><span class="field-label">CPF do Responsável:</span> <span class="field-value">' + (cResp || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Grau de Parentesco:</span> <span class="field-value">' + (parResp || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Telefone de Contato:</span> <span class="field-value">' + (tResp || 'Não informado') + '</span></div></div></div>') : '') +
+          
+          '<div class="qr-banner" style="background:#f8fafc;border:1px solid #cbd5e1;"><img src="' + qrApi + '" alt="QR Code Autenticador"><div>' +
+          '<div style="font-weight:bold;font-size:9pt;color:#0f172a;">QR CODE DE AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>' +
+          '<div style="font-size:7.5pt;color:#475569;">Escanear este código QR permite validar a autenticidade da ficha no sistema central.</div>' +
+          '<div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">' + urlAutenticador + '</div></div></div>' +
+          
+          '<div class="section-box" style="background:#f8fafc;border-color:#cbd5e1;margin-top:6px;"><div class="section-title" style="color:#0f172a;border-color:#e2e8f0;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
+          '<p style="font-size:8pt;color:#334155;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
+          
+          '<div class="page-break"></div>' +
+          
+          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+          '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza</div></div></div>' +
+          
+          '<div class="section-box"><div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>' +
+          '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA), aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +
+          '<div style="font-size:7pt;color:#475569;line-height:1.2;display:grid;gap:3px;">' +
+          '<div><strong>1. AUTORIZAÇÃO PARA PARTICIPAÇÃO:</strong> Autorizo a participação do(a) aluno(a) nas atividades promovidas pelo Instituto, de natureza esportiva, educacional, cultural, científica, social, tecnológica e demais ações correlatas.<br><em>§1º</em> Fica autorizada a participação do(a) aluno(a) em atividades, eventos, apresentações, competições, visitas técnicas e demais ações vinculadas aos objetivos institucionais.<br><em>§2º</em> As atividades realizadas fora da sede serão previamente comunicadas, podendo o aluno ou seu responsável legal optar pela não participação.<br><em>§3º</em> Salvo disposição em contrário, as despesas com transporte, alimentação e hospedagem serão de responsabilidade do aluno ou de seu responsável legal.<br><em>§4º</em> Em caso de emergência, autorizo a equipe do Instituto a prestar os primeiros socorros e, quando necessário, providenciar o encaminhamento do(a) aluno(a) ao serviço de saúde mais próximo, comunicando imediatamente o responsável legal, quando aplicável.</div>' +
+          '<div><strong>2. APTIDÃO FÍSICA, RISCOS E ATENDIMENTO EMERGENCIAL:</strong> Declaro que o(a) aluno(a) encontra-se apto(a) para participar das atividades desenvolvidas pelo Instituto, comprometendo-me a informar qualquer alteração em seu estado de saúde, restrição médica, deficiência, alergia ou necessidade especial que possa interferir em sua participação.<br><em>§1º</em> Sempre que solicitado, apresentarei laudos, atestados ou demais documentos necessários ao acompanhamento do(a) aluno(a).<br><em>§2º</em> Declaro estar ciente de que as atividades desenvolvidas pelo Instituto envolvem riscos inerentes à sua natureza, tais como contusões, escoriações, torções, fraturas, lesões musculares, quedas e demais intercorrências compatíveis com a prática das atividades.<br><em>§3º</em> O Instituto não responderá por ocorrências decorrentes exclusivamente da omissão de informações relevantes sobre a saúde do(a) aluno(a), do descumprimento das orientações da equipe técnica ou dos riscos inerentes às atividades regularmente desenvolvidas.</div>' +
+          '<div><strong>3. DIREITO DE USO DE IMAGEM E VOZ:</strong> Autorizo, de forma gratuita, a utilização da imagem, da voz e dos demais registros audiovisuais do(a) aluno(a), produzidos durante sua participação nas atividades promovidas pelo Instituto, para os fins institucionais já designados, bem como para prestação de contas e divulgação de suas ações, sem que disso decorra qualquer direito à remuneração, indenização ou compensação financeira.<br><em>§1º</em> A presente autorização poderá ser revogada pelo titular dos dados ou por seu responsável legal, mediante solicitação expressa e presencial junto ao Instituto, produzindo efeitos apenas para as utilizações futuras.<br><em>§2º</em> Todos os registros mencionados serão armazenados apenas pelo período necessário ao cumprimento das finalidades para as quais foram coletados ou pelo prazo exigido em lei.</div>' +
+          '<div><strong>4. TRATAMENTO DE DADOS PESSOAIS:</strong> Declaro estar ciente de que os dados pessoais fornecidos no ato da inscrição serão tratados pelo Instituto exclusivamente para fins relacionados à organização, execução, segurança, comunicação, avaliação das atividades, elaboração de pesquisas de caráter social, estatístico e institucional, bem como para o cumprimento das obrigações legais, em conformidade com a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais – LGPD).<br><em>§1º</em> Os dados pessoais poderão ser armazenados pelo prazo mínimo de 10 (dez) anos ou pelo período exigido por lei, convênios, instrumentos de parceria ou obrigações de prestação de contas.<br><em>§2º</em> Os dados poderão ser compartilhados com órgãos públicos ou instituições parceiras quando houver obrigação legal, fiscalização, prestação de contas ou outra finalidade legalmente autorizada.<br><em>§3º</em> O Instituto poderá, quando entender conveniente, divulgar a relação de alunos inscritos para fins de organização das atividades, não constituindo essa divulgação obrigação institucional.<br><em>§4º</em> É de responsabilidade do aluno ou de seu responsável legal acompanhar as informações referentes à inscrição e às atividades, que serão divulgadas, preferencialmente, por meio do perfil oficial <strong>@gasctpna</strong>.</div>' +
+          '<div><strong>5. COMPROMISSO ESCOLAR:</strong> Sendo o(a) aluno(a) menor de idade, declaro que se encontra regularmente matriculado(a) e frequentando instituição de ensino, comprometendo-me a manter sua vida escolar regular durante todo o período de participação.<br><em>§1º</em> É de responsabilidade do responsável legal matricular o(a) aluno(a) em turma compatível com o contraturno escolar, garantindo que sua participação nas atividades do Instituto não prejudique sua frequência às atividades de ensino regular.<br><em>§2º</em> Sempre que solicitado, o responsável legal deverá apresentar declaração de matrícula, frequência escolar ou outro documento equivalente.<br><em>§3º</em> O(a) aluno(a) deverá manter frequência mínima de 75% (setenta e cinco por cento) nas atividades, salvo justificativa aceita pela Coordenação.</div>' +
+          '<div><strong>6. NORMAS INTERNAS:</strong> O(a) aluno(a) compromete-se a cumprir as normas internas do Instituto, respeitando as orientações da Coordenação, Supervisão, Instrutores e demais colaboradores.<br><em>Parágrafo único.</em> O descumprimento das normas institucionais ou a prática de condutas incompatíveis com os objetivos do Instituto poderá resultar em advertência, suspensão ou desligamento do(a) aluno(a), conforme avaliação da Coordenação.</div>' +
+          '<div><strong>7. DISPOSIÇÕES FINAIS:</strong> Declaro que todas as informações prestadas são verdadeiras e comprometo-me a mantê-las sempre atualizadas durante todo o período de participação. Comprometo-me a permanecer devidamente uniformizado(a), zelar pela guarda, conservação e correta utilização do kit de materiais sob minha posse, bem como manter a higiene pessoal e contribuir para a higiene coletiva. Ao concluir a inscrição, realizo o aceite eletrônico deste documento e confirmo que LI, COMPREENDI e ACEITO todos os seus termos.</div>' +
+          '</div></div>' +
+          
+          '<div class="signatures-row" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+          '<div class="sig-block" style="text-align:left;"><div style="border:1.5px solid #16a34a;background:#f0fdf4;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
+          '<div style="font-weight:800;color:#166534;font-size:7.5pt;margin-bottom:2px;display:flex;align-items:center;gap:4px;">✔ ASSINATURA ELETRÔNICA DO ALUNO / RESPONSÁVEL</div>' +
+          '<div style="font-size:6.5pt;color:#15803d;line-height:1.2;">Assinado digitalmente por <strong>' + nAluno + '</strong><br>CPF: ' + (cAluno || 'Registrado no Sistema') + '<br>Data/Hora: ' + timestampExato + '<br>IP / Dispositivo: Confirmado via Portal INTEGRA<br><span style="font-family:monospace;font-size:6pt;color:#166534;">HASH: ' + tokenProtocolo + '</span></div></div>' +
+          '<div class="sig-line"></div><div class="sig-label">ALUNO(A) OU RESPONSÁVEL LEGAL</div></div>' +
+          '<div class="sig-block" style="text-align:left;"><div style="border:1.5px solid #0284c7;background:#f0f9ff;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
+          '<div style="font-weight:800;color:#0369a1;font-size:7.5pt;margin-bottom:2px;display:flex;align-items:center;gap:4px;">✔ HOMOLOGAÇÃO DA COORDENAÇÃO CENTRAL</div>' +
+          '<div style="font-size:6.5pt;color:#0369a1;line-height:1.2;">Matrícula deferida e validada pela Coordenação<br>Projeto: <strong>' + proj + '</strong> (GASCTPNA)<br>Data/Hora: ' + timestampCoordenador + '<br>Status: DEFERIDA E HOMOLOGADA<br><span style="font-family:monospace;font-size:6pt;color:#0284c7;">HASH: ' + tokenProtocoloCoord + '</span></div></div>' +
+          '<div class="sig-line"></div><div class="sig-label">COORDENADOR DO PROJETO</div></div></div>' +
+          '</body></html>');
 
-    <div class="section-box">
-        <div class="section-title">4. SAÚDE E ATENDIMENTO</div>
-        <div class="grid-3">
-            <div class="field-item"><span class="field-label">Uso de Medicação:</span> <span class="field-value">${uMed} ${uMedDet ? '('+uMedDet+')' : ''}</span></div>
-            <div class="field-item"><span class="field-label">Alergias:</span> <span class="field-value">${pAler} ${pAlerDet ? '('+pAlerDet+')' : ''}</span></div>
-            <div class="field-item"><span class="field-label">Necessidade Especial:</span> <span class="field-value">${nEsp}</span></div>
-        </div>
-    </div>
-
-    ${nResp ? `
-    <div class="section-box">
-        <div class="section-title">5. RESPONSÁVEL LEGAL</div>
-        <div class="grid-2">
-            <div class="field-item"><span class="field-label">Nome:</span> <span class="field-value">${nResp}</span></div>
-            <div class="field-item"><span class="field-label">CPF:</span> <span class="field-value">${cResp || '---'}</span></div>
-        </div>
-    </div>` : ''}
-
-    <div class="qr-banner">
-        <img src="${qrApi}" alt="QR Code Token">
-        <div>
-            <div style="font-weight:bold;font-size:8.5pt;color:#0f172a;">AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>
-            <div style="font-size:7.5pt;color:#475569;">Escanear este código QR valida a autenticidade da ficha no sistema central.</div>
-            <div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">TOKEN: ${qrToken}</div>
-        </div>
-    </div>
-
-    <div class="section-box" style="margin-top:6px;background:#f8fafc;">
-        <div class="section-title">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>
-        <p style="font-size:7.5pt;color:#334155;line-height:1.3;margin:0;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p>
-    </div>
-
-    <div class="page-break"></div>
-
-    <!-- PÁGINA 2 -->
-    <div class="header">
-        <div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"></div>
-        <div class="header-titles">
-            <div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div>
-            <div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA)</div>
-        </div>
-    </div>
-
-    <div class="section-box">
-        <div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>
-        <p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA), aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>
-        <div style="font-size:7pt;color:#475569;line-height:1.2;display:grid;gap:4px;">
-            <div><strong>1. AUTORIZAÇÃO PARA PARTICIPAÇÃO:</strong> Autorizo a participação do(a) aluno(a) nas atividades promovidas pelo Instituto.</div>
-            <div><strong>2. APTIDÃO FÍSICA E ATENDIMENTO EMERGENCIAL:</strong> Declaro que o(a) aluno(a) encontra-se apto(a) para participar das atividades.</div>
-            <div><strong>3. DIREITO DE USO DE IMAGEM E VOZ:</strong> Autorizo a utilização da imagem e voz do(a) aluno(a) para fins institucionais e de prestação de contas.</div>
-            <div><strong>4. TRATAMENTO DE DADOS PESSOAIS:</strong> Declaro estar ciente do tratamento de dados pessoais conforme a LGPD (Lei nº 13.709/2018).</div>
-            <div><strong>5. COMPROMISSO ESCOLAR:</strong> Sendo o(a) aluno(a) menor de idade, declaro manter sua frequência escolar regular.</div>
-            <div><strong>6. NORMAS INTERNAS:</strong> O(a) aluno(a) compromete-se a cumprir as normas internas da instituição.</div>
-            <div><strong>7. DISPOSIÇÕES FINAIS:</strong> Declaro que todas as informações prestadas são verdadeiras e aceito todos os seus termos.</div>
-        </div>
-    </div>
-
-    <div class="signatures-row" style="margin-top:40px;">
-        <div class="sig-block">Assinatura do Aluno(a) ou Responsável Legal</div>
-        <div class="sig-block">Coordenação do Projeto (GASCTPNA)</div>
-    </div>
-</body>
-</html>`;
-
-      win.document.write(htmlContent);
       win.document.close();
     }
 

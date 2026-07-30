@@ -900,6 +900,33 @@
       `);
       printDoc.close();
     }
+
+    // ════════════════════════════════════════════════════════════════
+    // PREVENIR QUE O BOTÃO VOLTAR DO CELULAR/NAVEGADOR VOLTE PRO LOGIN
+    // ════════════════════════════════════════════════════════════════
+    (function bloquearVoltarParaLogin() {
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function() {
+          var modalAvatar = document.getElementById('avatarModalOverlay');
+          var modalDados = document.getElementById('dadosModalOverlay');
+          
+          if (modalAvatar && modalAvatar.style.display !== 'none') {
+            closeAvatarModal();
+            window.history.pushState(null, null, window.location.href);
+            return;
+          }
+          if (modalDados && modalDados.style.display !== 'none') {
+            closeDadosModal();
+            window.history.pushState(null, null, window.location.href);
+            return;
+          }
+
+          // Mantém o aluno com segurança na Área do Aluno
+          window.history.pushState(null, null, window.location.href);
+        });
+      }
+    })();
   </script>
 </body>
 </html>

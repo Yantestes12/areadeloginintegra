@@ -17,7 +17,39 @@
     <meta property="og:image" content="https://portalintegra.com.br/logo_integra.png">
     <meta property="og:url" content="https://portalintegra.com.br/matricula">
     <meta property="og:type" content="website">
-    <style>
+    <script>
+    window.carregarCidadesIBGENaturalidade = function(uf) {
+        var selectCid = document.getElementById('naturalidade_cidade');
+        var inputNat = document.getElementById('naturalidade');
+        if (!selectCid) return;
+        if (!uf) {
+            selectCid.innerHTML = '<option value="">Selecione a UF primeiro</option>';
+            selectCid.disabled = true;
+            if (inputNat) inputNat.value = '';
+            return;
+        }
+        selectCid.innerHTML = '<option value="">Carregando cidades do IBGE...</option>';
+        selectCid.disabled = true;
+        
+        fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/' + uf + '/municipios?orderBy=nome')
+            .then(function(r) { return r.json(); })
+            .then(function(cidades) {
+                selectCid.innerHTML = '<option value="">Selecione a cidade</option>';
+                cidades.forEach(function(c) {
+                    var opt = document.createElement('option');
+                    opt.value = c.nome + ' - ' + uf;
+                    opt.textContent = c.nome;
+                    selectCid.appendChild(opt);
+                });
+                selectCid.disabled = false;
+            })
+            .catch(function() {
+                selectCid.innerHTML = '<option value="">Digite a cidade manualmente</option>';
+                selectCid.disabled = false;
+            });
+    };
+</script>
+<style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
         :root {
@@ -1259,7 +1291,7 @@
                     <div class="field-row">
                         <div class="field-group" style="flex:1;">
                             <label>UF de Nascimento</label>
-                            <select id="naturalidade_uf" onchange="carregarCidadesIBGENaturalidade(this.value)">
+                            <select id="naturalidade_uf" onchange="if(window.carregarCidadesIBGENaturalidade) window.carregarCidadesIBGENaturalidade(this.value);">
                                 <option value="">Selecione a UF</option>
                                 <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
                                 <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>

@@ -619,7 +619,7 @@
                             targetUrl = 'area_aluno.html';
                         }
 
-                        window.location.href = targetUrl;
+                        window.location.replace(targetUrl);
                     } else if (respText.includes('senha incorreta')) {
                         showLoginError('Senha incorreta. Por favor, verifique sua senha e tente novamente.');
                         btnSubmit.disabled = false;
@@ -731,7 +731,7 @@
 
                             setTimeout(() => {
                                 let targetUrl = 'area_aluno.html';
-                                window.location.href = targetUrl;
+                                window.location.replace(targetUrl);
                             }, 500);
                             return;
                         }

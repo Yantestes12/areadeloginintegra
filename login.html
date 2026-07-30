@@ -516,11 +516,11 @@
             return '';
         }
 
+        // [SEGURANÇA] Auto-login via senha armazenada foi removido.
+        // Senhas nunca devem ser armazenadas em localStorage ou cookies.
         const savedEmail = localStorage.getItem('usuario_email') || getCookie('usuario_email');
-        const savedSenha = localStorage.getItem('usuario_senha') || getCookie('usuario_senha');
-        if (savedEmail && savedSenha && window.location.search.includes('autologin=true')) {
+        if (savedEmail && window.location.search.includes('autologin=true')) {
             usernameInput.value = savedEmail;
-            passwordInput.value = savedSenha;
         }
 
         if (loginForm) {
@@ -619,17 +619,22 @@
 
                         if (uNome) { localStorage.setItem('usuario_nome', uNome); setCookie('usuario_nome', uNome); }
                         if (uPrimeiroNome) { localStorage.setItem('usuario_primeiro_nome', uPrimeiroNome); setCookie('usuario_primeiro_nome', uPrimeiroNome); }
-                        if (uTelefone) { localStorage.setItem('usuario_telefone', uTelefone); setCookie('usuario_telefone', uTelefone); }
+                        if (uTelefone) {
+                            localStorage.setItem('usuario_telefone', uTelefone);
+                            localStorage.setItem('telefone_conta', uTelefone);
+                            setCookie('usuario_telefone', uTelefone);
+                            setCookie('telefone_conta', uTelefone);
+                        }
                         if (uEmail) {
                             localStorage.setItem('usuario_email', uEmail);
                             localStorage.setItem('email_conta', uEmail);
                             setCookie('usuario_email', uEmail);
                             setCookie('email_conta', uEmail);
                         }
-                        if (password) {
-                            localStorage.setItem('usuario_senha', password);
-                            setCookie('usuario_senha', password);
-                        }
+                        // [SEGURANÇA] Senha removida do armazenamento local.
+                        // Limpar qualquer senha previamente armazenada.
+                        localStorage.removeItem('usuario_senha');
+                        try { document.cookie = 'usuario_senha=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/'; } catch(e){}
                         if (uId) { localStorage.setItem('usuario_id', uId); setCookie('usuario_id', uId); }
                         if (uDados) { localStorage.setItem('usuario_dados', uDados); setCookie('usuario_dados', uDados); }
 
@@ -745,7 +750,9 @@
 
                             if (uNome) { localStorage.setItem('usuario_nome', uNome); setCookie('usuario_nome', uNome); }
                             if (uEmail) { localStorage.setItem('usuario_email', uEmail); localStorage.setItem('email_conta', uEmail); setCookie('usuario_email', uEmail); setCookie('email_conta', uEmail); }
-                            if (passParam) { localStorage.setItem('usuario_senha', passParam); setCookie('usuario_senha', passParam); }
+                            // [SEGURANÇA] Senha não é armazenada localmente.
+                            localStorage.removeItem('usuario_senha');
+                            try { document.cookie = 'usuario_senha=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/'; } catch(e){}
                             if (uId) { localStorage.setItem('usuario_id', uId); setCookie('usuario_id', uId); }
                             if (uDados) { localStorage.setItem('usuario_dados', uDados); setCookie('usuario_dados', uDados); }
 

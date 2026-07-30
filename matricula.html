@@ -999,7 +999,7 @@
             <div class="progress-step" data-group="5" title="Enviar"><i data-lucide="check"></i></div>
         </div>
 
-        <form id="form-matricula" action="https://w.ibrase.com.br/webhook/matricula" method="post" enctype="multipart/form-data" autocomplete="off" novalidate>
+        <form id="form-matricula" action="#" method="post" enctype="multipart/form-data" autocomplete="off" novalidate>
             <input type="hidden" name="instituicao"            value="GASCTPNA">
             <input type="hidden" name="instituto"              value="GASCTPNA">
             <input type="hidden" name="acao"                   value="salvar_matricula">
@@ -1012,6 +1012,7 @@
             <input type="hidden" id="aceite_veracidade_versao" name="aceite_veracidade_versao" value="v3">
 <input type="hidden" id="projeto_nome"             name="projeto_nome"             value="">
 <input type="hidden" id="email_conta"              name="email_conta"              value="">
+<input type="hidden" id="telefone_conta"           name="telefone_conta"           value="">
 <input type="hidden" name="origem_cadastro"        value="Portal do Aluno">
 
 <!-- Step 1: CPF -->
@@ -3494,7 +3495,7 @@ window.dadosRecentesCPF = null;
             list.innerHTML='';
             selectedFiles.forEach(function(f,i){
                 var chip=document.createElement('div'); chip.className='file-chip'; chip.setAttribute('role','listitem');
-
+                
                 var span = document.createElement('span');
                 span.title = f.name;
                 span.textContent = f.name;
@@ -3503,8 +3504,10 @@ window.dadosRecentesCPF = null;
                 button.type = 'button';
                 button.setAttribute('aria-label', 'Remover ' + f.name);
                 button.textContent = '×';
-                button.addEventListener('click',function(){
-                    selectedFiles.splice(i,1); renderList(); syncRealInputs();
+                button.addEventListener('click', function(){
+                    selectedFiles.splice(i, 1);
+                    renderList();
+                    syncRealInputs();
                 });
 
                 chip.appendChild(span);
@@ -3623,6 +3626,10 @@ window.dadosRecentesCPF = null;
         var inpEmailConta = document.getElementById('email_conta');
         if (inpEmailConta) inpEmailConta.value = emailConta;
 
+        var telefoneConta = localStorage.getItem('usuario_telefone') || localStorage.getItem('telefone_conta') || localStorage.getItem('user_phone') || localStorage.getItem('usuario_whatsapp') || localStorage.getItem('user_whatsapp') || '';
+        var inpTelefoneConta = document.getElementById('telefone_conta');
+        if (inpTelefoneConta) inpTelefoneConta.value = telefoneConta;
+
         // Número de Matrícula 100% Numérico e Único (Dia + Mês + Hora + Minuto + Segundo + MS)
         var agoraMat = new Date();
         var diaM = String(agoraMat.getDate()).padStart(2, '0');
@@ -3664,18 +3671,29 @@ window.dadosRecentesCPF = null;
         if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
         if (btnNav) { btnNav.disabled = true; btnNav.textContent = 'Enviando…'; }
 
-        fetch('https://w.ibrase.com.br/webhook/matricula', { method: 'POST', body: fd })
-            .then(function(resp) { 
-                console.log('Status HTTP Webhook:', resp.status);
-                if (!resp.ok) {
-                    throw new Error('Erro HTTP ' + resp.status + ' no n8n');
-                }
-                return resp.text().then(function(text) {
-                    try { return JSON.parse(text); } catch(e) { return {ok: true, text: text}; }
-                }); 
-            })
+        function processarEnvioComProxyEFallback(bodyData) {
+            return fetch('matricula_proxy.php', { method: 'POST', body: bodyData })
+                .then(function(resp) {
+                    if (!resp.ok) throw new Error('Proxy HTTP ' + resp.status);
+                    return resp.text().then(function(text) {
+                        try { return JSON.parse(text); } catch(e) { return {ok: true, text: text}; }
+                    });
+                })
+                .catch(function(proxyErr) {
+                    console.warn('Proxy local indisponível. Utilizando envio direto para o webhook:', proxyErr);
+                    return fetch('https://w.ibrase.com.br/webhook/matricula', { method: 'POST', body: bodyData })
+                        .then(function(resp) {
+                            if (!resp.ok) throw new Error('Erro HTTP ' + resp.status + ' no n8n');
+                            return resp.text().then(function(text) {
+                                try { return JSON.parse(text); } catch(e) { return {ok: true, text: text}; }
+                            });
+                        });
+                });
+        }
+
+        processarEnvioComProxyEFallback(fd)
             .then(function(data) {
-                console.log('Resposta do n8n Webhook:', data);
+                console.log('Resposta do envio da matrícula:', data);
                 mostrarMensagem('sucesso', 'Matrícula enviada com sucesso!');
                 if (btn) { btn.textContent = 'Enviado! ✅'; }
                 if (btnNav) { btnNav.textContent = 'Enviado! ✅'; }
@@ -3777,7 +3795,7 @@ window.dadosRecentesCPF = null;
                     var tCalcado = getV('tamanho_calcado') || 'Não informado';
                     var tCalca = getV('tamanho_calca') || 'Não informado';
 
-                    var tel = getV('whatsapp') || getV('telefone_aluno') || getV('celular_aluno') || getV('telefone') || getV('celular') || getV('resp_whatsapp');
+                    var tel = getV('whatsapp') || getV('telefone_aluno') || getV('celular_aluno') || getV('telefone') || getV('celular') || getV('telefone_conta') || getV('resp_whatsapp');
                     var email = getV('email') || getV('email_aluno') || getV('email_conta') || getV('resp_email');
                     var cep = getV('cep') || getV('cep_aluno');
                     

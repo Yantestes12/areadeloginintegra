@@ -599,7 +599,12 @@
 
                         if (uNome) { localStorage.setItem('usuario_nome', uNome); setCookie('usuario_nome', uNome); }
                         if (uPrimeiroNome) { localStorage.setItem('usuario_primeiro_nome', uPrimeiroNome); setCookie('usuario_primeiro_nome', uPrimeiroNome); }
-                        if (uTelefone) { localStorage.setItem('usuario_telefone', uTelefone); setCookie('usuario_telefone', uTelefone); }
+                        if (uTelefone) {
+                            localStorage.setItem('usuario_telefone', uTelefone);
+                            localStorage.setItem('telefone_conta', uTelefone);
+                            setCookie('usuario_telefone', uTelefone);
+                            setCookie('telefone_conta', uTelefone);
+                        }
                         if (uEmail) {
                             localStorage.setItem('usuario_email', uEmail);
                             localStorage.setItem('email_conta', uEmail);

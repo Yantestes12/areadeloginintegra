@@ -628,11 +628,12 @@
             <label>Tamanho da Camisa / Blusa</label>
             <select id="edit_tamanho_camisa" name="tamanho_camisa">
               <option value="">Selecione o tamanho</option>
-              <option value="6">6</option><option value="8">8</option><option value="10">10</option>
-              <option value="12">12</option><option value="14">14</option><option value="16">16</option>
-              <option value="PP">PP</option><option value="P">P</option><option value="M">M</option>
-              <option value="G">G</option><option value="GG">GG</option><option value="XG">XG</option>
-              <option value="G1">G1</option><option value="G2">G2</option><option value="G3">G3</option>
+              <option value="10 ANOS">10 ANOS</option>
+              <option value="14 ANOS">14 ANOS</option>
+              <option value="M">M</option>
+              <option value="G">G</option>
+              <option value="GG">GG</option>
+              <option value="G2">G2</option>
             </select>
           </div>
           <div class="form-group-item">
@@ -676,47 +677,65 @@
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>Uso de Medicamento</label>
-            <select id="edit_uso_medicacao" name="uso_medicacao">
+            <select id="edit_uso_medicacao" name="uso_medicacao" onchange="toggleHealthDetail('uso_medicacao')">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
+            <div id="box_edit_uso_medicacao_detalhes" style="display:none;margin-top:6px;">
+              <input type="text" id="edit_uso_medicacao_detalhes" name="uso_medicacao_detalhes" placeholder="Qual medicamento?">
+            </div>
           </div>
           <div class="form-group-item">
             <label>Possui Alergias</label>
-            <select id="edit_possui_alergias" name="possui_alergias">
+            <select id="edit_possui_alergias" name="possui_alergias" onchange="toggleHealthDetail('possui_alergias')">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
+            <div id="box_edit_possui_alergias_detalhes" style="display:none;margin-top:6px;">
+              <input type="text" id="edit_possui_alergias_detalhes" name="possui_alergias_detalhes" placeholder="Qual alergia?">
+            </div>
           </div>
           <div class="form-group-item">
             <label>Possui Plano de Saúde</label>
-            <select id="edit_plano_saude" name="plano_saude">
+            <select id="edit_plano_saude" name="plano_saude" onchange="toggleHealthDetail('plano_saude')">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
+            <div id="box_edit_plano_saude_detalhes" style="display:none;margin-top:6px;">
+              <input type="text" id="edit_plano_saude_detalhes" name="plano_saude_detalhes" placeholder="Qual plano de saúde?">
+            </div>
           </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>Tratamento Médico</label>
-            <select id="edit_acompan_medico" name="acompan_medico">
+            <select id="edit_acompan_medico" name="acompan_medico" onchange="toggleHealthDetail('acompan_medico')">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
+            <div id="box_edit_acompan_medico_detalhes" style="display:none;margin-top:6px;">
+              <input type="text" id="edit_acompan_medico_detalhes" name="acompan_medico_detalhes" placeholder="Qual tratamento médico?">
+            </div>
           </div>
           <div class="form-group-item">
             <label>Restrição Física</label>
-            <select id="edit_restricao_fisica" name="restricao_fisica">
+            <select id="edit_restricao_fisica" name="restricao_fisica" onchange="toggleHealthDetail('restricao_fisica')">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
+            <div id="box_edit_restricao_fisica_detalhes" style="display:none;margin-top:6px;">
+              <input type="text" id="edit_restricao_fisica_detalhes" name="restricao_fisica_detalhes" placeholder="Qual restrição física?">
+            </div>
           </div>
           <div class="form-group-item">
             <label>Necessidade Especial</label>
-            <select id="edit_deficiencia" name="deficiencia">
+            <select id="edit_deficiencia" name="deficiencia" onchange="toggleHealthDetail('deficiencia')">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
+            <div id="box_edit_deficiencia_detalhes" style="display:none;margin-top:6px;">
+              <input type="text" id="edit_deficiencia_detalhes" name="deficiencia_detalhes" placeholder="Qual necessidade especial?">
+            </div>
           </div>
         </div>
 
@@ -789,6 +808,17 @@
       }
     }
 
+        function toggleHealthDetail(key) {
+      var sel = document.getElementById('edit_' + key);
+      var box = document.getElementById('box_edit_' + key + '_detalhes');
+      if (sel && box) {
+        if (sel.value === 'Sim') {
+          box.style.display = 'block';
+        } else {
+          box.style.display = 'none';
+        }
+      }
+    }
     function closeEditModal() {
       var overlay = document.getElementById('editModalOverlay');
       if (overlay) overlay.style.display = 'none';
@@ -1000,12 +1030,36 @@
         if (m.altura) document.getElementById('edit_altura').value = m.altura;
         if (m.peso) document.getElementById('edit_peso').value = m.peso;
 
-        if (m.uso_medicacao) setSelectValueSafe('edit_uso_medicacao', m.uso_medicacao);
-        if (m.possui_alergias) setSelectValueSafe('edit_possui_alergias', m.possui_alergias);
-        if (m.plano_saude) setSelectValueSafe('edit_plano_saude', m.plano_saude);
-        if (m.acompan_medico) setSelectValueSafe('edit_acompan_medico', m.acompan_medico);
-        if (m.restricao_fisica) setSelectValueSafe('edit_restricao_fisica', m.restricao_fisica);
-        if (m.deficiencia) setSelectValueSafe('edit_deficiencia', m.deficiencia);
+        if (m.uso_medicacao) {
+          setSelectValueSafe('edit_uso_medicacao', m.uso_medicacao);
+          toggleHealthDetail('uso_medicacao');
+          if (m.uso_medicacao_detalhes) document.getElementById('edit_uso_medicacao_detalhes').value = m.uso_medicacao_detalhes;
+        }
+        if (m.possui_alergias) {
+          setSelectValueSafe('edit_possui_alergias', m.possui_alergias);
+          toggleHealthDetail('possui_alergias');
+          if (m.possui_alergias_detalhes) document.getElementById('edit_possui_alergias_detalhes').value = m.possui_alergias_detalhes;
+        }
+        if (m.plano_saude) {
+          setSelectValueSafe('edit_plano_saude', m.plano_saude);
+          toggleHealthDetail('plano_saude');
+          if (m.plano_saude_detalhes) document.getElementById('edit_plano_saude_detalhes').value = m.plano_saude_detalhes;
+        }
+        if (m.acompan_medico) {
+          setSelectValueSafe('edit_acompan_medico', m.acompan_medico);
+          toggleHealthDetail('acompan_medico');
+          if (m.acompan_medico_detalhes) document.getElementById('edit_acompan_medico_detalhes').value = m.acompan_medico_detalhes;
+        }
+        if (m.restricao_fisica) {
+          setSelectValueSafe('edit_restricao_fisica', m.restricao_fisica);
+          toggleHealthDetail('restricao_fisica');
+          if (m.restricao_fisica_detalhes) document.getElementById('edit_restricao_fisica_detalhes').value = m.restricao_fisica_detalhes;
+        }
+        if (m.deficiencia) {
+          setSelectValueSafe('edit_deficiencia', m.deficiencia);
+          toggleHealthDetail('deficiencia');
+          if (m.deficiencia_detalhes) document.getElementById('edit_deficiencia_detalhes').value = m.deficiencia_detalhes;
+        }
 
         document.getElementById('edit_resp_nome').value = m.resp_nome || '';
         document.getElementById('edit_resp_cpf').value = m.resp_cpf || '';
@@ -1017,7 +1071,7 @@
       }
     }
 
-    // 3. Salvar Alterações e Enviar para o Webhook matriculaatualizar (Query Params + Redundância POST/JSON)
+    // 3. Salvar Alterações e Enviar via POST para o Webhook matriculaatualizar
     async function salvarEdicaoMatricula(e) {
       e.preventDefault();
       const btnSave = document.getElementById('btn-save-edit');
@@ -1038,24 +1092,36 @@
         }
       });
 
-      const updateUrlWithQuery = 'https://w.ibrase.com.br/webhook/matriculaatualizar?' + params.toString();
-
       try {
-        // Envia sinal via Query String (dispara o workflow do n8n com id e todos os parâmetros)
-        await fetch(updateUrlWithQuery);
+        // 1. POST Principal com Content-Type: application/x-www-form-urlencoded (Suportado nativamente pelo n8n)
+        let resp = await fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+          },
+          body: params.toString()
+        });
 
-        // Envio redundante via POST JSON para suportar qualquer nó do n8n
+        // 2. POST Redundante com Content-Type: application/json
         fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify(jsonBody)
+        }).catch(function(){});
+
+        // 3. POST Redundante com multipart/form-data
+        fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
+          method: 'POST',
+          body: formData
         }).catch(function(){});
 
         alert('Matrícula atualizada com sucesso no sistema central!');
         closeEditModal();
         carregarPainel();
       } catch(err) {
-        console.error('Erro ao enviar sinal para o webhook matriculaatualizar:', err);
+        console.error('Erro ao enviar POST para o webhook matriculaatualizar:', err);
         alert('Matrícula atualizada com sucesso!');
         closeEditModal();
         carregarPainel();

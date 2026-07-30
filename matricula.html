@@ -1798,6 +1798,37 @@
         buscarNucleos:     'https://w.ibrase.com.br/webhook/buscarnucleo'
     };
 
+    window.carregarCidadesIBGENaturalidade = function(uf) {
+        var selectCid = document.getElementById('naturalidade_cidade');
+        var inputNat = document.getElementById('naturalidade');
+        if (!selectCid) return;
+        if (!uf) {
+            selectCid.innerHTML = '<option value="">Selecione a UF primeiro</option>';
+            selectCid.disabled = true;
+            if (inputNat) inputNat.value = '';
+            return;
+        }
+        selectCid.innerHTML = '<option value="">Carregando cidades do IBGE...</option>';
+        selectCid.disabled = true;
+        
+        fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/' + uf + '/municipios?orderBy=nome')
+            .then(function(r) { return r.json(); })
+            .then(function(cidades) {
+                selectCid.innerHTML = '<option value="">Selecione a cidade</option>';
+                cidades.forEach(function(c) {
+                    var opt = document.createElement('option');
+                    opt.value = c.nome + ' - ' + uf;
+                    opt.textContent = c.nome;
+                    selectCid.appendChild(opt);
+                });
+                selectCid.disabled = false;
+            })
+            .catch(function() {
+                selectCid.innerHTML = '<option value="">Digite a cidade manualmente</option>';
+                selectCid.disabled = false;
+            });
+    };
+
     // Cache dos dados dos webhooks (carrega uma vez, filtra no front)
     var _cacheCidades = null;
     var _cacheBairros = null;
@@ -2310,9 +2341,26 @@ window.dadosRecentesCPF = null;
         if (!d) return;
         function setVal(id, val) {
             if (val === null || val === undefined || val === '') return;
-            var el = document.getElementById(id);
+            var el = document.getElementById(id) || document.querySelector('[name="' + id + '"]');
             if (el) {
-                el.value = val;
+                if (el.tagName === 'SELECT') {
+                    var strVal = String(val).trim().toUpperCase();
+                    var matched = false;
+                    for (var i = 0; i < el.options.length; i++) {
+                        var optVal = el.options[i].value.trim().toUpperCase();
+                        var optTxt = el.options[i].text.trim().toUpperCase();
+                        if (optVal === strVal || optTxt === strVal || 
+                           (strVal === 'M' && optVal.indexOf('MASC') !== -1) || 
+                           (strVal === 'F' && optVal.indexOf('FEM') !== -1)) {
+                            el.selectedIndex = i;
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched) el.value = val;
+                } else {
+                    el.value = val;
+                }
                 el.dispatchEvent(new Event('change', { bubbles: true }));
                 el.dispatchEvent(new Event('input', { bubbles: true }));
             }
@@ -2329,6 +2377,8 @@ window.dadosRecentesCPF = null;
         setVal('faixa_salarial', d.faixa_salarial);
         setVal('profissao', d.profissao);
         setVal('raca', d.raca);
+        setVal('sexo_step2', d.sexo || d.genero);
+        setVal('sexo', d.sexo || d.genero);
         if (d.naturalidade) {
             setVal('naturalidade', d.naturalidade);
             var parts = d.naturalidade.split('-');
@@ -3780,18 +3830,20 @@ window.dadosRecentesCPF = null;
                         '<div class="field-item"><span class="field-label">Grau de Parentesco:</span> <span class="field-value">' + (parResp || 'Não informado') + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Telefone de Contato:</span> <span class="field-value">' + (tResp || 'Não informado') + '</span></div></div></div>') : '') +
                         
-                        '<div class="qr-banner"><img src="' + qrApi + '" alt="QR Code Autenticador"><div>' +
-                        '<div style="font-weight:bold;font-size:9pt;color:#0284c7;">QR CODE DE AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>' +
+                        '<div class="qr-banner" style="background:#f8fafc;border:1px solid #cbd5e1;"><img src="' + qrApi + '" alt="QR Code Autenticador"><div>' +
+                        '<div style="font-weight:bold;font-size:9pt;color:#0f172a;">QR CODE DE AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>' +
                         '<div style="font-size:7.5pt;color:#475569;">Escanear este código QR permite validar a autenticidade da ficha no sistema central.</div>' +
-                        '<div style="font-size:7.5pt;font-family:monospace;color:#0369a1;margin-top:2px;">' + urlAutenticador + '</div></div></div>' +
+                        '<div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">' + urlAutenticador + '</div></div></div>' +
+                        
+                        '<div class="section-box" style="background:#f8fafc;border-color:#cbd5e1;margin-top:6px;"><div class="section-title" style="color:#0f172a;border-color:#e2e8f0;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
+                        '<p style="font-size:8pt;color:#334155;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
                         
                         '<div class="page-break"></div>' +
                         
                         '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
                         '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza</div></div></div>' +
                         
-                        '<div class="section-box" style="background:#fff7ed;border-color:#fed7aa;"><div class="section-title" style="color:#c2410c;border-color:#ffedd5;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
-                        '<p style="font-size:8pt;color:#7c2d12;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
+                        
                         
                         '<div class="section-box"><div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>' +
                         '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA), aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +
@@ -3803,14 +3855,6 @@ window.dadosRecentesCPF = null;
                         '<div><strong>5. COMPROMISSO ESCOLAR:</strong> Sendo o(a) aluno(a) menor de idade, declaro que se encontra regularmente matriculado(a) e frequentando instituição de ensino, comprometendo-me a manter sua vida escolar regular durante todo o período de participação.<br><em>§1º</em> É de responsabilidade do responsável legal matricular o(a) aluno(a) em turma compatível com o contraturno escolar, garantindo que sua participação nas atividades do Instituto não prejudique sua frequência às atividades de ensino regular.<br><em>§2º</em> Sempre que solicitado, o responsável legal deverá apresentar declaração de matrícula, frequência escolar ou outro documento equivalente.<br><em>§3º</em> O(a) aluno(a) deverá manter frequência mínima de 75% (setenta e cinco por cento) nas atividades, salvo justificativa aceita pela Coordenação.</div>' +
                         '<div><strong>6. NORMAS INTERNAS:</strong> O(a) aluno(a) compromete-se a cumprir as normas internas do Instituto, respeitando as orientações da Coordenação, Supervisão, Instrutores e demais colaboradores.<br><em>Parágrafo único.</em> O descumprimento das normas institucionais ou a prática de condutas incompatíveis com os objetivos do Instituto poderá resultar em advertência, suspensão ou desligamento do(a) aluno(a), conforme avaliação da Coordenação.</div>' +
                         '<div><strong>7. DISPOSIÇÕES FINAIS:</strong> Declaro que todas as informações prestadas são verdadeiras e comprometo-me a mantê-las sempre atualizadas durante todo o período de participação. Comprometo-me a permanecer devidamente uniformizado(a), zelar pela guarda, conservação e correta utilização do kit de materiais sob minha posse, bem como manter a higiene pessoal e contribuir para a higiene coletiva. Ao concluir a inscrição, realizo o aceite eletrônico deste documento e confirmo que LI, COMPREENDI e ACEITO todos os seus termos.</div>' +
-                        '</div></div>' +
-                        
-                        '<div style="margin-top:8px;margin-bottom:6px;border:1.5px solid #0284c7;background:#f0f9ff;border-radius:6px;padding:5px 8px;font-size:7pt;color:#0369a1;">' +
-                        '<div style="font-weight:800;color:#0284c7;border-bottom:1px solid #bae6fd;padding-bottom:2px;margin-bottom:2px;text-transform:uppercase;">ACEITES E VALIDAÇÕES REGISTRADAS NA FICHA</div>' +
-                        '• <strong>LGPD (ALUNO)</strong>: Declaro que LI e ACEITO o tratamento dos dados pessoais para fins de matrícula e execução das atividades do projeto, nos termos da LGPD. <strong style="color:#166534;">(ACEITO)</strong><br>' +
-                        '• <strong>VERACIDADE (ALUNO)</strong>: Declaro que as informações prestadas nesta ficha de matrícula são verdadeiras e completas. <strong style="color:#166534;">(ACEITO)</strong><br>' +
-                        '• <strong>HOMOLOGAÇÃO DA COORDENAÇÃO</strong>: Matrícula revisada, validada e deferida pela Coordenação Central do Projeto ' + proj + '. <strong style="color:#0369a1;">(DEFERIDA E HOMOLOGADA)</strong></div>' +
-                        
                         '<div class="signatures-row" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
                         
                         '<div class="sig-block" style="text-align:left;">' +

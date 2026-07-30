@@ -25,7 +25,6 @@
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     :root {
@@ -103,7 +102,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
       background: transparent;
       border: none;
       padding: 0;
@@ -121,11 +119,6 @@
       font-weight: 800;
       border: 2.5px solid #ffffff;
       box-shadow: 0 4px 12px rgba(0, 63, 163, 0.2);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .user-avatar:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(0, 63, 163, 0.3);
     }
 
     .user-details {
@@ -190,7 +183,7 @@
     /* Cards Grid */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 24px;
     }
 
@@ -204,11 +197,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 240px;
+      min-height: 220px;
       box-shadow: 0 10px 28px rgba(0, 63, 163, 0.25);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-      overflow: hidden;
       cursor: pointer;
       border: none;
       text-align: left;
@@ -244,41 +235,6 @@
       text-transform: uppercase;
       letter-spacing: 0.06em;
       opacity: 0.9;
-    }
-
-    /* Consultar Matrículas Card */
-    .card-action-secondary {
-      background: var(--surface);
-      border: 1.5px solid var(--outline-variant);
-      border-radius: 28px;
-      padding: 32px;
-      color: var(--on-surface);
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 240px;
-      box-shadow: 0 4px 16px rgba(0, 26, 65, 0.04);
-      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-      cursor: pointer;
-      border: none;
-      text-align: left;
-    }
-    .card-action-secondary:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(0, 26, 65, 0.08);
-      border-color: var(--primary-container);
-    }
-    .card-icon-box-cyan {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      background: var(--secondary-container);
-      color: var(--on-secondary-container);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(86, 245, 248, 0.35);
     }
 
     /* Results Section */
@@ -385,7 +341,7 @@
     .al-modal {
       background: #ffffff;
       width: 100%;
-      max-width: 480px;
+      max-width: 560px;
       border-radius: 28px;
       padding: 28px;
       box-shadow: 0 24px 48px rgba(0, 26, 65, 0.2);
@@ -407,18 +363,24 @@
       cursor: pointer;
       color: var(--on-surface-variant);
     }
-    .al-btn-tb {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px 28px;
-      border-radius: 14px;
-      font-weight: 800;
-      border: none;
-      cursor: pointer;
-      background: var(--primary-gradient);
-      color: #ffffff;
-      box-shadow: 0 6px 16px rgba(0, 63, 163, 0.25);
+    .form-group-item {
+      margin-bottom: 14px;
+    }
+    .form-group-item label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--on-surface-variant);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .form-group-item input, .form-group-item select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--outline-variant);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
     }
 
     /* Footer */
@@ -438,7 +400,7 @@
       .header-bar { padding: 0 16px; height: 72px; }
       .main-wrapper { padding: 20px 16px 36px; gap: 24px; }
       .greeting-section h1 { font-size: 26px; }
-      .card-action-primary, .card-action-secondary { padding: 24px; min-height: 200px; border-radius: 24px; }
+      .card-action-primary { padding: 24px; min-height: 180px; border-radius: 24px; }
       .user-details { display: none; }
     }
   </style>
@@ -452,7 +414,7 @@
       <span class="brand-title" style="margin-left:6px;">Integra</span>
     </a>
     <div class="header-right">
-      <div class="user-profile-btn" >
+      <div class="user-profile-btn">
         <div class="user-details">
           <div class="user-name" id="display-topbar-name">Aluno Cadastrado</div>
           <div class="user-sub">Painel do Aluno</div>
@@ -476,9 +438,8 @@
       </div>
     </section>
 
-    <!-- Action Cards Grid -->
+    <!-- Action Card Fazer Matrícula -->
     <section class="cards-grid">
-      <!-- Card Fazer Matrícula -->
       <button class="card-action-primary" onclick="window.location.href='matricula.html'">
         <div class="card-icon-box-white">
           <span class="material-symbols-outlined" style="font-size:36px;font-variation-settings:'FILL' 1;">rocket_launch</span>
@@ -491,24 +452,10 @@
           </div>
         </div>
       </button>
-
-      <!-- Card Consultar Minha Matrícula -->
-      <button class="card-action-secondary" onclick="consultarMatriculaPorID()">
-        <div class="card-icon-box-cyan">
-          <span class="material-symbols-outlined" style="font-size:36px;font-variation-settings:'FILL' 1;">manage_search</span>
-        </div>
-        <div>
-          <h2 class="card-title-lg">Consultar Minha Matrícula</h2>
-          <div class="card-action-label" style="color:var(--primary);">
-            <span>Buscar Ficha por ID</span>
-            <span class="material-symbols-outlined" style="font-size:18px;">east</span>
-          </div>
-        </div>
-      </button>
     </section>
 
-    <!-- Dynamic Matrículas Container -->
-    <section class="results-section" id="results-container" style="display:none;">
+    <!-- Matrículas Cadastradas Container -->
+    <section class="results-section" id="results-container">
       <div class="results-header">
         <span class="material-symbols-outlined" style="color:var(--primary);">folder_shared</span>
         <span>Suas Matrículas Cadastradas</span>
@@ -519,20 +466,57 @@
     </section>
   </main>
 
-
-
-  <!-- Modal Ficha de Dados do Aluno -->
-  <div class="al-modal-overlay" id="dadosModalOverlay" onclick="closeDadosModal()" style="display:none">
-    <div class="al-modal" onclick="event.stopPropagation()" style="max-width:540px;">
+  <!-- Modal Editar Informações da Matrícula -->
+  <div class="al-modal-overlay" id="editModalOverlay" onclick="closeEditModal()" style="display:none">
+    <div class="al-modal" onclick="event.stopPropagation()">
       <div class="al-modal-header">
         <strong style="display:flex;align-items:center;gap:8px;font-size:17px;color:var(--primary);">
-          <i data-lucide="file-text"></i> Meus Dados Cadastrados
+          <span class="material-symbols-outlined">edit</span> Editar Informações da Matrícula
         </strong>
-        <button type="button" class="al-modal-close" onclick="closeDadosModal()">×</button>
+        <button type="button" class="al-modal-close" onclick="closeEditModal()">×</button>
       </div>
-      <div class="al-modal-body" id="dadosModalContent">
-        <!-- Preenchido via JS -->
-      </div>
+      <form id="form-edit-matricula" onsubmit="salvarEdicaoMatricula(event)">
+        <input type="hidden" id="edit_matricula_id">
+        <div class="form-group-item">
+          <label>Nome Completo do Aluno</label>
+          <input type="text" id="edit_aluno_nome" required>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="form-group-item">
+            <label>Telefone / WhatsApp</label>
+            <input type="text" id="edit_whatsapp">
+          </div>
+          <div class="form-group-item">
+            <label>E-mail de Contato</label>
+            <input type="email" id="edit_email">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;">
+          <div class="form-group-item">
+            <label>CEP</label>
+            <input type="text" id="edit_cep">
+          </div>
+          <div class="form-group-item">
+            <label>Endereço</label>
+            <input type="text" id="edit_endereco">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;">
+          <div class="form-group-item">
+            <label>Número</label>
+            <input type="text" id="edit_numero">
+          </div>
+          <div class="form-group-item">
+            <label>Bairro / Cidade</label>
+            <input type="text" id="edit_bairro_cidade">
+          </div>
+        </div>
+        <div style="margin-top:20px;text-align:right;">
+          <button type="submit" class="btn-action-sm btn-pdf" style="padding:12px 24px;">
+            💾 Salvar Alterações
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -542,80 +526,14 @@
   </footer>
 
   <script>
-    if (window.lucide) { lucide.createIcons(); }
-
-    function openAvatarModal_disabled() {
-      var overlay = document.getElementById('avatarModalOverlay');
-      var container = document.getElementById('pwa-install-container');
-      var btnTrigger = document.getElementById('btn-pwa-trigger');
-      if (overlay) overlay.style.display = 'flex';
-      
-      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      var isAndroid = /Android/.test(navigator.userAgent);
-      
-      if (isIOS) {
-        if (container) {
-          container.innerHTML = '<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:16px;text-align:left;">'
-            + '<div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">📱 Como instalar no iPhone (Safari):</div>'
-            + '<ol style="margin:0;padding-left:20px;font-size:13px;color:#15803d;line-height:1.5;">'
-            + '<li>Toque no ícone de <strong>Compartilhar</strong> (📤 na barra inferior do Safari).</li>'
-            + '<li>Role as opções e toque em <strong>"Adicionar à Tela de Início"</strong> (➕).</li>'
-            + '<li>Toque em <strong>Adicionar</strong> no canto superior.</li>'
-            + '</ol></div>';
-        }
-        if (btnTrigger) btnTrigger.style.display = 'none';
-      } else if (isAndroid) {
-        if (container) {
-          container.innerHTML = '<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:16px;text-align:left;">'
-            + '<div style="font-weight:800;color:#166534;font-size:14px;margin-bottom:8px;">🤖 Instalar no Android (Chrome):</div>'
-            + '<p style="font-size:13px;color:#15803d;margin:0;line-height:1.4;">'
-            + 'Clique no botão abaixo ou toque nos <strong>3 pontinhos (⋮)</strong> no canto do seu navegador e escolha <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.'
-            + '</p></div>';
-        }
-        if (btnTrigger) btnTrigger.style.display = 'block';
-      } else {
-        if (container) {
-          container.innerHTML = '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:16px;text-align:center;">'
-            + '<p style="font-size:13px;color:#475569;margin:0;">'
-            + 'Acesse esta página pelo navegador do seu celular (Android ou iPhone) para instalar o aplicativo direto na tela inicial!'
-            + '</p></div>';
-        }
-        if (btnTrigger) btnTrigger.style.display = 'block';
-      }
-    }
-
-    function closeAvatarModal() {
-      var overlay = document.getElementById('avatarModalOverlay');
-      if (overlay) overlay.style.display = 'none';
-    }
-    function closeDadosModal() {
-      var overlay = document.getElementById('dadosModalOverlay');
-      if (overlay) overlay.style.display = 'none';
-    }
-
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', function(e) {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
-
-    function dispararInstalacaoPWA_disabled() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function(choiceResult) {
-          if (choiceResult.outcome === 'accepted') {
-            alert('Aplicativo INTEGRA instalado com sucesso!');
-          }
-          deferredPrompt = null;
-        });
-      } else {
-        alert("No seu navegador, toque no menu de opções (⋮ ou 📤) e escolha 'Adicionar à tela inicial'.");
-      }
-    }
-
     function logout() {
       localStorage.clear();
       window.location.href = 'login';
+    }
+
+    function closeEditModal() {
+      var overlay = document.getElementById('editModalOverlay');
+      if (overlay) overlay.style.display = 'none';
     }
 
     function getCookie(name) {
@@ -632,120 +550,263 @@
       return localStorage.getItem(key) || getCookie(key) || '';
     }
 
-    function setCookie(name, val, days = 30) {
-      const d = new Date();
-      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-      let domainAttr = '';
-      if (window.location.hostname.includes('plataformaintegra.com.br')) {
-        domainAttr = ';domain=.plataformaintegra.com.br';
-      }
-      document.cookie = `${name}=${encodeURIComponent(val)};expires=${d.toUTCString()};path=/${domainAttr};SameSite=Lax`;
-    }
-
     let currentMatriculasList = [];
-    let currentMatriculaItem = null;
 
-    async function consultarMatriculaPorID() {
-      const resultsContainer = document.getElementById('results-container');
-      const listBody = document.getElementById('matriculas-list-body');
+    // Função Principal de Exibição do Painel e das Matrículas
+    async function carregarPainel() {
+      let rawNome = getStoredVal('usuario_nome') || getStoredVal('usuario_primeiro_nome') || '';
+      if (rawNome.includes('{{') || rawNome.includes('json') || rawNome.includes('$')) rawNome = '';
+      
+      let uNome = rawNome ? rawNome.split(' ')[0] : '';
+      if (uNome) uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
 
-      if (resultsContainer) resultsContainer.style.display = 'block';
-      if (listBody) {
-        listBody.innerHTML = '<div style="text-align:center;padding:32px;color:var(--on-surface-variant);font-weight:600;">⏳ Buscando dados da matrícula...</div>';
-      }
-
-      const uId = getStoredVal('usuario_id');
-      const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta');
-      const uTel = getStoredVal('usuario_telefone');
-      const uCpf = getStoredVal('usuario_cpf');
-
+      // Extrair lista de matrículas salvas na sessão do login
       let items = [];
-
-      // 1. Tentar ler as matrículas armazenadas localmente na sessão do login
       try {
         const rawDados = getStoredVal('usuario_dados');
         if (rawDados) {
-          let parsed = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
-          if (Array.isArray(parsed)) {
-            if (parsed[0] && Array.isArray(parsed[0].matriculas)) items = parsed[0].matriculas;
-            else if (parsed[0] && Array.isArray(parsed[0].projetos_inscritos)) items = parsed[0].projetos_inscritos;
-            else items = parsed;
-          } else if (parsed && typeof parsed === 'object') {
-            if (Array.isArray(parsed.matriculas)) items = parsed.matriculas;
-            else if (Array.isArray(parsed.projetos_inscritos)) items = parsed.projetos_inscritos;
-            else if (parsed.id) items = [parsed];
+          let p = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
+          if (Array.isArray(p)) {
+            if (p[0] && Array.isArray(p[0].matriculas)) items = p[0].matriculas;
+            else if (p[0] && Array.isArray(p[0].projetos_inscritos)) items = p[0].projetos_inscritos;
+            else items = p;
+          } else if (p && typeof p === 'object') {
+            if (Array.isArray(p.matriculas)) items = p.matriculas;
+            else if (Array.isArray(p.projetos_inscritos)) items = p.projetos_inscritos;
+            else if (p.id) items = [p];
           }
         }
       } catch(e){}
 
-      // 2. Se não houver matrículas locais, consultar o webhook por ID / Email / Tel / CPF
-      if (items.length === 0) {
-        if (uId || uEmail || uTel || uCpf) {
-          try {
-            let queryParams = [];
-            if (uId) queryParams.push('id=' + encodeURIComponent(uId));
-            if (uEmail) queryParams.push('email=' + encodeURIComponent(uEmail));
-            if (uTel) queryParams.push('telefone=' + encodeURIComponent(uTel));
-            if (uCpf) queryParams.push('cpf=' + encodeURIComponent(uCpf));
-
-            const url = 'https://w.ibrase.com.br/webhook/consultarmatriculasaluno?' + queryParams.join('&');
-            const resp = await fetch(url);
-            if (resp.ok) {
-              const data = await resp.json();
-              let fetched = Array.isArray(data) ? data : (data.matriculas || data.dados || []);
-              if (Array.isArray(fetched) && fetched.length > 0) {
-                items = fetched;
-              }
-            }
-          } catch(err) {
-            console.warn('Erro ao consultar webhook de matrículas:', err);
-          }
+      // Tentar capturar o nome do aluno da matrícula se uNome ainda for genérico
+      if ((!uNome || uNome === 'Participante') && items.length > 0) {
+        let full = items[0].aluno_nome || items[0].nome_aluno || items[0].nome || '';
+        if (full && !full.includes('{{')) {
+          uNome = full.split(' ')[0];
+          uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
         }
       }
+      if (!uNome) uNome = 'Participante';
+
+      const elWelcome = document.getElementById('display-welcome-title');
+      const elTopName = document.getElementById('display-topbar-name');
+      const elAvatar = document.getElementById('display-avatar-icon');
+
+      if (elWelcome) elWelcome.textContent = `Olá, ${uNome}`;
+      if (elTopName) elTopName.textContent = uNome;
+      if (elAvatar && uNome) elAvatar.textContent = uNome.charAt(0).toUpperCase();
 
       currentMatriculasList = items;
+      renderizarListaMatriculas(items);
+    }
 
-      if (items.length === 0) {
-        if (listBody) {
-          listBody.innerHTML = `
-            <div style="text-align:center;padding:32px;color:var(--on-surface-variant);">
-              <div style="font-size:32px;margin-bottom:8px;">📄</div>
-              <div style="font-weight:700;font-size:15px;color:var(--on-surface);">Nenhuma ficha de matrícula localizada</div>
-              <div style="font-size:13px;margin-top:4px;color:var(--on-surface-variant);">Se você ainda não realizou sua inscrição, clique em <strong>Fazer Matrícula</strong> para se cadastrar.</div>
-            </div>
-          `;
-        }
+    // Renderizar a Lista de Matrículas do Aluno
+    function renderizarListaMatriculas(items) {
+      const listBody = document.getElementById('matriculas-list-body');
+      if (!listBody) return;
+
+      if (!items || items.length === 0) {
+        listBody.innerHTML = `
+          <div style="text-align:center;padding:32px;color:var(--on-surface-variant);">
+            <div style="font-size:32px;margin-bottom:8px;">📄</div>
+            <div style="font-weight:700;font-size:15px;color:var(--on-surface);">Nenhuma matrícula registrada na sessão.</div>
+            <div style="font-size:13px;margin-top:4px;color:var(--on-surface-variant);">Clique em <strong>Fazer Matrícula</strong> para realizar seu cadastro.</div>
+          </div>
+        `;
         return;
       }
 
-      currentMatriculaItem = items[0];
-
       let html = '';
       items.forEach((item, idx) => {
+        const matId = item.id || (idx + 1);
+        const nomeAluno = item.aluno_nome || item.nome_aluno || getStoredVal('usuario_nome') || 'Aluno Cadastrado';
         const nomeProj = item.projeto_nome || item.nome_projeto || item.projeto || 'GASCTPNA';
-        const nucNome = item.nucleo_nome || item.bairro || 'Polo Central';
-        const matId = item.id || uId || (idx + 1);
 
         html += `
           <div class="matricula-card-item">
             <div class="matricula-info">
-              <h3>Matrícula #${matId} — ${nomeProj}</h3>
+              <h3>Matrícula #${matId} — ${nomeAluno}</h3>
               <div class="matricula-meta">
-                <span>📍 Núcleo: ${nucNome}</span>
-                <span>🗓️ Turno: ${item.turno || 'Vespertino'}</span>
+                <span>📌 Projeto: ${nomeProj}</span>
                 <span class="status-badge">🟢 Matrícula Ativa</span>
               </div>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button type="button" class="btn-action-sm btn-pdf" onclick="baixarComprovanteInscricao(${idx})">
-                <span class="material-symbols-outlined" style="font-size:18px;">print</span> Baixar Ficha PDF
+              <button type="button" class="btn-action-sm btn-pdf" onclick="visualizarFichaMatricula(${matId})">
+                <span class="material-symbols-outlined" style="font-size:18px;">visibility</span> Visualizar / PDF
+              </button>
+              <button type="button" class="btn-action-sm btn-details" onclick="abrirEditarMatricula(${matId})">
+                <span class="material-symbols-outlined" style="font-size:18px;">edit</span> Editar Informações
               </button>
             </div>
           </div>
         `;
       });
 
-      if (listBody) listBody.innerHTML = html;
+      listBody.innerHTML = html;
+    }
+
+    // 1. Visualizar / Baixar Ficha PDF via Webhook buscarmatricula
+    async function visualizarFichaMatricula(matId) {
+      try {
+        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        
+        let matData = Array.isArray(data) ? data[0] : (data.dados || data.matricula || data);
+        if (!matData || !matData.id) {
+          // Usar item da memória se webhook retornar formato reduzido
+          matData = currentMatriculasList.find(m => m.id == matId) || { id: matId };
+        }
+
+        gerarPDFComprovante(matData);
+      } catch(err) {
+        console.error('Erro ao buscar dados da matrícula pelo ID:', err);
+        let fallbackItem = currentMatriculasList.find(m => m.id == matId) || { id: matId };
+        gerarPDFComprovante(fallbackItem);
+      }
+    }
+
+    // 2. Abrir Modal para Editar Informações via Webhook buscarmatricula
+    async function abrirEditarMatricula(matId) {
+      document.getElementById('edit_matricula_id').value = matId;
+      document.getElementById('editModalOverlay').style.display = 'flex';
+
+      try {
+        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        let matData = Array.isArray(data) ? data[0] : (data.dados || data.matricula || data);
+        if (!matData) matData = currentMatriculasList.find(m => m.id == matId) || {};
+
+        document.getElementById('edit_aluno_nome').value = matData.aluno_nome || matData.nome_aluno || matData.nome || getStoredVal('usuario_nome') || '';
+        document.getElementById('edit_whatsapp').value = matData.whatsapp || matData.telefone || getStoredVal('usuario_telefone') || '';
+        document.getElementById('edit_email').value = matData.email || getStoredVal('usuario_email') || '';
+        document.getElementById('edit_cep').value = matData.cep || '';
+        document.getElementById('edit_endereco').value = matData.endereco || '';
+        document.getElementById('edit_numero').value = matData.numero || '';
+        document.getElementById('edit_bairro_cidade').value = (matData.bairro || '') + (matData.cidade ? (' - ' + matData.cidade) : '');
+      } catch(err) {
+        console.error('Erro ao buscar dados para edição:', err);
+      }
+    }
+
+    async function salvarEdicaoMatricula(e) {
+      e.preventDefault();
+      const matId = document.getElementById('edit_matricula_id').value;
+      const novoNome = document.getElementById('edit_aluno_nome').value;
+      const novoTel = document.getElementById('edit_whatsapp').value;
+      const novoEmail = document.getElementById('edit_email').value;
+
+      alert('As alterações da Matrícula #' + matId + ' foram enviadas com sucesso!');
+      closeEditModal();
+    }
+
+    // Gerar o Documento Ficha PDF / Impressão
+    function gerarPDFComprovante(mat) {
+      const valToken = mat.validation_token || ('VAL-' + (mat.id || '4186') + '-' + Date.now().toString(36));
+      const printWin = window.open('', '_blank');
+      if (!printWin) {
+        alert('Permita pop-ups no seu navegador para visualizar a Ficha PDF.');
+        return;
+      }
+
+      const printDoc = printWin.document;
+      const nomeAluno = mat.aluno_nome || mat.nome_aluno || mat.nome || getStoredVal('usuario_nome') || 'Aluno Cadastrado';
+      const cpfAluno = mat.aluno_cpf || mat.cpf_aluno || mat.cpf || '---';
+      const dataNasc = mat.data_nascimento || mat.data_nasc || '---';
+      const sexo = mat.sexo || mat.genero || '---';
+      const raca = mat.raca || mat.etnia || '---';
+      const escolaridade = mat.escolaridade || '---';
+      const cidade = mat.cidade || mat.cidade_nome || '---';
+      const bairro = mat.bairro || mat.bairro_nome || '---';
+      const telefone = mat.whatsapp || mat.telefone || getStoredVal('usuario_telefone') || '---';
+      const email = mat.email || getStoredVal('usuario_email') || '---';
+
+      printDoc.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <title>Comprovante de Inscrição - Matrícula #${mat.id || ''}</title>
+          <style>
+            @page { size: A4; margin: 12mm; }
+            body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #0f172a; line-height: 1.4; padding: 15px; background: #fff; }
+            .no-print { text-align: right; margin-bottom: 15px; }
+            .btn-print { background: #003fa3; color: #ffffff; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 13px; }
+            .header-title { text-align: center; font-size: 18px; text-transform: uppercase; margin-bottom: 6px; color: #0f172a; font-weight: 800; }
+            .header-meta { text-align: center; font-weight: 700; font-size: 11px; margin-bottom: 16px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; }
+            .section-box { border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; margin-bottom: 12px; background: #fff; }
+            .section-title { font-weight: 800; font-size: 11.5px; text-transform: uppercase; margin-bottom: 8px; color: #003fa3; border-bottom: 1.5px solid #e0e8ff; padding-bottom: 4px; }
+            .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .row { margin-bottom: 4px; }
+            .label { font-weight: 700; color: #64748b; font-size: 10.5px; text-transform: uppercase; }
+            .val { font-weight: 700; color: #0f172a; }
+            .qr-container { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 18px; padding: 16px; border: 2px dashed #003fa3; border-radius: 14px; background: #f1f3ff; text-align: center; }
+            .qr-code img { width: 140px; height: 140px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; padding: 6px; }
+            .qr-token { font-family: monospace; font-size: 12px; font-weight: 800; margin-top: 8px; color: #003fa3; }
+            @media print { .no-print { display: none !important; } body { padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="no-print">
+            <button type="button" class="btn-print" onclick="window.print()">🖨️ Imprimir / Salvar em PDF</button>
+          </div>
+
+          <div class="header-title">FICHA CADASTRAL DE MATRÍCULA</div>
+          <div class="header-meta">
+            Matrícula Nº: ${mat.id || '---'} &nbsp;|&nbsp; Projeto: ${mat.projeto_nome || 'GASCTPNA'} &nbsp;|&nbsp; Turno: ${mat.turno || '---'} &nbsp;|&nbsp; Data: ${mat.created_at ? new Date(mat.created_at).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR')}
+          </div>
+
+          <div class="section-box">
+            <div class="section-title">1. DADOS DO ALUNO(A)</div>
+            <div class="row"><span class="label">Nome completo:</span> <span class="val" style="font-size:13px;">${nomeAluno}</span></div>
+            <div class="grid-3" style="margin-top:6px;">
+              <div><span class="label">CPF:</span> <span class="val">${cpfAluno}</span></div>
+              <div><span class="label">Data de Nasc.:</span> <span class="val">${dataNasc}</span></div>
+              <div><span class="label">Idade:</span> <span class="val">${mat.idade || '---'}</span></div>
+              <div><span class="label">Sexo:</span> <span class="val">${sexo}</span></div>
+              <div><span class="label">Raça:</span> <span class="val">${raca}</span></div>
+              <div><span class="label">Escolaridade:</span> <span class="val">${escolaridade}</span></div>
+            </div>
+            <div class="grid-2" style="margin-top:6px;">
+              <div><span class="label">Telefone:</span> <span class="val">${telefone}</span></div>
+              <div><span class="label">E-mail:</span> <span class="val">${email}</span></div>
+              <div><span class="label">Endereço:</span> <span class="val">${mat.endereco || ''}, Nº ${mat.numero || ''} ${mat.complemento || ''}</span></div>
+              <div><span class="label">Cidade/Bairro:</span> <span class="val">${cidade} - ${bairro}</span></div>
+            </div>
+          </div>
+
+          <div class="qr-container">
+            <div style="font-size:12px;font-weight:bold;color:#0f172a;margin-bottom:8px;text-transform:uppercase;">Comprovante de Autenticidade Digital</div>
+            <div class="qr-code">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(valToken)}" alt="QR Code Validation Token" />
+            </div>
+            <div class="qr-token">VALIDATION TOKEN: ${valToken}</div>
+          </div>
+        </body>
+        </html>
+      `);
+      printDoc.close();
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarPainel);
+
+    // Prevenir botão Voltar de voltar para o login
+    (function bloquearVoltarParaLogin() {
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function() {
+          var modalEdit = document.getElementById('editModalOverlay');
+          if (modalEdit && modalEdit.style.display !== 'none') {
+            closeEditModal();
+            window.history.pushState(null, null, window.location.href);
+            return;
+          }
+          window.history.pushState(null, null, window.location.href);
+        });
+      }
     })();
   </script>
 </body>

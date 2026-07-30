@@ -470,9 +470,9 @@
       <h1 id="display-welcome-title">Olá, Participante!</h1>
       <p>Bem-vindo(a) ao seu Painel do Aluno GASCTPNA</p>
 
-      <div style="margin-top:16px;display:inline-flex;flex-direction:column;align-items:center;background:#ffffff;border:1px solid var(--outline-variant);border-radius:18px;padding:12px 20px;box-shadow:0 4px 14px rgba(0,26,65,0.03);">
-        <img src="logo_gasctpna.jpg" onerror="this.src='logo_integra.png';" style="height:44px;border-radius:6px;margin-bottom:6px;">
-        <div style="font-size:12px;font-weight:800;color:var(--on-surface);letter-spacing:0.04em;">GASCTPNA</div>
+      <div style="margin-top:14px;display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--outline-variant);border-radius:14px;padding:10px 18px;box-shadow:0 4px 14px rgba(0,26,65,0.03);">
+        <img src="logo_gasctpna.jpg" onerror="this.src='logo_integra.png';" style="height:34px;width:auto;object-fit:contain;border-radius:6px;">
+        <div style="font-size:13px;font-weight:800;color:var(--on-surface);letter-spacing:0.03em;">GASCTPNA</div>
       </div>
     </section>
 
@@ -634,66 +634,128 @@
     async function buscarEMostrarMatricula() {
       const resultsContainer = document.getElementById('results-container');
       const listBody = document.getElementById('matriculas-list-body');
-      if (resultsContainer) resultsContainer.style.display = 'block';
-      if (listBody) listBody.innerHTML = '<div style="text-align:center;padding:24px;color:var(--on-surface-variant);font-weight:600;">⏳ Carregando suas matrículas...</div>';
 
-      const email = getStoredVal('usuario_email') || getStoredVal('email_conta');
-      const telefone = getStoredVal('usuario_telefone');
-      const cpf = getStoredVal('usuario_cpf');
+      let items = [];
 
+      // 1. Tentar ler as matrículas armazenadas localmente na sessão do login
       try {
-        let queryParams = [];
-        if (email) queryParams.push(`email=${encodeURIComponent(email)}`);
-        if (telefone) queryParams.push(`telefone=${encodeURIComponent(telefone)}`);
-        if (cpf) queryParams.push(`cpf=${encodeURIComponent(cpf)}`);
-
-        const url = 'https://w.ibrase.com.br/webhook/consultarmatriculasaluno?' + queryParams.join('&');
-        const resp = await fetch(url);
-        const data = await resp.json();
-
-        let items = Array.isArray(data) ? data : (data.matriculas || data.dados || []);
-        if (items.length === 0) {
-          listBody.innerHTML = '<div style="text-align:center;padding:32px;color:var(--on-surface-variant);font-weight:600;">Nenhuma matrícula ativa encontrada para este usuário.</div>';
-          return;
+        const rawDados = getStoredVal('usuario_dados');
+        if (rawDados) {
+          let parsed = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
+          if (Array.isArray(parsed)) {
+            // Suporte ao formato: [{"email":"...","matriculas":[{...},{...}]}]
+            if (parsed[0] && Array.isArray(parsed[0].matriculas)) {
+              items = parsed[0].matriculas;
+            } else if (parsed[0] && Array.isArray(parsed[0].projetos_inscritos)) {
+              items = parsed[0].projetos_inscritos;
+            } else {
+              items = parsed;
+            }
+          } else if (parsed && typeof parsed === 'object') {
+            if (Array.isArray(parsed.matriculas)) items = parsed.matriculas;
+            else if (Array.isArray(parsed.projetos_inscritos)) items = parsed.projetos_inscritos;
+            else if (parsed.id) items = [parsed];
+          }
         }
+      } catch(e) {
+        console.warn('Erro ao processar usuario_dados local:', e);
+      }
 
-        currentMatriculasList = items;
-        currentMatriculaItem = items[0];
+      // 2. Se não houver matrículas salvas na sessão local, consultar o webhook
+      if (items.length === 0) {
+        const email = getStoredVal('usuario_email') || getStoredVal('email_conta');
+        const telefone = getStoredVal('usuario_telefone');
+        const cpf = getStoredVal('usuario_cpf');
 
-        let html = '';
-        items.forEach((item, idx) => {
-          const nomeProj = item.projeto_nome || item.projeto || 'Projeto Esportivo';
-          const nucNome = item.nucleo_nome || item.bairro || 'Polo Central';
-          const matId = item.id || (idx + 1);
+        if (email || telefone || cpf) {
+          try {
+            let queryParams = [];
+            if (email) queryParams.push('email=' + encodeURIComponent(email));
+            if (telefone) queryParams.push('telefone=' + encodeURIComponent(telefone));
+            if (cpf) queryParams.push('cpf=' + encodeURIComponent(cpf));
 
-          html += `
-            <div class="matricula-card-item">
-              <div class="matricula-info">
-                <h3>Matrícula #${matId} — ${nomeProj}</h3>
-                <div class="matricula-meta">
-                  <span>📍 Núcleo: ${nucNome}</span>
-                  <span>🗓️ Turno: ${item.turno || 'Vespertino'}</span>
-                  <span class="status-badge">🟢 Matrícula Ativa</span>
-                </div>
-              </div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button type="button" class="btn-action-sm btn-pdf" onclick="baixarComprovanteInscricao(${idx})">
-                  <span class="material-symbols-outlined" style="font-size:18px;">print</span> Baixar Ficha PDF
-                </button>
+            const url = 'https://w.ibrase.com.br/webhook/consultarmatriculasaluno?' + queryParams.join('&');
+            const resp = await fetch(url);
+            if (resp.ok) {
+              const data = await resp.json();
+              let fetched = Array.isArray(data) ? data : (data.matriculas || data.dados || []);
+              if (Array.isArray(fetched) && fetched.length > 0) {
+                items = fetched;
+              }
+            }
+          } catch(err) {
+            console.warn('Erro ao consultar webhook de matrículas:', err);
+          }
+        }
+      }
+
+      currentMatriculasList = items;
+
+      // 3. Se NÃO possuir matrículas cadastradas: Esconde o bloco para não poluir a tela
+      if (items.length === 0) {
+        if (resultsContainer) resultsContainer.style.display = 'none';
+        return;
+      }
+
+      // 4. Se possuir 1 ou mais matrículas: Exibe a lista com os botões de PDF
+      currentMatriculaItem = items[0];
+      if (resultsContainer) resultsContainer.style.display = 'block';
+
+      let html = '';
+      items.forEach((item, idx) => {
+        const nomeProj = item.projeto_nome || item.nome_projeto || item.projeto || 'GASCTPNA';
+        const nucNome = item.nucleo_nome || item.bairro || 'Polo Central';
+        const matId = item.id || (idx + 1);
+
+        html += `
+          <div class="matricula-card-item">
+            <div class="matricula-info">
+              <h3>Matrícula #${matId} — ${nomeProj}</h3>
+              <div class="matricula-meta">
+                <span>📍 Núcleo: ${nucNome}</span>
+                <span>🗓️ Turno: ${item.turno || 'Vespertino'}</span>
+                <span class="status-badge">🟢 Matrícula Ativa</span>
               </div>
             </div>
-          `;
-        });
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button type="button" class="btn-action-sm btn-pdf" onclick="baixarComprovanteInscricao(${idx})">
+                <span class="material-symbols-outlined" style="font-size:18px;">print</span> Baixar Ficha PDF
+              </button>
+            </div>
+          </div>
+        `;
+      });
 
-        listBody.innerHTML = html;
-      } catch (err) {
-        console.error('Erro ao buscar matrículas:', err);
-        listBody.innerHTML = '<div style="text-align:center;padding:24px;color:#ba1a1a;font-weight:600;">Não foi possível carregar as matrículas. Tente novamente.</div>';
-      }
+      if (listBody) listBody.innerHTML = html;
     }
 
     function carregarPainel() {
-      const uNome = getStoredVal('usuario_primeiro_nome') || getStoredVal('usuario_nome') || 'Participante';
+      let rawNome = getStoredVal('usuario_nome') || getStoredVal('usuario_primeiro_nome') || '';
+      if (rawNome.includes('{{') || rawNome.includes('json') || rawNome.includes('$')) rawNome = '';
+      
+      let uNome = rawNome ? rawNome.split(' ')[0] : '';
+      if (uNome) uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
+
+      // Tentar pegar o nome de usuario_dados se ainda for nulo
+      if (!uNome) {
+        try {
+          const rawDados = getStoredVal('usuario_dados');
+          if (rawDados) {
+            let p = JSON.parse(rawDados);
+            if (Array.isArray(p)) p = p[0] || {};
+            if (p.matriculas && p.matriculas[0]) {
+              let full = p.matriculas[0].aluno_nome || p.matriculas[0].nome_aluno || '';
+              if (full) {
+                uNome = full.split(' ')[0];
+                uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
+              }
+            }
+          }
+        } catch(e){}
+      }
+
+      if (!uNome) uNome = 'Participante';
+
       const elWelcome = document.getElementById('display-welcome-title');
       const elTopName = document.getElementById('display-topbar-name');
       const elAvatar = document.getElementById('display-avatar-icon');

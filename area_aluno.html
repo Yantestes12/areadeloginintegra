@@ -448,8 +448,10 @@
   <!-- Top Navbar Header -->
   <header class="header-bar">
     <a href="area_aluno.html" class="brand-logo">
-      <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA">
-      <span class="brand-title">Integra</span>
+      <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA" style="height:36px;">
+      <span style="font-size:16px;color:#94a3b8;font-weight:700;">×</span>
+      <img src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="GASCTPNA" style="height:36px;border-radius:6px;">
+      <span class="brand-title" style="margin-left:4px;">Integra</span>
     </a>
     <div class="header-right">
       <div class="user-profile-btn" onclick="openAvatarModal()">
@@ -466,9 +468,15 @@
   <!-- Main Container -->
   <main class="main-wrapper">
     <!-- Greeting Header -->
-    <section class="greeting-section">
-      <h1 id="display-welcome-title">Olá, Participante!</h1>
-      <p>O que você gostaria de fazer hoje?</p>
+    <section class="greeting-section" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
+      <div>
+        <h1 id="display-welcome-title">Olá, Participante!</h1>
+        <p>Bem-vindo(a) ao seu Painel do Aluno — GASCTPNA</p>
+      </div>
+      <div style="background:#ffffff;border:1px solid var(--outline-variant);border-radius:16px;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,26,65,0.03);">
+        <img src="logo_gasctpna.jpg" onerror="this.src='logo_integra.png';" style="height:32px;border-radius:4px;">
+        <div style="font-size:12px;font-weight:800;color:var(--on-surface);">GASCTPNA</div>
+      </div>
     </section>
 
     <!-- Action Cards Grid -->
@@ -487,8 +495,8 @@
         </div>
       </button>
 
-      <!-- Card Consultar Matrículas -->
-      <button class="card-action-secondary" onclick="buscarEMostrarMatricula()">
+      <!-- Card Consultar Matrículas (Visível apenas se possuir 2 ou mais matrículas) -->
+      <button class="card-action-secondary" id="btn-consultar-card" style="display:none;" onclick="buscarEMostrarMatricula(true)">
         <div class="card-icon-box-cyan">
           <span class="material-symbols-outlined" style="font-size:36px;font-variation-settings:'FILL' 1;">history_edu</span>
         </div>

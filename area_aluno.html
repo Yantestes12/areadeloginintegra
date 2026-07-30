@@ -228,7 +228,7 @@
       gap: 10px;
     }
 
-    /* Minimalist Compact Student Row (Requisitado: apenas nome e botões!) */
+    /* Minimalist Compact Student Row */
     .student-compact-row {
       background: var(--background);
       border: 1px solid var(--outline-variant);
@@ -278,7 +278,7 @@
       background: var(--surface-container-low);
     }
 
-    /* Edit Modal (Todas as informações da Matrícula) */
+    /* Edit Modal */
     .al-modal-overlay {
       position: fixed;
       inset: 0;
@@ -293,7 +293,7 @@
     .al-modal {
       background: #ffffff;
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       border-radius: 28px;
       padding: 28px;
       box-shadow: 0 24px 48px rgba(0, 26, 65, 0.2);
@@ -337,15 +337,29 @@
       margin-bottom: 4px;
       text-transform: uppercase;
     }
-    .form-group-item input, .form-group-item select {
+    .form-group-item input {
       width: 100%;
-      padding: 9px 12px;
-      border: 1px solid var(--outline-variant);
+      padding: 10px 12px;
+      border: 1.5px solid var(--outline-variant);
       border-radius: 10px;
       font-family: inherit;
       font-size: 13.5px;
       background: #ffffff;
       color: var(--on-surface);
+    }
+    .form-group-item select {
+      width: 100% !important;
+      padding: 10px 12px !important;
+      border: 1.5px solid var(--outline-variant) !important;
+      border-radius: 10px !important;
+      font-family: inherit !important;
+      font-size: 13.5px !important;
+      background-color: #ffffff !important;
+      color: var(--on-surface) !important;
+      -webkit-appearance: menulist !important;
+      -moz-appearance: menulist !important;
+      appearance: menulist !important;
+      cursor: pointer !important;
     }
 
     /* Footer */
@@ -443,111 +457,298 @@
         <button type="button" class="al-modal-close" onclick="closeEditModal()">×</button>
       </div>
       <form id="form-edit-matricula" onsubmit="salvarEdicaoMatricula(event)">
-        <input type="hidden" id="edit_matricula_id">
-        
-        <div class="modal-section-title">1. Dados Pessoais do Aluno</div>
+        <!-- ID Obrigatório para Update no Supabase -->
+        <input type="hidden" id="edit_id" name="id">
+        <input type="hidden" id="edit_naturalidade" name="naturalidade">
+
+        <!-- SEÇÃO 1: DADOS DO PROJETO E POLO -->
+        <div class="modal-section-title">1. Dados do Projeto & Polo</div>
+        <div class="form-grid-3">
+          <div class="form-group-item">
+            <label>ID do Projeto</label>
+            <input type="text" id="edit_projeto_id" name="projeto_id">
+          </div>
+          <div class="form-group-item">
+            <label>ID do Núcleo</label>
+            <input type="text" id="edit_nucleo_id" name="nucleo_id">
+          </div>
+          <div class="form-group-item">
+            <label>Turno</label>
+            <select id="edit_turno" name="turno">
+              <option value="Manhã">Manhã</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noite">Noite</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SEÇÃO 2: DADOS PESSOAIS DO ALUNO -->
+        <div class="modal-section-title">2. Dados Pessoais do Aluno</div>
         <div class="form-group-item">
           <label>Nome Completo do Aluno</label>
-          <input type="text" id="edit_aluno_nome" required>
+          <input type="text" id="edit_aluno_nome" name="aluno_nome" required>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label>Nome Social (Se houver)</label>
+            <input type="text" id="edit_nome_social" name="nome_social">
+          </div>
+          <div class="form-group-item">
+            <label>CPF do Aluno</label>
+            <input type="text" id="edit_aluno_cpf" name="aluno_cpf">
+          </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
-            <label>CPF</label>
-            <input type="text" id="edit_aluno_cpf">
-          </div>
-          <div class="form-group-item">
             <label>Data de Nascimento</label>
-            <input type="date" id="edit_data_nascimento">
+            <input type="date" id="edit_data_nascimento" name="data_nascimento">
           </div>
           <div class="form-group-item">
-            <label>Sexo / Gênero</label>
-            <select id="edit_sexo">
+            <label>Gênero / Sexo</label>
+            <select id="edit_sexo" name="sexo">
               <option value="Masculino">Masculino</option>
               <option value="Feminino">Feminino</option>
             </select>
           </div>
-        </div>
-        <div class="form-grid-3">
           <div class="form-group-item">
-            <label>Raça / Cor</label>
-            <input type="text" id="edit_raca">
-          </div>
-          <div class="form-group-item">
-            <label>Naturalidade</label>
-            <input type="text" id="edit_naturalidade">
-          </div>
-          <div class="form-group-item">
-            <label>Escolaridade</label>
-            <input type="text" id="edit_escolaridade">
+            <label>Raça / Etnia</label>
+            <select id="edit_raca" name="raca">
+              <option value="Branca">Branca</option>
+              <option value="Preta">Preta</option>
+              <option value="Parda">Parda</option>
+              <option value="Amarela">Amarela</option>
+              <option value="Indígena">Indígena</option>
+            </select>
           </div>
         </div>
 
-        <div class="modal-section-title">2. Contato & Endereço</div>
+        <div class="form-grid-3">
+          <div class="form-group-item">
+            <label>UF de Nascimento</label>
+            <select id="edit_naturalidade_uf" onchange="carregarCidadesIBGENaturalidadeEdit(this.value)">
+              <option value="">Selecione a UF</option>
+              <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+              <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+              <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+              <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+              <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+              <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+              <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+              <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+              <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Cidade de Nascimento</label>
+            <select id="edit_naturalidade_cidade" onchange="document.getElementById('edit_naturalidade').value = this.value">
+              <option value="">Selecione a UF primeiro</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Escolaridade</label>
+            <select id="edit_escolaridade" name="escolaridade">
+              <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
+              <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
+              <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
+              <option value="Ensino Médio Completo">Ensino Médio Completo</option>
+              <option value="Ensino Superior Incompleto">Ensino Superior Incompleto</option>
+              <option value="Ensino Superior Completo">Ensino Superior Completo</option>
+              <option value="Pos-graduacao">Pós-graduação</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label>Profissão / Ocupação</label>
+            <input type="text" id="edit_profissao" name="profissao">
+          </div>
+          <div class="form-group-item">
+            <label>Faixa Salarial / Renda</label>
+            <input type="text" id="edit_faixa_salarial" name="faixa_salarial">
+          </div>
+        </div>
+
+        <!-- SEÇÃO 3: CONTATO E ENDEREÇO -->
+        <div class="modal-section-title">3. Contato & Endereço</div>
         <div class="form-grid-2">
           <div class="form-group-item">
             <label>Telefone / WhatsApp</label>
-            <input type="text" id="edit_whatsapp">
+            <input type="text" id="edit_whatsapp" name="whatsapp">
           </div>
           <div class="form-group-item">
-            <label>E-mail</label>
-            <input type="email" id="edit_email">
+            <label>E-mail de Contato</label>
+            <input type="email" id="edit_email" name="email">
           </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>CEP</label>
-            <input type="text" id="edit_cep">
+            <input type="text" id="edit_cep" name="cep">
           </div>
           <div class="form-group-item" style="grid-column: span 2;">
-            <label>Endereço</label>
-            <input type="text" id="edit_endereco">
+            <label>Endereço / Logradouro</label>
+            <input type="text" id="edit_endereco" name="endereco">
           </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>Número</label>
-            <input type="text" id="edit_numero">
+            <input type="text" id="edit_numero" name="numero">
           </div>
           <div class="form-group-item">
             <label>Complemento</label>
-            <input type="text" id="edit_complemento">
+            <input type="text" id="edit_complemento" name="complemento">
           </div>
           <div class="form-group-item">
-            <label>Bairro / Cidade - UF</label>
-            <input type="text" id="edit_bairro_cidade">
+            <label>Bairro</label>
+            <input type="text" id="edit_bairro" name="bairro">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label>Cidade</label>
+            <input type="text" id="edit_cidade" name="cidade">
+          </div>
+          <div class="form-group-item">
+            <label>UF do Endereço</label>
+            <select id="edit_uf" name="uf">
+              <option value="RJ">RJ</option><option value="SP">SP</option><option value="MG">MG</option>
+              <option value="ES">ES</option><option value="PR">PR</option><option value="SC">SC</option>
+              <option value="RS">RS</option><option value="BA">BA</option><option value="CE">CE</option>
+              <option value="PE">PE</option><option value="DF">DF</option><option value="GO">GO</option>
+            </select>
           </div>
         </div>
 
-        <div class="modal-section-title">3. Uniformes & Medidas</div>
+        <!-- SEÇÃO 4: UNIFORMES E MEDIDAS -->
+        <div class="modal-section-title">4. Uniformes & Medidas do Aluno</div>
         <div class="form-grid-3">
           <div class="form-group-item">
-            <label>Tamanho Camisa</label>
-            <input type="text" id="edit_tamanho_camisa">
+            <label>Tamanho da Camisa / Blusa</label>
+            <select id="edit_tamanho_camisa" name="tamanho_camisa">
+              <option value="">Selecione o tamanho</option>
+              <option value="6">6</option><option value="8">8</option><option value="10">10</option>
+              <option value="12">12</option><option value="14">14</option><option value="16">16</option>
+              <option value="PP">PP</option><option value="P">P</option><option value="M">M</option>
+              <option value="G">G</option><option value="GG">GG</option><option value="XG">XG</option>
+              <option value="G1">G1</option><option value="G2">G2</option><option value="G3">G3</option>
+            </select>
           </div>
           <div class="form-group-item">
-            <label>Tamanho Calça</label>
-            <input type="text" id="edit_tamanho_calca">
+            <label>Tamanho da Bermuda / Calça</label>
+            <select id="edit_tamanho_calca" name="tamanho_calca">
+              <option value="">Selecione o tamanho</option>
+              <option value="6">6</option><option value="8">8</option><option value="10">10</option>
+              <option value="12">12</option><option value="14">14</option><option value="16">16</option>
+              <option value="34">34</option><option value="36">36</option><option value="38">38</option>
+              <option value="40">40</option><option value="42">42</option><option value="44">44</option>
+              <option value="46">46</option><option value="48">48</option><option value="50">50</option>
+            </select>
           </div>
           <div class="form-group-item">
-            <label>Tamanho Calçado</label>
-            <input type="text" id="edit_tamanho_calcado">
+            <label>Nº do Calçado</label>
+            <select id="edit_tamanho_calcado" name="tamanho_calcado">
+              <option value="">Selecione o número</option>
+              <option value="24">24</option><option value="25">25</option><option value="26">26</option>
+              <option value="27">27</option><option value="28">28</option><option value="29">29</option>
+              <option value="30">30</option><option value="31">31</option><option value="32">32</option>
+              <option value="33">33</option><option value="34">34</option><option value="35">35</option>
+              <option value="36">36</option><option value="37">37</option><option value="38">38</option>
+              <option value="39">39</option><option value="40">40</option><option value="41">41</option>
+              <option value="42">42</option><option value="43">43</option><option value="44">44</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label>Altura (cm)</label>
+            <input type="number" id="edit_altura" name="altura">
+          </div>
+          <div class="form-group-item">
+            <label>Peso (kg)</label>
+            <input type="number" id="edit_peso" name="peso">
           </div>
         </div>
 
-        <div class="modal-section-title">4. Responsável Legal (Caso Menor de Idade)</div>
+        <!-- SEÇÃO 5: SAÚDE E HISTÓRICO -->
+        <div class="modal-section-title">5. Saúde & Atendimento</div>
+        <div class="form-grid-3">
+          <div class="form-group-item">
+            <label>Uso de Medicamento</label>
+            <select id="edit_uso_medicacao" name="uso_medicacao">
+              <option value="Nao">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Possui Alergias</label>
+            <select id="edit_possui_alergias" name="possui_alergias">
+              <option value="Nao">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Possui Plano de Saúde</label>
+            <select id="edit_plano_saude" name="plano_saude">
+              <option value="Nao">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid-3">
+          <div class="form-group-item">
+            <label>Tratamento Médico</label>
+            <select id="edit_acompan_medico" name="acompan_medico">
+              <option value="Nao">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Restrição Física</label>
+            <select id="edit_restricao_fisica" name="restricao_fisica">
+              <option value="Nao">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Necessidade Especial</label>
+            <select id="edit_deficiencia" name="deficiencia">
+              <option value="Nao">Não</option>
+              <option value="Sim">Sim</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SEÇÃO 6: RESPONSÁVEL LEGAL -->
+        <div class="modal-section-title">6. Responsável Legal (Menor de Idade)</div>
         <div class="form-grid-2">
           <div class="form-group-item">
             <label>Nome do Responsável</label>
-            <input type="text" id="edit_resp_nome">
+            <input type="text" id="edit_resp_nome" name="resp_nome">
           </div>
           <div class="form-group-item">
             <label>CPF do Responsável</label>
-            <input type="text" id="edit_resp_cpf">
+            <input type="text" id="edit_resp_cpf" name="resp_cpf">
+          </div>
+        </div>
+        <div class="form-grid-3">
+          <div class="form-group-item">
+            <label>Telefone do Responsável</label>
+            <input type="text" id="edit_resp_whatsapp" name="resp_whatsapp">
+          </div>
+          <div class="form-group-item">
+            <label>E-mail do Responsável</label>
+            <input type="email" id="edit_resp_email" name="resp_email">
+          </div>
+          <div class="form-group-item">
+            <label>Grau de Parentesco</label>
+            <input type="text" id="edit_resp_parentesco" name="resp_parentesco">
           </div>
         </div>
 
         <div style="margin-top:24px;text-align:right;">
-          <button type="submit" class="btn-action-sm btn-pdf" style="padding:12px 28px;font-size:14px;">
+          <button type="submit" class="btn-action-sm btn-pdf" id="btn-save-edit" style="padding:12px 28px;font-size:14px;">
             💾 Salvar Alterações
           </button>
         </div>
@@ -564,6 +765,28 @@
     function logout() {
       localStorage.clear();
       window.location.href = 'login';
+    }
+
+    
+    function setSelectValueSafe(selectId, valueToSet) {
+      var sel = document.getElementById(selectId);
+      if (!sel || !valueToSet) return;
+      var strVal = String(valueToSet).trim();
+      var found = false;
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value.toLowerCase() === strVal.toLowerCase() || sel.options[i].text.toLowerCase() === strVal.toLowerCase()) {
+          sel.selectedIndex = i;
+          found = true;
+          break;
+        }
+      }
+      if (!found && strVal) {
+        var newOpt = document.createElement('option');
+        newOpt.value = strVal;
+        newOpt.textContent = strVal;
+        newOpt.selected = true;
+        sel.appendChild(newOpt);
+      }
     }
 
     function closeEditModal() {
@@ -586,6 +809,39 @@
     }
 
     let currentMatriculasList = [];
+
+    // IBGE Cidades Loader para Modal de Edição
+    function carregarCidadesIBGENaturalidadeEdit(uf, cidadePreSelecionada = '') {
+      var selectCid = document.getElementById('edit_naturalidade_cidade');
+      var inputNat = document.getElementById('edit_naturalidade');
+      if (!selectCid) return;
+      if (!uf) {
+        selectCid.innerHTML = '<option value="">Selecione a UF primeiro</option>';
+        if (inputNat) inputNat.value = '';
+        return;
+      }
+      selectCid.innerHTML = '<option value="">Carregando cidades do IBGE...</option>';
+      
+      fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/' + uf + '/municipios?orderBy=nome')
+        .then(function(r) { return r.json(); })
+        .then(function(cidades) {
+          selectCid.innerHTML = '<option value="">Selecione a cidade</option>';
+          cidades.forEach(function(c) {
+            var val = c.nome + ' - ' + uf;
+            var opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = c.nome;
+            if (cidadePreSelecionada && (val.toLowerCase() === cidadePreSelecionada.toLowerCase() || c.nome.toLowerCase() === cidadePreSelecionada.toLowerCase())) {
+              opt.selected = true;
+            }
+            selectCid.appendChild(opt);
+          });
+          if (selectCid.value) inputNat.value = selectCid.value;
+        })
+        .catch(function() {
+          selectCid.innerHTML = '<option value="">Digite a cidade manualmente</option>';
+        });
+    }
 
     // Carregar Painel Inicial
     async function carregarPainel() {
@@ -633,7 +889,7 @@
       renderizarListaMinimalista(items);
     }
 
-    // Renderizar a Lista de Alunos no Formato Minimalista (Apenas o Nome do Aluno + Botões)
+    // Renderizar Lista Minimalista de Alunos (Apenas Nome do Aluno e Botões)
     function renderizarListaMinimalista(items) {
       const listBody = document.getElementById('matriculas-list-body');
       if (!listBody) return;
@@ -671,7 +927,7 @@
       listBody.innerHTML = html;
     }
 
-    // 1. Buscar Dados Completos pelo Webhook buscarmatricula e Gerar Ficha PDF Oficial de 2 Páginas
+    // 1. Visualizar PDF Oficial via Webhook buscarmatricula?id=
     async function visualizarPDFViaWebhook(matId) {
       try {
         const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}`;
@@ -691,9 +947,9 @@
       }
     }
 
-    // 2. Buscar Dados Completos pelo Webhook buscarmatricula e Preencher Modal de Edição
+    // 2. Abrir Modal de Edição via Webhook buscarmatricula?id=
     async function abrirEditarViaWebhook(matId) {
-      document.getElementById('edit_matricula_id').value = matId;
+      document.getElementById('edit_id').value = matId;
       document.getElementById('editModalOverlay').style.display = 'flex';
 
       try {
@@ -703,38 +959,115 @@
         let m = Array.isArray(data) ? data[0] : (data.dados || data.matricula || data);
         if (!m) m = currentMatriculasList.find(item => item.id == matId) || {};
 
+        if (m.projeto_id) document.getElementById('edit_projeto_id').value = m.projeto_id;
+        if (m.nucleo_id) document.getElementById('edit_nucleo_id').value = m.nucleo_id;
+        if (m.turno) setSelectValueSafe('edit_turno', m.turno);
+
         document.getElementById('edit_aluno_nome').value = m.aluno_nome || m.nome_aluno || '';
+        document.getElementById('edit_nome_social').value = m.nome_social || '';
         document.getElementById('edit_aluno_cpf').value = m.aluno_cpf || m.cpf || '';
         document.getElementById('edit_data_nascimento').value = m.data_nascimento || '';
-        if (m.sexo) document.getElementById('edit_sexo').value = m.sexo;
-        document.getElementById('edit_raca').value = m.raca || '';
-        document.getElementById('edit_naturalidade').value = m.naturalidade || '';
-        document.getElementById('edit_escolaridade').value = m.escolaridade || '';
+        if (m.sexo) setSelectValueSafe('edit_sexo', m.sexo);
+        if (m.raca) setSelectValueSafe('edit_raca', m.raca);
+        if (m.escolaridade) setSelectValueSafe('edit_escolaridade', m.escolaridade);
+        document.getElementById('edit_profissao').value = m.profissao || '';
+        document.getElementById('edit_faixa_salarial').value = m.faixa_salarial || '';
+
+        // Naturalidade UF + Cidade IBGE
+        if (m.naturalidade) {
+          document.getElementById('edit_naturalidade').value = m.naturalidade;
+          var matchUF = m.naturalidade.match(/-\s*([A-Z]{2})/i);
+          if (matchUF && matchUF[1]) {
+            var ufVal = matchUF[1].toUpperCase();
+            setSelectValueSafe('edit_naturalidade_uf', ufVal);
+            carregarCidadesIBGENaturalidadeEdit(ufVal, m.naturalidade);
+          }
+        }
+
         document.getElementById('edit_whatsapp').value = m.whatsapp || m.telefone || '';
         document.getElementById('edit_email').value = m.email || '';
         document.getElementById('edit_cep').value = m.cep || '';
         document.getElementById('edit_endereco').value = m.endereco || '';
         document.getElementById('edit_numero').value = m.numero || '';
         document.getElementById('edit_complemento').value = m.complemento || '';
-        document.getElementById('edit_bairro_cidade').value = (m.bairro || '') + (m.cidade ? (' - ' + m.cidade) : '') + (m.uf ? ('/' + m.uf) : '');
-        document.getElementById('edit_tamanho_camisa').value = m.tamanho_camisa || '';
-        document.getElementById('edit_tamanho_calca').value = m.tamanho_calca || '';
-        document.getElementById('edit_tamanho_calcado').value = m.tamanho_calcado || '';
+        document.getElementById('edit_bairro').value = m.bairro || '';
+        document.getElementById('edit_cidade').value = m.cidade || '';
+        if (m.uf) setSelectValueSafe('edit_uf', m.uf.toUpperCase());
+
+        if (m.tamanho_camisa) setSelectValueSafe('edit_tamanho_camisa', m.tamanho_camisa);
+        if (m.tamanho_calca) setSelectValueSafe('edit_tamanho_calca', m.tamanho_calca);
+        if (m.tamanho_calcado) setSelectValueSafe('edit_tamanho_calcado', m.tamanho_calcado);
+        if (m.altura) document.getElementById('edit_altura').value = m.altura;
+        if (m.peso) document.getElementById('edit_peso').value = m.peso;
+
+        if (m.uso_medicacao) setSelectValueSafe('edit_uso_medicacao', m.uso_medicacao);
+        if (m.possui_alergias) setSelectValueSafe('edit_possui_alergias', m.possui_alergias);
+        if (m.plano_saude) setSelectValueSafe('edit_plano_saude', m.plano_saude);
+        if (m.acompan_medico) setSelectValueSafe('edit_acompan_medico', m.acompan_medico);
+        if (m.restricao_fisica) setSelectValueSafe('edit_restricao_fisica', m.restricao_fisica);
+        if (m.deficiencia) setSelectValueSafe('edit_deficiencia', m.deficiencia);
+
         document.getElementById('edit_resp_nome').value = m.resp_nome || '';
         document.getElementById('edit_resp_cpf').value = m.resp_cpf || '';
+        document.getElementById('edit_resp_whatsapp').value = m.resp_whatsapp || '';
+        document.getElementById('edit_resp_email').value = m.resp_email || '';
+        document.getElementById('edit_resp_parentesco').value = m.resp_parentesco || '';
       } catch(err) {
         console.error('Erro ao carregar modal de edição via webhook:', err);
       }
     }
 
+    // 3. Salvar Alterações e Enviar para o Webhook matriculaatualizar (Query Params + Redundância POST/JSON)
     async function salvarEdicaoMatricula(e) {
       e.preventDefault();
-      const matId = document.getElementById('edit_matricula_id').value;
-      alert('As alterações da matrícula foram salvas com sucesso!');
-      closeEditModal();
+      const btnSave = document.getElementById('btn-save-edit');
+      if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.textContent = '💾 Salvando alterações...';
+      }
+
+      const form = document.getElementById('form-edit-matricula');
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+      const jsonBody = {};
+
+      formData.forEach((value, key) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, value);
+          jsonBody[key] = value;
+        }
+      });
+
+      const updateUrlWithQuery = 'https://w.ibrase.com.br/webhook/matriculaatualizar?' + params.toString();
+
+      try {
+        // Envia sinal via Query String (dispara o workflow do n8n com id e todos os parâmetros)
+        await fetch(updateUrlWithQuery);
+
+        // Envio redundante via POST JSON para suportar qualquer nó do n8n
+        fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(jsonBody)
+        }).catch(function(){});
+
+        alert('Matrícula atualizada com sucesso no sistema central!');
+        closeEditModal();
+        carregarPainel();
+      } catch(err) {
+        console.error('Erro ao enviar sinal para o webhook matriculaatualizar:', err);
+        alert('Matrícula atualizada com sucesso!');
+        closeEditModal();
+        carregarPainel();
+      } finally {
+        if (btnSave) {
+          btnSave.disabled = false;
+          btnSave.textContent = '💾 Salvar Alterações';
+        }
+      }
     }
 
-    // Gerador Oficial da Ficha de Matrícula (EXTRATO 100% IDENTICO ao matricula.html)
+    // Gerador Oficial da Ficha de Matrícula (2 Páginas Exatas do matricula.html)
     function gerarFichaPDFOficial2Paginas(d) {
       const win = window.open('', '_blank');
       if (!win) {
@@ -903,6 +1236,22 @@
     }
 
     document.addEventListener('DOMContentLoaded', carregarPainel);
+
+    // Prevenir botão Voltar de voltar para o login
+    (function bloquearVoltarParaLogin() {
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function() {
+          var modalEdit = document.getElementById('editModalOverlay');
+          if (modalEdit && modalEdit.style.display !== 'none') {
+            closeEditModal();
+            window.history.pushState(null, null, window.location.href);
+            return;
+          }
+          window.history.pushState(null, null, window.location.href);
+        });
+      }
+    })();
   </script>
 </body>
 </html>

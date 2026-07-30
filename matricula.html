@@ -3494,11 +3494,21 @@ window.dadosRecentesCPF = null;
             list.innerHTML='';
             selectedFiles.forEach(function(f,i){
                 var chip=document.createElement('div'); chip.className='file-chip'; chip.setAttribute('role','listitem');
-                chip.innerHTML='<span title="'+f.name+'">'+f.name+'</span>'+
-                    '<button type="button" aria-label="Remover '+f.name+'">×</button>';
-                chip.querySelector('button').addEventListener('click',function(){
+
+                var span = document.createElement('span');
+                span.title = f.name;
+                span.textContent = f.name;
+
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.setAttribute('aria-label', 'Remover ' + f.name);
+                button.textContent = '×';
+                button.addEventListener('click',function(){
                     selectedFiles.splice(i,1); renderList(); syncRealInputs();
                 });
+
+                chip.appendChild(span);
+                chip.appendChild(button);
                 list.appendChild(chip);
             });
             syncRealInputs();

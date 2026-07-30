@@ -448,13 +448,11 @@
   <!-- Top Navbar Header -->
   <header class="header-bar">
     <a href="area_aluno.html" class="brand-logo">
-      <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA" style="height:36px;">
-      <span style="font-size:16px;color:#94a3b8;font-weight:700;">×</span>
-      <img src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="GASCTPNA" style="height:36px;border-radius:6px;">
-      <span class="brand-title" style="margin-left:4px;">Integra</span>
+      <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA" style="height:38px;">
+      <span class="brand-title" style="margin-left:6px;">Integra</span>
     </a>
     <div class="header-right">
-      <div class="user-profile-btn" onclick="openAvatarModal()">
+      <div class="user-profile-btn" >
         <div class="user-details">
           <div class="user-name" id="display-topbar-name">Aluno Cadastrado</div>
           <div class="user-sub">Painel do Aluno</div>
@@ -468,21 +466,20 @@
   <!-- Main Container -->
   <main class="main-wrapper">
     <!-- Greeting Header -->
-    <section class="greeting-section" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;">
-      <div>
-        <h1 id="display-welcome-title">Olá, Participante!</h1>
-        <p>Bem-vindo(a) ao seu Painel do Aluno — GASCTPNA</p>
-      </div>
-      <div style="background:#ffffff;border:1px solid var(--outline-variant);border-radius:16px;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,26,65,0.03);">
-        <img src="logo_gasctpna.jpg" onerror="this.src='logo_integra.png';" style="height:32px;border-radius:4px;">
-        <div style="font-size:12px;font-weight:800;color:var(--on-surface);">GASCTPNA</div>
+    <section class="greeting-section">
+      <h1 id="display-welcome-title">Olá, Participante!</h1>
+      <p>Bem-vindo(a) ao seu Painel do Aluno GASCTPNA</p>
+
+      <div style="margin-top:16px;display:inline-flex;flex-direction:column;align-items:center;background:#ffffff;border:1px solid var(--outline-variant);border-radius:18px;padding:12px 20px;box-shadow:0 4px 14px rgba(0,26,65,0.03);">
+        <img src="logo_gasctpna.jpg" onerror="this.src='logo_integra.png';" style="height:44px;border-radius:6px;margin-bottom:6px;">
+        <div style="font-size:12px;font-weight:800;color:var(--on-surface);letter-spacing:0.04em;">GASCTPNA</div>
       </div>
     </section>
 
-    <!-- Action Cards Grid -->
-    <section class="cards-grid">
+    <!-- Action Card -->
+    <section>
       <!-- Card Fazer Matrícula -->
-      <button class="card-action-primary" onclick="window.location.href='matricula.html'">
+      <button class="card-action-primary" onclick="window.location.href='matricula.html'" style="width:100%;">
         <div class="card-icon-box-white">
           <span class="material-symbols-outlined" style="font-size:36px;font-variation-settings:'FILL' 1;">rocket_launch</span>
         </div>
@@ -491,20 +488,6 @@
           <div class="card-action-label">
             <span>Iniciar Novo Processo</span>
             <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
-          </div>
-        </div>
-      </button>
-
-      <!-- Card Consultar Matrículas (Visível apenas se possuir 2 ou mais matrículas) -->
-      <button class="card-action-secondary" id="btn-consultar-card" style="display:none;" onclick="buscarEMostrarMatricula(true)">
-        <div class="card-icon-box-cyan">
-          <span class="material-symbols-outlined" style="font-size:36px;font-variation-settings:'FILL' 1;">history_edu</span>
-        </div>
-        <div>
-          <h2 class="card-title-lg">Consultar Matrículas</h2>
-          <div class="card-action-label" style="color:var(--primary);">
-            <span>Ver Histórico e Ficha PDF</span>
-            <span class="material-symbols-outlined" style="font-size:18px;">east</span>
           </div>
         </div>
       </button>
@@ -522,29 +505,7 @@
     </section>
   </main>
 
-  <!-- Modal Instalar App INTEGRA -->
-  <div class="al-modal-overlay" id="avatarModalOverlay" onclick="closeAvatarModal()" style="display:none">
-    <div class="al-modal" onclick="event.stopPropagation()" style="max-width:440px;text-align:center;">
-      <div class="al-modal-header" style="justify-content:center;position:relative;">
-        <strong style="font-size:18px;color:var(--primary);display:flex;align-items:center;gap:8px;">
-          <img src="logo_integra_simbolo.gif" onerror="this.src='logo_integra.png';" style="height:26px;border-radius:4px;">
-          Instalar App INTEGRA
-        </strong>
-        <button type="button" class="al-modal-close" onclick="closeAvatarModal()" style="position:absolute;right:0;">×</button>
-      </div>
-      <div class="al-modal-body" style="padding:10px 4px;">
-        <p style="font-size:13.5px;color:var(--on-surface-variant);margin-bottom:16px;line-height:1.4;">
-          Instale o aplicativo da <strong>Plataforma INTEGRA</strong> na tela inicial do seu celular para acessar suas matrículas com 1 clique!
-        </p>
-        <div id="pwa-install-container"></div>
-        <div style="margin-top:18px;">
-          <button type="button" class="al-btn-tb" id="btn-pwa-trigger" onclick="dispararInstalacaoPWA()" style="width:100%;font-size:15px;padding:12px 18px;">
-            📲 Instalar Aplicativo no Celular
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Modal Ficha de Dados do Aluno -->
   <div class="al-modal-overlay" id="dadosModalOverlay" onclick="closeDadosModal()" style="display:none">
@@ -569,7 +530,7 @@
   <script>
     if (window.lucide) { lucide.createIcons(); }
 
-    function openAvatarModal() {
+    function openAvatarModal_disabled() {
       var overlay = document.getElementById('avatarModalOverlay');
       var container = document.getElementById('pwa-install-container');
       var btnTrigger = document.getElementById('btn-pwa-trigger');
@@ -624,7 +585,7 @@
       deferredPrompt = e;
     });
 
-    function dispararInstalacaoPWA() {
+    function dispararInstalacaoPWA_disabled() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then(function(choiceResult) {
@@ -845,11 +806,7 @@
           var modalAvatar = document.getElementById('avatarModalOverlay');
           var modalDados = document.getElementById('dadosModalOverlay');
           
-          if (modalAvatar && modalAvatar.style.display !== 'none') {
-            closeAvatarModal();
-            window.history.pushState(null, null, window.location.href);
-            return;
-          }
+
           if (modalDados && modalDados.style.display !== 'none') {
             closeDadosModal();
             window.history.pushState(null, null, window.location.href);

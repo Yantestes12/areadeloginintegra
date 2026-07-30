@@ -977,6 +977,9 @@
       }
     }
 
+    // Global variable to store full record returned by buscarmatricula
+    let currentEditingRecord = {};
+
     // 2. Abrir Modal de Edição via Webhook buscarmatricula?id=
     async function abrirEditarViaWebhook(matId) {
       document.getElementById('edit_id').value = matId;
@@ -989,13 +992,16 @@
         let m = Array.isArray(data) ? data[0] : (data.dados || data.matricula || data);
         if (!m) m = currentMatriculasList.find(item => item.id == matId) || {};
 
+        // Guardar registro completo na memória para NADA ser perdido no update
+        currentEditingRecord = Object.assign({}, m);
+
         if (m.projeto_id) document.getElementById('edit_projeto_id').value = m.projeto_id;
         if (m.nucleo_id) document.getElementById('edit_nucleo_id').value = m.nucleo_id;
         if (m.turno) setSelectValueSafe('edit_turno', m.turno);
 
-        document.getElementById('edit_aluno_nome').value = m.aluno_nome || m.nome_aluno || '';
+        document.getElementById('edit_aluno_nome').value = m.aluno_nome || m.nome_aluno || m.nome || '';
         document.getElementById('edit_nome_social').value = m.nome_social || '';
-        document.getElementById('edit_aluno_cpf').value = m.aluno_cpf || m.cpf || '';
+        document.getElementById('edit_aluno_cpf').value = m.aluno_cpf || m.cpf || m.cpf_aluno || '';
         document.getElementById('edit_data_nascimento').value = m.data_nascimento || '';
         if (m.sexo) setSelectValueSafe('edit_sexo', m.sexo);
         if (m.raca) setSelectValueSafe('edit_raca', m.raca);
@@ -1082,18 +1088,31 @@
 
       const form = document.getElementById('form-edit-matricula');
       const formData = new FormData(form);
-      const params = new URLSearchParams();
-      const jsonBody = {};
+
+      // Mesclar todos os dados originais buscados no webhook com as alterações do formulário
+      const fullPayload = Object.assign({}, currentEditingRecord || {});
 
       formData.forEach((value, key) => {
-        if (value !== undefined && value !== null) {
-          params.append(key, value);
-          jsonBody[key] = value;
+        if (value !== undefined && value !== null && value !== '') {
+          fullPayload[key] = value;
         }
       });
 
+      // Garantir compatibilidade de aliases de campos
+      if (fullPayload.aluno_cpf) fullPayload.cpf = fullPayload.aluno_cpf;
+      if (fullPayload.cpf && !fullPayload.aluno_cpf) fullPayload.aluno_cpf = fullPayload.cpf;
+      if (fullPayload.aluno_nome) fullPayload.nome = fullPayload.aluno_nome;
+      if (fullPayload.whatsapp) fullPayload.telefone = fullPayload.whatsapp;
+
+      const params = new URLSearchParams();
+      for (let k in fullPayload) {
+        if (fullPayload[k] !== undefined && fullPayload[k] !== null) {
+          params.append(k, fullPayload[k]);
+        }
+      }
+
       try {
-        // 1. POST Principal com Content-Type: application/x-www-form-urlencoded (Suportado nativamente pelo n8n)
+        // 1. POST Principal Form-Urlencoded com TODOS os dados
         let resp = await fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
           method: 'POST',
           headers: {
@@ -1102,19 +1121,13 @@
           body: params.toString()
         });
 
-        // 2. POST Redundante com Content-Type: application/json
+        // 2. POST Redundante JSON com TODOS os dados
         fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(jsonBody)
-        }).catch(function(){});
-
-        // 3. POST Redundante com multipart/form-data
-        fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
-          method: 'POST',
-          body: formData
+          body: JSON.stringify(fullPayload)
         }).catch(function(){});
 
         alert('Matrícula atualizada com sucesso no sistema central!');

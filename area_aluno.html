@@ -1387,10 +1387,11 @@
         return s;
       };
 
-      const numMatricula = getF(d, ['id', 'num_matricula', 'numero_matricula', 'codigo_matricula']) || '4186';
-      const projRaw = getF(d, ['projeto_nome', 'nome_projeto', 'projeto', 'projeto_titulo', 'projeto_id']) || 'GASCTPNA';
+      const numMatricula = getF(d, ['matricula', 'id', 'num_matricula', 'numero_matricula', 'codigo_matricula']) || '---';
+      const projRaw = getF(d, ['projeto_nome', 'nome_projeto', 'projeto', 'projeto_titulo']) || 'GASCTPNA';
       let proj = String(projRaw).replace(/GASCTPNA\s*[\/\-]\s*GASCTPNA/gi, 'GASCTPNA').trim();
-      if (!proj || proj.toUpperCase() === 'GASCTPNA') {
+      // Se o nome do projeto for numérico (ID puro), tratar como GASCTPNA
+      if (!proj || !isNaN(proj)) {
           proj = 'GASCTPNA';
       }
 

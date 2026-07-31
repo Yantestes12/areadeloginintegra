@@ -3690,6 +3690,27 @@ window.dadosRecentesCPF = null;
         fd.append('hora_do_aceite_aluno', horaAceiteAgora);
         fd.append('hora_aceite_coordenador', horaAceiteAgora);
 
+        // Captura obrigatória dos dados de e-mail e telefone da conta logada
+        function getStoredValueKey(k) {
+            try {
+                var v = sessionStorage.getItem(k) || localStorage.getItem(k);
+                if (v) return v;
+                var nEQ = k + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(nEQ) === 0) return decodeURIComponent(c.substring(nEQ.length));
+                }
+            } catch(e){}
+            return '';
+        }
+
+        var emContaVal = getStoredValueKey('usuario_email') || getStoredValueKey('email_conta') || rawFd.get('email_conta') || rawFd.get('email') || '';
+        var telContaVal = getStoredValueKey('usuario_telefone') || getStoredValueKey('telefone_conta') || rawFd.get('telefone_conta') || rawFd.get('whatsapp') || rawFd.get('telefone') || '';
+
+        fd.set('email_conta', emContaVal);
+        fd.set('telefone_conta', telContaVal);
+
         // Protocolo / Hash Único para as duas assinaturas
         var hashUnicoProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
         fd.append('protocolo', hashUnicoProtocolo);

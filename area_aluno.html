@@ -462,19 +462,22 @@
         <input type="hidden" id="edit_naturalidade" name="naturalidade">
 
         <!-- SEÇÃO 1: DADOS DO PROJETO E POLO -->
-        <div class="modal-section-title">1. Dados do Projeto & Polo</div>
+        <div class="modal-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>1. Dados do Projeto & Polo</span>
+          <span style="font-size:11px;font-weight:bold;color:#64748b;background:#e2e8f0;padding:2px 8px;border-radius:4px;">🔒 Somente Leitura</span>
+        </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>ID do Projeto</label>
-            <input type="text" id="edit_projeto_id" name="projeto_id">
+            <input type="text" id="edit_projeto_id" name="projeto_id" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>ID do Núcleo</label>
-            <input type="text" id="edit_nucleo_id" name="nucleo_id">
+            <input type="text" id="edit_nucleo_id" name="nucleo_id" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>Turno</label>
-            <select id="edit_turno" name="turno">
+            <select id="edit_turno" name="turno" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
               <option value="Manhã">Manhã</option>
               <option value="Tarde">Tarde</option>
               <option value="Noite">Noite</option>
@@ -485,34 +488,34 @@
         <!-- SEÇÃO 2: DADOS PESSOAIS DO ALUNO -->
         <div class="modal-section-title">2. Dados Pessoais do Aluno</div>
         <div class="form-group-item">
-          <label>Nome Completo do Aluno</label>
-          <input type="text" id="edit_aluno_nome" name="aluno_nome" required>
+          <label>Nome Completo do Aluno (Bloqueado)</label>
+          <input type="text" id="edit_aluno_nome" name="aluno_nome" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
         </div>
         <div class="form-grid-2">
           <div class="form-group-item">
-            <label>Nome Social (Se houver)</label>
-            <input type="text" id="edit_nome_social" name="nome_social">
+            <label style="color:#0284c7;font-weight:bold;">✏️ Nome Social (Editável)</label>
+            <input type="text" id="edit_nome_social" name="nome_social" placeholder="Digite o nome social se houver" style="border:1.5px solid #0284c7;background:#f0f9ff;">
           </div>
           <div class="form-group-item">
             <label>CPF do Aluno</label>
-            <input type="text" id="edit_aluno_cpf" name="aluno_cpf">
+            <input type="text" id="edit_aluno_cpf" name="aluno_cpf" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>Data de Nascimento</label>
-            <input type="date" id="edit_data_nascimento" name="data_nascimento">
+            <input type="date" id="edit_data_nascimento" name="data_nascimento" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>Gênero / Sexo</label>
-            <select id="edit_sexo" name="sexo">
+            <select id="edit_sexo" name="sexo" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
               <option value="Masculino">Masculino</option>
               <option value="Feminino">Feminino</option>
             </select>
           </div>
           <div class="form-group-item">
             <label>Raça / Etnia</label>
-            <select id="edit_raca" name="raca">
+            <select id="edit_raca" name="raca" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
               <option value="Branca">Branca</option>
               <option value="Preta">Preta</option>
               <option value="Parda">Parda</option>
@@ -525,7 +528,7 @@
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>UF de Nascimento</label>
-            <select id="edit_naturalidade_uf" onchange="carregarCidadesIBGENaturalidadeEdit(this.value)">
+            <select id="edit_naturalidade_uf" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
               <option value="">Selecione a UF</option>
               <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
               <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
@@ -540,13 +543,13 @@
           </div>
           <div class="form-group-item">
             <label>Cidade de Nascimento</label>
-            <select id="edit_naturalidade_cidade" onchange="document.getElementById('edit_naturalidade').value = this.value">
-              <option value="">Selecione a UF primeiro</option>
+            <select id="edit_naturalidade_cidade" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
+              <option value="">Naturalidade</option>
             </select>
           </div>
           <div class="form-group-item">
             <label>Escolaridade</label>
-            <select id="edit_escolaridade" name="escolaridade">
+            <select id="edit_escolaridade" name="escolaridade" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
               <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
               <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
               <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
@@ -561,58 +564,58 @@
         <div class="form-grid-2">
           <div class="form-group-item">
             <label>Profissão / Ocupação</label>
-            <input type="text" id="edit_profissao" name="profissao">
+            <input type="text" id="edit_profissao" name="profissao" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>Faixa Salarial / Renda</label>
-            <input type="text" id="edit_faixa_salarial" name="faixa_salarial">
+            <input type="text" id="edit_faixa_salarial" name="faixa_salarial" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
 
         <!-- SEÇÃO 3: CONTATO E ENDEREÇO -->
-        <div class="modal-section-title">3. Contato & Endereço</div>
+        <div class="modal-section-title">3. Contato & Endereço (Bloqueados)</div>
         <div class="form-grid-2">
           <div class="form-group-item">
             <label>Telefone / WhatsApp</label>
-            <input type="text" id="edit_whatsapp" name="whatsapp">
+            <input type="text" id="edit_whatsapp" name="whatsapp" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>E-mail de Contato</label>
-            <input type="email" id="edit_email" name="email">
+            <input type="email" id="edit_email" name="email" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>CEP</label>
-            <input type="text" id="edit_cep" name="cep">
+            <input type="text" id="edit_cep" name="cep" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item" style="grid-column: span 2;">
             <label>Endereço / Logradouro</label>
-            <input type="text" id="edit_endereco" name="endereco">
+            <input type="text" id="edit_endereco" name="endereco" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>Número</label>
-            <input type="text" id="edit_numero" name="numero">
+            <input type="text" id="edit_numero" name="numero" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>Complemento</label>
-            <input type="text" id="edit_complemento" name="complemento">
+            <input type="text" id="edit_complemento" name="complemento" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>Bairro</label>
-            <input type="text" id="edit_bairro" name="bairro">
+            <input type="text" id="edit_bairro" name="bairro" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
         <div class="form-grid-2">
           <div class="form-group-item">
             <label>Cidade</label>
-            <input type="text" id="edit_cidade" name="cidade">
+            <input type="text" id="edit_cidade" name="cidade" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>UF do Endereço</label>
-            <select id="edit_uf" name="uf">
+            <select id="edit_uf" name="uf" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
               <option value="RJ">RJ</option><option value="SP">SP</option><option value="MG">MG</option>
               <option value="ES">ES</option><option value="PR">PR</option><option value="SC">SC</option>
               <option value="RS">RS</option><option value="BA">BA</option><option value="CE">CE</option>
@@ -622,23 +625,31 @@
         </div>
 
         <!-- SEÇÃO 4: UNIFORMES E MEDIDAS -->
-        <div class="modal-section-title">4. Uniformes & Medidas do Aluno</div>
+        <div class="modal-section-title" style="display:flex;justify-content:space-between;align-items:center;background:#f0f9ff;border-color:#bae6fd;padding:6px 10px;border-radius:4px;">
+          <span style="color:#0369a1;">4. Uniformes & Medidas do Aluno</span>
+          <span style="font-size:11px;font-weight:bold;color:#0284c7;background:#e0f2fe;padding:2px 8px;border-radius:4px;">✏️ Editável</span>
+        </div>
         <div class="form-grid-3">
           <div class="form-group-item">
-            <label>Tamanho da Camisa / Blusa</label>
-            <select id="edit_tamanho_camisa" name="tamanho_camisa">
+            <label style="color:#0284c7;font-weight:bold;">Tamanho da Camisa / Blusa</label>
+            <select id="edit_tamanho_camisa" name="tamanho_camisa" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="">Selecione o tamanho</option>
-              <option value="10 ANOS">10 ANOS</option>
-              <option value="14 ANOS">14 ANOS</option>
-              <option value="M">M</option>
-              <option value="G">G</option>
-              <option value="GG">GG</option>
-              <option value="G2">G2</option>
+              <option value="10">10 (Infantil)</option>
+              <option value="14">14 (Infantil)</option>
+              <option value="PP">PP</option>
+              <option value="P">P</option>
+              <option value="M">M (Adulto)</option>
+              <option value="G">G (Adulto)</option>
+              <option value="GG">GG (Adulto)</option>
+              <option value="XG">XG</option>
+              <option value="G1">G1</option>
+              <option value="G2">G2 (Adulto)</option>
+              <option value="G3">G3</option>
             </select>
           </div>
           <div class="form-group-item">
-            <label>Tamanho da Bermuda / Calça</label>
-            <select id="edit_tamanho_calca" name="tamanho_calca">
+            <label style="color:#0284c7;font-weight:bold;">Tamanho da Bermuda / Calça</label>
+            <select id="edit_tamanho_calca" name="tamanho_calca" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="">Selecione o tamanho</option>
               <option value="6">6</option><option value="8">8</option><option value="10">10</option>
               <option value="12">12</option><option value="14">14</option><option value="16">16</option>
@@ -648,36 +659,39 @@
             </select>
           </div>
           <div class="form-group-item">
-            <label>Nº do Calçado</label>
-            <select id="edit_tamanho_calcado" name="tamanho_calcado">
+            <label style="color:#0284c7;font-weight:bold;">Nº do Calçado</label>
+            <select id="edit_tamanho_calcado" name="tamanho_calcado" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="">Selecione o número</option>
-              <option value="24">24</option><option value="25">25</option><option value="26">26</option>
-              <option value="27">27</option><option value="28">28</option><option value="29">29</option>
-              <option value="30">30</option><option value="31">31</option><option value="32">32</option>
-              <option value="33">33</option><option value="34">34</option><option value="35">35</option>
-              <option value="36">36</option><option value="37">37</option><option value="38">38</option>
-              <option value="39">39</option><option value="40">40</option><option value="41">41</option>
-              <option value="42">42</option><option value="43">43</option><option value="44">44</option>
+              <option value="26">26</option><option value="27">27</option><option value="28">28</option>
+              <option value="29">29</option><option value="30">30</option><option value="31">31</option>
+              <option value="32">32</option><option value="33">33</option><option value="34">34</option>
+              <option value="35">35</option><option value="36">36</option><option value="37">37</option>
+              <option value="38">38</option><option value="39">39</option><option value="40">40</option>
+              <option value="41">41</option><option value="42">42</option><option value="43">43</option>
+              <option value="44">44</option><option value="45">45</option><option value="46">46</option>
             </select>
           </div>
         </div>
         <div class="form-grid-2">
           <div class="form-group-item">
             <label>Altura (cm)</label>
-            <input type="number" id="edit_altura" name="altura">
+            <input type="number" id="edit_altura" name="altura" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>Peso (kg)</label>
-            <input type="number" id="edit_peso" name="peso">
+            <input type="number" id="edit_peso" name="peso" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
 
         <!-- SEÇÃO 5: SAÚDE E HISTÓRICO -->
-        <div class="modal-section-title">5. Saúde & Atendimento</div>
+        <div class="modal-section-title" style="display:flex;justify-content:space-between;align-items:center;background:#f0f9ff;border-color:#bae6fd;padding:6px 10px;border-radius:4px;">
+          <span style="color:#0369a1;">5. Saúde & Atendimento</span>
+          <span style="font-size:11px;font-weight:bold;color:#0284c7;background:#e0f2fe;padding:2px 8px;border-radius:4px;">✏️ Editável</span>
+        </div>
         <div class="form-grid-3">
           <div class="form-group-item">
-            <label>Uso de Medicamento</label>
-            <select id="edit_uso_medicacao" name="uso_medicacao" onchange="toggleHealthDetail('uso_medicacao')">
+            <label style="color:#0284c7;font-weight:bold;">Uso de Medicamento</label>
+            <select id="edit_uso_medicacao" name="uso_medicacao" onchange="toggleHealthDetail('uso_medicacao')" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
@@ -686,8 +700,8 @@
             </div>
           </div>
           <div class="form-group-item">
-            <label>Possui Alergias</label>
-            <select id="edit_possui_alergias" name="possui_alergias" onchange="toggleHealthDetail('possui_alergias')">
+            <label style="color:#0284c7;font-weight:bold;">Possui Alergias</label>
+            <select id="edit_possui_alergias" name="possui_alergias" onchange="toggleHealthDetail('possui_alergias')" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
@@ -696,8 +710,8 @@
             </div>
           </div>
           <div class="form-group-item">
-            <label>Possui Plano de Saúde</label>
-            <select id="edit_plano_saude" name="plano_saude" onchange="toggleHealthDetail('plano_saude')">
+            <label style="color:#0284c7;font-weight:bold;">Possui Plano de Saúde</label>
+            <select id="edit_plano_saude" name="plano_saude" onchange="toggleHealthDetail('plano_saude')" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
@@ -708,8 +722,8 @@
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
-            <label>Tratamento Médico</label>
-            <select id="edit_acompan_medico" name="acompan_medico" onchange="toggleHealthDetail('acompan_medico')">
+            <label style="color:#0284c7;font-weight:bold;">Tratamento Médico</label>
+            <select id="edit_acompan_medico" name="acompan_medico" onchange="toggleHealthDetail('acompan_medico')" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
@@ -718,8 +732,8 @@
             </div>
           </div>
           <div class="form-group-item">
-            <label>Restrição Física</label>
-            <select id="edit_restricao_fisica" name="restricao_fisica" onchange="toggleHealthDetail('restricao_fisica')">
+            <label style="color:#0284c7;font-weight:bold;">Restrição Física</label>
+            <select id="edit_restricao_fisica" name="restricao_fisica" onchange="toggleHealthDetail('restricao_fisica')" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
@@ -728,8 +742,8 @@
             </div>
           </div>
           <div class="form-group-item">
-            <label>Necessidade Especial</label>
-            <select id="edit_deficiencia" name="deficiencia" onchange="toggleHealthDetail('deficiencia')">
+            <label style="color:#0284c7;font-weight:bold;">Necessidade Especial</label>
+            <select id="edit_deficiencia" name="deficiencia" onchange="toggleHealthDetail('deficiencia')" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="Nao">Não</option>
               <option value="Sim">Sim</option>
             </select>
@@ -740,29 +754,29 @@
         </div>
 
         <!-- SEÇÃO 6: RESPONSÁVEL LEGAL -->
-        <div class="modal-section-title">6. Responsável Legal (Menor de Idade)</div>
+        <div class="modal-section-title">6. Responsável Legal (Menor de Idade - Bloqueados)</div>
         <div class="form-grid-2">
           <div class="form-group-item">
             <label>Nome do Responsável</label>
-            <input type="text" id="edit_resp_nome" name="resp_nome">
+            <input type="text" id="edit_resp_nome" name="resp_nome" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>CPF do Responsável</label>
-            <input type="text" id="edit_resp_cpf" name="resp_cpf">
+            <input type="text" id="edit_resp_cpf" name="resp_cpf" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
             <label>Telefone do Responsável</label>
-            <input type="text" id="edit_resp_whatsapp" name="resp_whatsapp">
+            <input type="text" id="edit_resp_whatsapp" name="resp_whatsapp" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>E-mail do Responsável</label>
-            <input type="email" id="edit_resp_email" name="resp_email">
+            <input type="email" id="edit_resp_email" name="resp_email" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
           <div class="form-group-item">
             <label>Grau de Parentesco</label>
-            <input type="text" id="edit_resp_parentesco" name="resp_parentesco">
+            <input type="text" id="edit_resp_parentesco" name="resp_parentesco" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
           </div>
         </div>
 
@@ -1030,83 +1044,125 @@
         // Guardar registro completo na memória para NADA ser perdido no update
         currentEditingRecord = Object.assign({}, m);
 
-        if (m.projeto_id) document.getElementById('edit_projeto_id').value = m.projeto_id;
-        if (m.nucleo_id) document.getElementById('edit_nucleo_id').value = m.nucleo_id;
-        if (m.turno) setSelectValueSafe('edit_turno', m.turno);
+        const setFVal = function(id, keys) {
+          const el = document.getElementById(id);
+          if (el) el.value = getF(m, keys);
+        };
 
-        document.getElementById('edit_aluno_nome').value = m.aluno_nome || m.nome_aluno || m.nome || '';
-        document.getElementById('edit_nome_social').value = m.nome_social || '';
-        document.getElementById('edit_aluno_cpf').value = m.aluno_cpf || m.cpf || m.cpf_aluno || '';
-        document.getElementById('edit_data_nascimento').value = m.data_nascimento || '';
-        if (m.sexo) setSelectValueSafe('edit_sexo', m.sexo);
-        if (m.raca) setSelectValueSafe('edit_raca', m.raca);
-        if (m.escolaridade) setSelectValueSafe('edit_escolaridade', m.escolaridade);
-        document.getElementById('edit_profissao').value = m.profissao || '';
-        document.getElementById('edit_faixa_salarial').value = m.faixa_salarial || '';
+        setFVal('edit_projeto_id', ['projeto_id', 'projeto']);
+        setFVal('edit_nucleo_id', ['nucleo_id', 'nucleo']);
+        
+        let turVal = getF(m, ['turno']);
+        if (turVal) setSelectValueSafe('edit_turno', turVal);
+
+        setFVal('edit_aluno_nome', ['aluno_nome', 'nome_aluno', 'nome', 'nome_completo']);
+        setFVal('edit_nome_social', ['nome_social']);
+        setFVal('edit_aluno_cpf', ['aluno_cpf', 'cpf_aluno', 'cpf']);
+        setFVal('edit_data_nascimento', ['data_nascimento', 'data de nascimento', 'nascimento', 'dt_nascimento']);
+        
+        let sexoVal = getF(m, ['sexo', 'genero']);
+        if (sexoVal) setSelectValueSafe('edit_sexo', sexoVal);
+
+        let racaVal = getF(m, ['raca', 'raca_cor', 'etnia']);
+        if (racaVal) setSelectValueSafe('edit_raca', racaVal);
+
+        let escVal = getF(m, ['escolaridade', 'nivel_escolaridade']);
+        if (escVal) setSelectValueSafe('edit_escolaridade', escVal);
+
+        setFVal('edit_profissao', ['profissao']);
+        setFVal('edit_faixa_salarial', ['faixa_salarial']);
 
         // Naturalidade UF + Cidade IBGE
-        if (m.naturalidade) {
-          document.getElementById('edit_naturalidade').value = m.naturalidade;
-          var matchUF = m.naturalidade.match(/-\s*([A-Z]{2})/i);
+        let natStr = getF(m, ['naturalidade']);
+        if (natStr) {
+          document.getElementById('edit_naturalidade').value = natStr;
+          var matchUF = natStr.match(/-\s*([A-Z]{2})/i);
           if (matchUF && matchUF[1]) {
             var ufVal = matchUF[1].toUpperCase();
             setSelectValueSafe('edit_naturalidade_uf', ufVal);
-            carregarCidadesIBGENaturalidadeEdit(ufVal, m.naturalidade);
+            carregarCidadesIBGENaturalidadeEdit(ufVal, natStr);
           }
         }
 
-        document.getElementById('edit_whatsapp').value = m.whatsapp || m.telefone || '';
-        document.getElementById('edit_email').value = m.email || '';
-        document.getElementById('edit_cep').value = m.cep || '';
-        document.getElementById('edit_endereco').value = m.endereco || '';
-        document.getElementById('edit_numero').value = m.numero || '';
-        document.getElementById('edit_complemento').value = m.complemento || '';
-        document.getElementById('edit_bairro').value = m.bairro || '';
-        document.getElementById('edit_cidade').value = m.cidade || '';
-        if (m.uf) setSelectValueSafe('edit_uf', m.uf.toUpperCase());
+        setFVal('edit_whatsapp', ['whatsapp', 'telefone', 'celular']);
+        setFVal('edit_email', ['email']);
+        setFVal('edit_cep', ['cep']);
+        setFVal('edit_endereco', ['endereco', 'logradouro']);
+        setFVal('edit_numero', ['numero']);
+        setFVal('edit_complemento', ['complemento']);
+        setFVal('edit_bairro', ['bairro', 'bairro_nome']);
+        setFVal('edit_cidade', ['cidade', 'cidade_nome']);
+        
+        let ufEnd = getF(m, ['uf', 'estado']);
+        if (ufEnd) setSelectValueSafe('edit_uf', ufEnd.toUpperCase());
 
-        if (m.tamanho_camisa) setSelectValueSafe('edit_tamanho_camisa', m.tamanho_camisa);
-        if (m.tamanho_calca) setSelectValueSafe('edit_tamanho_calca', m.tamanho_calca);
-        if (m.tamanho_calcado) setSelectValueSafe('edit_tamanho_calcado', m.tamanho_calcado);
-        if (m.altura) document.getElementById('edit_altura').value = m.altura;
-        if (m.peso) document.getElementById('edit_peso').value = m.peso;
+        let tCamisaVal = getF(m, ['tamanho_camisa', 'camisa']);
+        if (tCamisaVal) setSelectValueSafe('edit_tamanho_camisa', tCamisaVal);
 
-        if (m.uso_medicacao) {
-          setSelectValueSafe('edit_uso_medicacao', m.uso_medicacao);
+        let tCalcaVal = getF(m, ['tamanho_calca', 'calca', 'bermuda']);
+        if (tCalcaVal) setSelectValueSafe('edit_tamanho_calca', tCalcaVal);
+
+        let tCalcadoVal = getF(m, ['tamanho_calcado', 'calcado', 'sapato']);
+        if (tCalcadoVal) setSelectValueSafe('edit_tamanho_calcado', tCalcadoVal);
+
+        setFVal('edit_altura', ['altura', 'altura_cm']);
+        setFVal('edit_peso', ['peso', 'peso_kg']);
+
+        // Saúde
+        let uMedVal = getF(m, ['uso_medicacao']);
+        if (uMedVal) {
+          setSelectValueSafe('edit_uso_medicacao', uMedVal);
           toggleHealthDetail('uso_medicacao');
-          if (m.uso_medicacao_detalhes) document.getElementById('edit_uso_medicacao_detalhes').value = m.uso_medicacao_detalhes;
-        }
-        if (m.possui_alergias) {
-          setSelectValueSafe('edit_possui_alergias', m.possui_alergias);
-          toggleHealthDetail('possui_alergias');
-          if (m.possui_alergias_detalhes) document.getElementById('edit_possui_alergias_detalhes').value = m.possui_alergias_detalhes;
-        }
-        if (m.plano_saude) {
-          setSelectValueSafe('edit_plano_saude', m.plano_saude);
-          toggleHealthDetail('plano_saude');
-          if (m.plano_saude_detalhes) document.getElementById('edit_plano_saude_detalhes').value = m.plano_saude_detalhes;
-        }
-        if (m.acompan_medico) {
-          setSelectValueSafe('edit_acompan_medico', m.acompan_medico);
-          toggleHealthDetail('acompan_medico');
-          if (m.acompan_medico_detalhes) document.getElementById('edit_acompan_medico_detalhes').value = m.acompan_medico_detalhes;
-        }
-        if (m.restricao_fisica) {
-          setSelectValueSafe('edit_restricao_fisica', m.restricao_fisica);
-          toggleHealthDetail('restricao_fisica');
-          if (m.restricao_fisica_detalhes) document.getElementById('edit_restricao_fisica_detalhes').value = m.restricao_fisica_detalhes;
-        }
-        if (m.deficiencia) {
-          setSelectValueSafe('edit_deficiencia', m.deficiencia);
-          toggleHealthDetail('deficiencia');
-          if (m.deficiencia_detalhes) document.getElementById('edit_deficiencia_detalhes').value = m.deficiencia_detalhes;
+          let det = getF(m, ['uso_medicacao_detalhes']);
+          if (det) document.getElementById('edit_uso_medicacao_detalhes').value = det;
         }
 
-        document.getElementById('edit_resp_nome').value = m.resp_nome || '';
-        document.getElementById('edit_resp_cpf').value = m.resp_cpf || '';
-        document.getElementById('edit_resp_whatsapp').value = m.resp_whatsapp || '';
-        document.getElementById('edit_resp_email').value = m.resp_email || '';
-        document.getElementById('edit_resp_parentesco').value = m.resp_parentesco || '';
+        let pAlergVal = getF(m, ['possui_alergias']);
+        if (pAlergVal) {
+          setSelectValueSafe('edit_possui_alergias', pAlergVal);
+          toggleHealthDetail('possui_alergias');
+          let det = getF(m, ['possui_alergias_detalhes']);
+          if (det) document.getElementById('edit_possui_alergias_detalhes').value = det;
+        }
+
+        let pSaudeVal = getF(m, ['plano_saude']);
+        if (pSaudeVal) {
+          setSelectValueSafe('edit_plano_saude', pSaudeVal);
+          toggleHealthDetail('plano_saude');
+          let det = getF(m, ['plano_saude_detalhes']);
+          if (det) document.getElementById('edit_plano_saude_detalhes').value = det;
+        }
+
+        let aMedVal = getF(m, ['acompan_medico']);
+        if (aMedVal) {
+          setSelectValueSafe('edit_acompan_medico', aMedVal);
+          toggleHealthDetail('acompan_medico');
+          let det = getF(m, ['acompan_medico_detalhes']);
+          if (det) document.getElementById('edit_acompan_medico_detalhes').value = det;
+        }
+
+        let rFisVal = getF(m, ['restricao_fisica']);
+        if (rFisVal) {
+          setSelectValueSafe('edit_restricao_fisica', rFisVal);
+          toggleHealthDetail('restricao_fisica');
+          let det = getF(m, ['restricao_fisica_detalhes']);
+          if (det) document.getElementById('edit_restricao_fisica_detalhes').value = det;
+        }
+
+        let defVal = getF(m, ['deficiencia', 'necessidade_especial']);
+        if (defVal) {
+          setSelectValueSafe('edit_deficiencia', defVal);
+          toggleHealthDetail('deficiencia');
+          let det = getF(m, ['deficiencia_detalhes', 'necessidade_especial_detalhes']);
+          if (det) document.getElementById('edit_deficiencia_detalhes').value = det;
+        }
+
+        // Responsável
+        setFVal('edit_resp_nome', ['resp_nome', 'nome_responsavel']);
+        setFVal('edit_resp_cpf', ['resp_cpf', 'cpf_responsavel']);
+        setFVal('edit_resp_whatsapp', ['resp_whatsapp', 'telefone_responsavel']);
+        setFVal('edit_resp_email', ['resp_email']);
+        setFVal('edit_resp_parentesco', ['resp_parentesco', 'grau_parentesco']);
       } catch(err) {
         console.error('Erro ao carregar modal de edição via webhook:', err);
       }

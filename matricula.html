@@ -1985,6 +1985,20 @@ window.dadosRecentesCPF = null;
     function mostrarStep(stepNum) {
         currentStep = stepNum;
         updateStepVisibility();
+        
+        // Garantir que a Etapa 5 (Modalidade & Núcleo) carregue automaticamente sem precisar voltar
+        if (stepNum === 5) {
+            var blocoMod = document.getElementById('bloco-modalidade');
+            if (blocoMod) {
+                blocoMod.style.display = 'block';
+                setRequiredIn('bloco-modalidade', true);
+            }
+            var bInp = document.getElementById('bairro_id');
+            if (bInp && bInp.value) {
+                bInp.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+        
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 

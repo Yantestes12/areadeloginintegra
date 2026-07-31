@@ -3666,6 +3666,35 @@ window.dadosRecentesCPF = null;
         fd.append('codigo_matricula', numMatricula);
         fd.append('matricula_numero', numMatricula);
 
+        // Calcular e enviar idade no payload
+        var dNascInp = (document.getElementById('data_nascimento') || document.querySelector('input[name="data_nascimento"]') || {}).value || '';
+        if (dNascInp) {
+            var pAge = dNascInp.split(/[\/\-]/);
+            if (pAge.length >= 3) {
+                var yA = pAge[0].length === 4 ? parseInt(pAge[0], 10) : parseInt(pAge[2], 10);
+                var mA = pAge[0].length === 4 ? parseInt(pAge[1], 10) - 1 : parseInt(pAge[1], 10) - 1;
+                var dA = pAge[0].length === 4 ? parseInt(pAge[2], 10) : parseInt(pAge[0], 10);
+                if (yA && !isNaN(yA)) {
+                    var hA = new Date();
+                    var idA = hA.getFullYear() - yA;
+                    if (hA.getMonth() < mA || (hA.getMonth() === mA && hA.getDate() < dA)) idA--;
+                    if (idA >= 0) fd.append('idade', idA);
+                }
+            }
+        }
+
+        // Horário do aceite do Aluno e Coordenador
+        var horaAceiteAgora = new Date().toLocaleString('pt-BR');
+        fd.append('hora_aceite_aluno', horaAceiteAgora);
+        fd.append('aceite_aluno_em', horaAceiteAgora);
+        fd.append('hora_do_aceite_aluno', horaAceiteAgora);
+        fd.append('hora_aceite_coordenador', horaAceiteAgora);
+
+        // Protocolo / Hash Único para as duas assinaturas
+        var hashUnicoProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
+        fd.append('protocolo', hashUnicoProtocolo);
+        fd.append('hash_protocolo', hashUnicoProtocolo);
+
         var btn  = form.querySelector('.btn-submit-final');
         var btnNav = document.getElementById('btnSubmit');
         if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
@@ -3695,17 +3724,11 @@ window.dadosRecentesCPF = null;
             .then(function(data) {
                 console.log('Resposta do envio da matrícula:', data);
                 mostrarMensagem('sucesso', 'Matrícula enviada com sucesso!');
-                if (btn) { btn.textContent = 'Enviado! ✅'; }
-                if (btnNav) { btnNav.textContent = 'Enviado! ✅'; }
+                var formMatricula = document.getElementById('form-matricula');
+                if (formMatricula) formMatricula.style.display = 'none';
                 
                 var progressContainer = document.querySelector('.progress-container');
                 if(progressContainer) progressContainer.style.display = 'none';
-                
-                var steps = document.querySelectorAll('.form-step');
-                steps.forEach(function(s){ s.style.display = 'none'; });
-                
-                var navBtns = document.querySelector('.nav-buttons');
-                if(navBtns) navBtns.style.display = 'none';
                 
                 var nomeAluno = (document.getElementById('nome_aluno') || {}).value || 'Aluno';
                 var cpfAluno = (document.getElementById('cpf_aluno') || {}).value || '';
@@ -3865,7 +3888,6 @@ window.dadosRecentesCPF = null;
                     var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
                     var tokenProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
-                    var tokenProtocoloCoord = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
 
                     win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
                         '<style>@page{size:A4;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +

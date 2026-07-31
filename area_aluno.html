@@ -1240,19 +1240,33 @@
       const parResp = d.resp_parentesco || '';
       const tResp = d.resp_whatsapp || '';
 
+      const formatarDataHoraBr = function(val) {
+          if (!val) return '';
+          var sVal = String(val).trim();
+          if (sVal.includes('/')) return sVal;
+          try {
+              var dObj = new Date(sVal);
+              if (!isNaN(dObj.getTime())) return dObj.toLocaleString('pt-BR');
+          } catch(e){}
+          return sVal;
+      };
+
       const agoraMat = d.created_at ? new Date(d.created_at) : new Date();
       const timestampExato = agoraMat.toLocaleString('pt-BR');
       const offsetSegundosCoord = Math.floor(Math.random() * (201 - 71 + 1)) + 71;
       const dataCoordenador = new Date(agoraMat.getTime() + offsetSegundosCoord * 1000);
       const timestampCoordenador = dataCoordenador.toLocaleString('pt-BR');
 
+      const horaAceiteAluno = formatarDataHoraBr(d.hora_aceite_aluno || d.aceite_aluno_em || d.hora_do_aceite_aluno || d.lgpd_aceite_em) || timestampExato;
+      const horaAceiteCoordenador = formatarDataHoraBr(d.hora_aceite_coordenador || d.aceite_coordenador_em || d.hora_do_aceite_coordenador) || timestampCoordenador;
+
       const instSlug = 'gasctpna';
       const projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'gasctpna';
       const urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
       const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
-      const tokenProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
-      const tokenProtocoloCoord = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
+      // Protocolo / Hash ÚNICO para ambas as assinaturas
+      const tokenProtocolo = d.protocolo || d.hash_protocolo || (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
 
       win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
           '<style>@page{size:A4;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
@@ -1348,11 +1362,11 @@
           '<div class="signatures-row" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
           '<div class="sig-block" style="text-align:left;"><div style="border:1.5px solid #16a34a;background:#f0fdf4;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
           '<div style="font-weight:800;color:#166534;font-size:7.5pt;margin-bottom:2px;display:flex;align-items:center;gap:4px;">✔ ASSINATURA ELETRÔNICA DO ALUNO / RESPONSÁVEL</div>' +
-          '<div style="font-size:6.5pt;color:#15803d;line-height:1.2;">Assinado digitalmente por <strong>' + nAluno + '</strong><br>CPF: ' + (cAluno || 'Registrado no Sistema') + '<br>Data/Hora: ' + timestampExato + '<br>IP / Dispositivo: Confirmado via Portal INTEGRA<br><span style="font-family:monospace;font-size:6pt;color:#166534;">HASH: ' + tokenProtocolo + '</span></div></div>' +
+          '<div style="font-size:6.5pt;color:#15803d;line-height:1.2;">Assinado digitalmente por <strong>' + nAluno + '</strong><br>CPF: ' + (cAluno || 'Registrado no Sistema') + '<br>Data/Hora: ' + horaAceiteAluno + '<br>IP / Dispositivo: Confirmado via Portal INTEGRA<br><span style="font-family:monospace;font-size:6pt;color:#166534;">HASH: ' + tokenProtocolo + '</span></div></div>' +
           '<div class="sig-line"></div><div class="sig-label">ALUNO(A) OU RESPONSÁVEL LEGAL</div></div>' +
           '<div class="sig-block" style="text-align:left;"><div style="border:1.5px solid #0284c7;background:#f0f9ff;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
           '<div style="font-weight:800;color:#0369a1;font-size:7.5pt;margin-bottom:2px;display:flex;align-items:center;gap:4px;">✔ HOMOLOGAÇÃO DA COORDENAÇÃO CENTRAL</div>' +
-          '<div style="font-size:6.5pt;color:#0369a1;line-height:1.2;">Matrícula deferida e validada pela Coordenação<br>Projeto: <strong>' + proj + '</strong> (GASCTPNA)<br>Data/Hora: ' + timestampCoordenador + '<br>Status: DEFERIDA E HOMOLOGADA<br><span style="font-family:monospace;font-size:6pt;color:#0284c7;">HASH: ' + tokenProtocoloCoord + '</span></div></div>' +
+          '<div style="font-size:6.5pt;color:#0369a1;line-height:1.2;">Matrícula deferida e validada pela Coordenação<br>Projeto: <strong>' + proj + '</strong> (GASCTPNA)<br>Data/Hora: ' + horaAceiteCoordenador + '<br>Status: DEFERIDA E HOMOLOGADA<br><span style="font-family:monospace;font-size:6pt;color:#0284c7;">HASH: ' + tokenProtocolo + '</span></div></div>' +
           '<div class="sig-line"></div><div class="sig-label">COORDENADOR DO PROJETO</div></div></div>' +
           '</body></html>');
 

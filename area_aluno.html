@@ -464,20 +464,22 @@
         <!-- SEÇÃO 1: DADOS DO PROJETO E POLO -->
         <div class="modal-section-title" style="display:flex;justify-content:space-between;align-items:center;">
           <span>1. Dados do Projeto & Polo</span>
-          <span style="font-size:11px;font-weight:bold;color:#64748b;background:#e2e8f0;padding:2px 8px;border-radius:4px;">🔒 Somente Leitura</span>
+          <span style="font-size:11px;font-weight:bold;color:#0284c7;background:#e0f2fe;padding:2px 8px;border-radius:4px;">✏️ Turno Editável</span>
         </div>
         <div class="form-grid-3">
           <div class="form-group-item">
-            <label>ID do Projeto</label>
-            <input type="text" id="edit_projeto_id" name="projeto_id" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
+            <label>Projeto</label>
+            <input type="hidden" id="edit_projeto_id" name="projeto_id">
+            <input type="text" id="edit_projeto_nome" readonly style="background:#f1f5f9;color:#0f172a;font-weight:bold;cursor:not-allowed;" placeholder="Carregando projeto...">
           </div>
           <div class="form-group-item">
-            <label>ID do Núcleo</label>
-            <input type="text" id="edit_nucleo_id" name="nucleo_id" readonly style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
+            <label>Núcleo / Polo</label>
+            <input type="hidden" id="edit_nucleo_id" name="nucleo_id">
+            <input type="text" id="edit_nucleo_nome" readonly style="background:#f1f5f9;color:#0f172a;font-weight:bold;cursor:not-allowed;" placeholder="Carregando núcleo...">
           </div>
           <div class="form-group-item">
-            <label>Turno</label>
-            <select id="edit_turno" name="turno" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed;">
+            <label style="color:#0284c7;font-weight:bold;">Turno (Editável)</label>
+            <select id="edit_turno" name="turno" style="border:1.5px solid #0284c7;background:#f0f9ff;font-weight:bold;">
               <option value="Manhã">Manhã</option>
               <option value="Tarde">Tarde</option>
               <option value="Noite">Noite</option>
@@ -1018,6 +1020,26 @@
           matData = currentMatriculasList.find(m => m.id == matId) || { id: matId };
         }
 
+        // Se o nome do projeto não estiver na matrícula, buscar no webhook buscarprojetosaluno
+        let pId = matData.projeto_id || matData.id_projeto;
+        let pNome = matData.projeto_nome || matData.nome_projeto || matData.projeto;
+        if ((!pNome || pNome === pId || !isNaN(pNome)) && pId) {
+          try {
+            const resP = await fetch('https://w.ibrase.com.br/webhook/buscarprojetosaluno', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const dataP = await resP.json();
+            let arrP = Array.isArray(dataP) ? (dataP[0]?.projetos || dataP) : (dataP.projetos || []);
+            if (Array.isArray(arrP)) {
+              let pFound = arrP.find(p => String(p.id) === String(pId));
+              if (pFound && (pFound.nome || pFound.projeto_nome || pFound.titulo)) {
+                matData.projeto_nome = pFound.nome || pFound.projeto_nome || pFound.titulo;
+              }
+            }
+          } catch(e){}
+        }
+
         gerarFichaPDFOficial2Paginas(matData);
       } catch(err) {
         console.error('Erro ao buscar dados completos pelo webhook:', err);
@@ -1051,7 +1073,35 @@
 
         setFVal('edit_projeto_id', ['projeto_id', 'projeto']);
         setFVal('edit_nucleo_id', ['nucleo_id', 'nucleo']);
-        
+
+        // Resgate Inteligente de Nome do Projeto (Webhook buscarprojetosaluno)
+        let pId = getF(m, ['projeto_id', 'id_projeto']);
+        let pNome = getF(m, ['projeto_nome', 'nome_projeto', 'projeto', 'projeto_titulo']);
+        if ((!pNome || pNome === pId || !isNaN(pNome)) && pId) {
+          try {
+            const resP = await fetch('https://w.ibrase.com.br/webhook/buscarprojetosaluno', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const dataP = await resP.json();
+            let arrP = Array.isArray(dataP) ? (dataP[0]?.projetos || dataP) : (dataP.projetos || []);
+            if (Array.isArray(arrP)) {
+              let pFound = arrP.find(p => String(p.id) === String(pId));
+              if (pFound && (pFound.nome || pFound.projeto_nome || pFound.titulo)) {
+                pNome = pFound.nome || pFound.projeto_nome || pFound.titulo;
+              }
+            }
+          } catch(eProjs){}
+        }
+        if (!pNome || !isNaN(pNome)) pNome = 'GASCTPNA';
+        const elProjNome = document.getElementById('edit_projeto_nome');
+        if (elProjNome) elProjNome.value = pNome;
+
+        // Resgate do Nome do Núcleo
+        let nNome = getF(m, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro', 'bairro_nome']) || 'Núcleo Central';
+        const elNucNome = document.getElementById('edit_nucleo_nome');
+        if (elNucNome) elNucNome.value = nNome;
+
         let turVal = getF(m, ['turno']);
         if (turVal) setSelectValueSafe('edit_turno', turVal);
 

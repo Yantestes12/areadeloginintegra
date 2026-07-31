@@ -782,12 +782,17 @@
                             localStorage.removeItem('usuario_senha');
                         }
 
+                        sessionStorage.clear();
+                        localStorage.removeItem('usuario_dados');
+                        localStorage.removeItem('usuario_dados_completos');
+
                         sessionStorage.setItem('usuario_logado', 'true');
                         sessionStorage.setItem('usuario_email', uEmail);
                         sessionStorage.setItem('usuario_nome', uNome);
                         sessionStorage.setItem('usuario_telefone', uTelefone);
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
+                        localStorage.setItem('usuario_dados', uDados);
 
                         setTimeout(() => {
                             window.location.href = 'area_aluno.html';

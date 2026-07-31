@@ -898,6 +898,18 @@
         }
       } catch(e){}
 
+      // Filtrar estritamente objetos de matrícula vazios [{}]
+      if (Array.isArray(items)) {
+        items = items.filter(item => {
+          if (!item || typeof item !== 'object') return false;
+          const validKeys = Object.keys(item).filter(k => item[k] !== null && item[k] !== undefined && item[k] !== '');
+          if (validKeys.length === 0) return false;
+          return !!(item.id || item.matricula || item.projeto || item.modalidade || item.aluno_nome || item.nome_aluno || item.nome || item.n_inscricao || item.cpf);
+        });
+      } else {
+        items = [];
+      }
+
       if ((!uNome || uNome === 'Participante') && items.length > 0) {
         let full = items[0].aluno_nome || items[0].nome_aluno || items[0].nome || '';
         if (full && !full.includes('{{')) {

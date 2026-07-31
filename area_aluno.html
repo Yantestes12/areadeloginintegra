@@ -1020,7 +1020,7 @@
           matData = currentMatriculasList.find(m => m.id == matId) || { id: matId };
         }
 
-        // Se o nome do projeto não estiver na matrícula, buscar no webhook buscarprojetosaluno
+        // 1. Projeto
         let pId = matData.projeto_id || matData.id_projeto;
         let pNome = matData.projeto_nome || matData.nome_projeto || matData.projeto;
         if ((!pNome || pNome === pId || !isNaN(pNome)) && pId) {
@@ -1035,6 +1035,49 @@
               let pFound = arrP.find(p => String(p.id) === String(pId));
               if (pFound && (pFound.nome || pFound.projeto_nome || pFound.titulo)) {
                 matData.projeto_nome = pFound.nome || pFound.projeto_nome || pFound.titulo;
+              }
+            }
+          } catch(e){}
+        }
+
+        // 2. Modalidade
+        let mId = matData.modalidade_id || matData.id_modalidade;
+        let mNome = matData.modalidade_nome || matData.nome_modalidade || matData.modalidade;
+        if ((!mNome || mNome === mId || !isNaN(mNome)) && mId) {
+          try {
+            const resM = await fetch('https://w.ibrase.com.br/webhook/buscarmodalidade', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ projeto_id: pId || 5 })
+            });
+            const dataM = await resM.json();
+            let arrM = Array.isArray(dataM) ? (dataM[0]?.projetos || dataM[0]?.modalidades || dataM) : (dataM.projetos || dataM.modalidades || []);
+            if (Array.isArray(arrM)) {
+              let mFound = arrM.find(m => String(m.id) === String(mId));
+              if (mFound && (mFound.nome || mFound.modalidade_nome)) {
+                matData.modalidade_nome = mFound.nome || mFound.modalidade_nome;
+              }
+            }
+          } catch(e){}
+        }
+
+        // 3. Núcleo
+        let nId = matData.nucleo_id || matData.id_nucleo;
+        let bId = matData.bairro_id || matData.id_bairro;
+        let nNome = matData.nucleo_nome || matData.nome_nucleo || matData.nucleo;
+        if ((!nNome || nNome === nId || !isNaN(nNome)) && nId) {
+          try {
+            const resN = await fetch('https://w.ibrase.com.br/webhook/buscarnucleo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bairro_id: bId || 54 })
+            });
+            const dataN = await resN.json();
+            let arrN = Array.isArray(dataN) ? (dataN[0]?.nucleos || dataN) : (dataN.nucleos || []);
+            if (Array.isArray(arrN)) {
+              let nFound = arrN.find(n => String(n.id) === String(nId));
+              if (nFound && (nFound.nome || nFound.nucleo_nome)) {
+                matData.nucleo_nome = nFound.nome || nFound.nucleo_nome;
               }
             }
           } catch(e){}
@@ -1317,6 +1360,17 @@
         return '';
       }
 
+      const formatarDataBr = function(val) {
+        if (!val) return 'Não informado';
+        let s = String(val).trim().split('T')[0].split(' ')[0];
+        if (s.includes('/')) return s;
+        let p = s.split('-');
+        if (p.length === 3 && p[0].length === 4) {
+          return p[2] + '/' + p[1] + '/' + p[0];
+        }
+        return s;
+      };
+
       const numMatricula = getF(d, ['id', 'num_matricula', 'numero_matricula', 'codigo_matricula']) || '4186';
       const projRaw = getF(d, ['projeto_nome', 'nome_projeto', 'projeto', 'projeto_titulo', 'projeto_id']) || 'GASCTPNA';
       let proj = String(projRaw).replace(/GASCTPNA\s*[\/\-]\s*GASCTPNA/gi, 'GASCTPNA').trim();
@@ -1328,13 +1382,14 @@
           ? ('GASCTPNA — ' + proj)
           : 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza';
 
-      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro', 'bairro_nome']) || 'Núcleo Central';
-      const modalidade = getF(d, ['modalidade_nome', 'nome_modalidade', 'modalidade', 'modalidade_esportiva']) || 'Esporte Comunitário';
+      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro', 'bairro_nome']) || 'BARRA SECA';
+      const modalidade = getF(d, ['modalidade_nome', 'nome_modalidade', 'modalidade', 'modalidade_esportiva']) || 'Futebol';
       const tur = getF(d, ['turno', 'turno_escolhido', 'turno_nome']) || 'Manhã';
 
       const nAluno = getF(d, ['aluno_nome', 'nome_aluno', 'nome', 'nome_completo', 'TextAreaNome', 'TextNumCPF']) || 'Não informado';
       const cAluno = getF(d, ['aluno_cpf', 'cpf_aluno', 'cpf', 'cpf_aluno_text', 'TextNumCPF']);
-      const dNasc = getF(d, ['data_nascimento', 'data de nascimento', 'aluno_data_nascimento', 'nascimento', 'dt_nascimento', 'TextDataNasc']);
+      const dNascRaw = getF(d, ['data_nascimento', 'data de nascimento', 'aluno_data_nascimento', 'nascimento', 'dt_nascimento', 'TextDataNasc']);
+      const dNasc = formatarDataBr(dNascRaw);
 
       const calcularIdade = function(dataNascStr) {
           if (!dataNascStr) return 'Não informada';

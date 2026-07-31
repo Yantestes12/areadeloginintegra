@@ -1154,16 +1154,62 @@
         return;
       }
 
-      const numMatricula = d.id || '4186';
-      const proj = d.projeto_nome || d.nome_projeto || d.projeto || 'GASCTPNA';
+      const numMatricula = d.id || d.numero_matricula || d.num_matricula || '4186';
+      const projRaw = d.projeto_nome || d.nome_projeto || d.projeto || d.projeto_titulo || 'GASCTPNA';
+      let proj = String(projRaw).replace(/GASCTPNA\s*[\/\-]\s*GASCTPNA/gi, 'GASCTPNA').trim();
+      if (!proj || proj.toUpperCase() === 'GASCTPNA') {
+          proj = 'GASCTPNA';
+      }
+
+      const subTitleHeader = (proj && proj !== 'GASCTPNA') 
+          ? ('GASCTPNA — ' + proj)
+          : 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza';
+
       const nuc = d.nucleo_nome || d.bairro || 'Núcleo Central';
       const modalidade = d.modalidade_nome || d.modalidade || 'Esporte Comunitário';
       const tur = d.turno || 'Manhã';
 
       const nAluno = d.aluno_nome || d.nome_aluno || d.nome || 'Não informado';
-      const cAluno = d.aluno_cpf || d.cpf || '';
-      const dNasc = d.data_nascimento || '';
-      const idadeCalc = d.idade ? (d.idade + ' anos') : '---';
+      const cAluno = d.aluno_cpf || d.cpf || d.cpf_aluno || '';
+      const dNasc = d.data_nascimento || d.aluno_data_nascimento || d.nascimento || d.dt_nascimento || '';
+
+      const calcularIdade = function(dataNascStr) {
+          if (!dataNascStr) return 'Não informada';
+          var str = String(dataNascStr).trim().split('T')[0].split(' ')[0];
+          var dia, mes, ano;
+          if (str.indexOf('/') !== -1) {
+              var partes = str.split('/');
+              if (partes.length >= 3) {
+                  dia = parseInt(partes[0], 10);
+                  mes = parseInt(partes[1], 10) - 1;
+                  ano = parseInt(partes[2], 10);
+              }
+          } else if (str.indexOf('-') !== -1) {
+              var partes = str.split('-');
+              if (partes.length >= 3) {
+                  if (partes[0].length === 4) {
+                      ano = parseInt(partes[0], 10);
+                      mes = parseInt(partes[1], 10) - 1;
+                      dia = parseInt(partes[2], 10);
+                  } else {
+                      dia = parseInt(partes[0], 10);
+                      mes = parseInt(partes[1], 10) - 1;
+                      ano = parseInt(partes[2], 10);
+                  }
+              }
+          }
+          if (!ano || isNaN(ano) || isNaN(mes) || isNaN(dia)) return 'Não informada';
+          var hoje = new Date();
+          var idade = hoje.getFullYear() - ano;
+          var m = hoje.getMonth() - mes;
+          if (m < 0 || (m === 0 && hoje.getDate() < dia)) {
+              idade--;
+          }
+          return (idade >= 0 && idade < 120) ? idade + ' anos' : 'Não informada';
+      };
+
+      const idadeCalc = calcularIdade(dNasc);
+
       const gen = d.sexo || d.genero || 'Não informado';
       const escolaridadeVal = d.escolaridade || 'Não informado';
 
@@ -1227,15 +1273,14 @@
           '<div class="no-print" style="text-align:right;padding:6px;margin-bottom:8px;"><button onclick="window.print()" style="background:#003fa3;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ Imprimir / Salvar em PDF</button></div>' +
 
           '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
-          '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza</div></div></div>' +
+          '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
           
           '<div class="section-box" style="background:#e0f2fe;border-color:#bae6fd;"><div class="grid-3">' +
           '<div class="field-item"><span class="field-label">Nº de Matrícula:</span> <span class="field-value" style="font-weight:bold;font-size:10pt;color:#0369a1;">' + numMatricula + '</span></div>' +
-          '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + proj + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + (proj && proj !== 'GASCTPNA' ? 'GASCTPNA — ' + proj : 'GASCTPNA') + '</span></div>' +
           '<div class="field-item"><span class="field-label">Núcleo:</span> <span class="field-value">' + nuc + '</span></div>' +
           '<div class="field-item"><span class="field-label">Modalidade:</span> <span class="field-value">' + modalidade + '</span></div>' +
-          '<div class="field-item"><span class="field-label">Turno:</span> <span class="field-value">' + tur + '</span></div>' +
-          '<div class="field-item"><span class="field-label">Data/Hora Registro:</span> <span class="field-value">' + timestampExato + '</span></div></div></div>' +
+          '<div class="field-item"><span class="field-label">Turno:</span> <span class="field-value">' + tur + '</span></div></div></div>' +
           
           '<div class="section-box"><div class="section-title">1. Dados Pessoais do Aluno</div><div class="grid-3">' +
           '<div class="field-item"><span class="field-label">Nome Completo:</span> <span class="field-value">' + nAluno + '</span></div>' +
@@ -1286,7 +1331,7 @@
           '<div class="page-break"></div>' +
           
           '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
-          '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza</div></div></div>' +
+          '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
           
           '<div class="section-box"><div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>' +
           '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA), aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +

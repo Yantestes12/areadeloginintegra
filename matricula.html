@@ -3690,26 +3690,38 @@ window.dadosRecentesCPF = null;
         fd.append('hora_do_aceite_aluno', horaAceiteAgora);
         fd.append('hora_aceite_coordenador', horaAceiteAgora);
 
-        // Captura obrigatória dos dados de e-mail e telefone da conta logada
-        function getStoredValueKey(k) {
+        // Captura estrita do e-mail e telefone da CONTA LOGADA (sem misturar com e-mail do aluno)
+        function getAccountOwnerData() {
             try {
-                var v = sessionStorage.getItem(k) || localStorage.getItem(k);
-                if (v) return v;
-                var nEQ = k + "=";
-                var ca = document.cookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i].trim();
-                    if (c.indexOf(nEQ) === 0) return decodeURIComponent(c.substring(nEQ.length));
+                var em = sessionStorage.getItem('usuario_email') || 
+                         localStorage.getItem('usuario_email') || 
+                         sessionStorage.getItem('email_conta') || 
+                         localStorage.getItem('email_conta');
+
+                var tel = sessionStorage.getItem('usuario_telefone') || 
+                          localStorage.getItem('usuario_telefone') || 
+                          sessionStorage.getItem('telefone_conta') || 
+                          localStorage.getItem('telefone_conta');
+
+                if (!em || !tel) {
+                    var ca = document.cookie.split(';');
+                    for (var i = 0; i < ca.length; i++) {
+                        var c = ca[i].trim();
+                        if (!em && c.indexOf('usuario_email=') === 0) em = decodeURIComponent(c.substring(14));
+                        if (!em && c.indexOf('email_conta=') === 0) em = decodeURIComponent(c.substring(12));
+                        if (!tel && c.indexOf('usuario_telefone=') === 0) tel = decodeURIComponent(c.substring(17));
+                        if (!tel && c.indexOf('telefone_conta=') === 0) tel = decodeURIComponent(c.substring(15));
+                    }
                 }
-            } catch(e){}
-            return '';
+                return { email_conta: em || '', telefone_conta: tel || '' };
+            } catch(e) {
+                return { email_conta: '', telefone_conta: '' };
+            }
         }
 
-        var emContaVal = getStoredValueKey('usuario_email') || getStoredValueKey('email_conta') || rawFd.get('email_conta') || rawFd.get('email') || '';
-        var telContaVal = getStoredValueKey('usuario_telefone') || getStoredValueKey('telefone_conta') || rawFd.get('telefone_conta') || rawFd.get('whatsapp') || rawFd.get('telefone') || '';
-
-        fd.set('email_conta', emContaVal);
-        fd.set('telefone_conta', telContaVal);
+        var accSessionData = getAccountOwnerData();
+        fd.set('email_conta', accSessionData.email_conta);
+        fd.set('telefone_conta', accSessionData.telefone_conta);
 
         // Protocolo / Hash Único para as duas assinaturas
         var hashUnicoProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);

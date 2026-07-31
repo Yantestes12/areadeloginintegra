@@ -1015,7 +1015,16 @@
         const resp = await fetch(url);
         const data = await resp.json();
         
-        let matData = Array.isArray(data) ? data[0] : (data.dados || data.matricula || data);
+        // IMPORTANTE: data.matricula é o NÚMERO de matrícula (string), NÃO um wrapper.
+        // Verificar se é array, se tem wrapper .dados, ou usar o próprio data.
+        let matData;
+        if (Array.isArray(data)) {
+          matData = data[0];
+        } else if (data.dados && typeof data.dados === 'object' && !Array.isArray(data.dados)) {
+          matData = data.dados;
+        } else {
+          matData = data;
+        }
         if (!matData || !matData.id) {
           matData = currentMatriculasList.find(m => m.id == matId) || { id: matId };
         }
@@ -1103,7 +1112,14 @@
         const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}`;
         const resp = await fetch(url);
         const data = await resp.json();
-        let m = Array.isArray(data) ? data[0] : (data.dados || data.matricula || data);
+        let m;
+        if (Array.isArray(data)) {
+          m = data[0];
+        } else if (data.dados && typeof data.dados === 'object' && !Array.isArray(data.dados)) {
+          m = data.dados;
+        } else {
+          m = data;
+        }
         if (!m) m = currentMatriculasList.find(item => item.id == matId) || {};
 
         // Guardar registro completo na memória para NADA ser perdido no update

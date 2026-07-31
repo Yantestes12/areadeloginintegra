@@ -1,0 +1,21 @@
+
+> portal-integra-central@1.0.0 start
+> npx serve .
+
+ INFO  Accepting connections at http://localhost:40827
+ HTTP  7/31/2026 1:16:46 AM ::1 GET /matricula.html
+ HTTP  7/31/2026 1:16:46 AM ::1 Returned 301 in 342 ms
+ HTTP  7/31/2026 1:16:46 AM ::1 GET /matricula
+ HTTP  7/31/2026 1:16:46 AM ::1 Returned 200 in 15 ms
+ HTTP  7/31/2026 1:16:46 AM ::1 GET /logo_integra_simbolo.gif
+ HTTP  7/31/2026 1:16:46 AM ::1 GET /logo_gasctpna.jpg
+ HTTP  7/31/2026 1:16:46 AM ::1 Returned 200 in 6 ms
+ HTTP  7/31/2026 1:16:46 AM ::1 Returned 200 in 19 ms
+ HTTP  7/31/2026 1:17:35 AM ::1 GET /matricula.html
+ HTTP  7/31/2026 1:17:35 AM ::1 Returned 301 in 1 ms
+ HTTP  7/31/2026 1:17:35 AM ::1 GET /matricula
+ HTTP  7/31/2026 1:17:35 AM ::1 Returned 200 in 3 ms
+ HTTP  7/31/2026 1:17:35 AM ::1 GET /logo_integra_simbolo.gif
+ HTTP  7/31/2026 1:17:35 AM ::1 GET /logo_gasctpna.jpg
+ HTTP  7/31/2026 1:17:35 AM ::1 Returned 200 in 1 ms
+ HTTP  7/31/2026 1:17:35 AM ::1 Returned 200 in 2 ms

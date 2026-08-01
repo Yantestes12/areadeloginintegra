@@ -1082,7 +1082,7 @@
               body: JSON.stringify({ bairro_id: bId || 54 })
             });
             const dataN = await resN.json();
-            let arrN = Array.isArray(dataN) ? (dataN[0]?.nucleos || dataN) : (dataN.nucleos || []);
+            let arrN = Array.isArray(dataN) ? (dataN[0]?.projetos || dataN[0]?.nucleos || dataN) : (dataN.projetos || dataN.nucleos || []);
             if (Array.isArray(arrN)) {
               let nFound = arrN.find(n => String(n.id) === String(nId));
               if (nFound && (nFound.nome || nFound.nucleo_nome)) {
@@ -1156,8 +1156,26 @@
         const elProjNome = document.getElementById('edit_projeto_nome');
         if (elProjNome) elProjNome.value = pNome;
 
-        // Resgate do Nome do Núcleo
-        let nNome = getF(m, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro', 'bairro_nome']) || 'Núcleo Central';
+        // Resgate do Nome do Núcleo via webhook buscarnucleo
+        let nId = getF(m, ['nucleo_id', 'id_nucleo']);
+        let bId = getF(m, ['bairro_id', 'id_bairro']);
+        let nNome = getF(m, ['nucleo_nome', 'nome_nucleo']);
+        if ((!nNome || !isNaN(nNome)) && nId) {
+          try {
+            const resN = await fetch('https://w.ibrase.com.br/webhook/buscarnucleo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bairro_id: bId || 54 })
+            });
+            const dataN = await resN.json();
+            let arrN = Array.isArray(dataN) ? (dataN[0]?.projetos || dataN[0]?.nucleos || dataN) : (dataN.projetos || dataN.nucleos || []);
+            if (Array.isArray(arrN)) {
+              let nFound = arrN.find(n => String(n.id) === String(nId));
+              if (nFound && nFound.nome) nNome = nFound.nome;
+            }
+          } catch(e){}
+        }
+        if (!nNome || !isNaN(nNome)) nNome = 'Núcleo';
         const elNucNome = document.getElementById('edit_nucleo_nome');
         if (elNucNome) elNucNome.value = nNome;
 

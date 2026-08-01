@@ -614,7 +614,7 @@
                     <input type="checkbox" id="rememberMe">
                     Lembrar acesso
                 </label>
-                <a href="#" class="forgot-link" onclick="alert('Entre em contato com a coordenação do seu projeto para redefinir sua senha.'); return false;">Esqueceu a senha?</a>
+                <a href="#" class="forgot-link" onclick="abrirModalEsqueceuSenha(); return false;">Esqueceu a senha?</a>
             </div>
 
             <button type="submit" id="btnSubmitLogin" class="btn-primary-login">
@@ -811,6 +811,100 @@
                 }
             });
         }
+    </script>
+
+    <!-- MODAL: Esqueceu a Senha -->
+    <div id="modalEsqueceuSenha" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:20px;padding:36px 32px;max-width:420px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,0.18);position:relative;animation:slideUp .3s ease;">
+        <button onclick="fecharModalEsqueceuSenha()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:#64748b;font-size:20px;">✕</button>
+
+        <!-- Step 1: Digitar email -->
+        <div id="esqStep1">
+          <div style="text-align:center;margin-bottom:24px;">
+            <div style="width:56px;height:56px;background:linear-gradient(135deg,#1e40af,#2563eb);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;">🔑</div>
+            <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:#0f172a;margin:0 0 6px;">Recuperar Senha</h2>
+            <p style="color:#64748b;font-size:14px;margin:0;">Digite o e-mail da sua conta. Enviaremos um link para redefinir sua senha.</p>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">E-mail da conta</label>
+            <input id="esqEmailInput" type="email" placeholder="seu@email.com" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;transition:border .2s;" onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#e2e8f0'">
+            <div id="esqEmailErro" style="display:none;color:#dc2626;font-size:12px;margin-top:6px;"></div>
+          </div>
+          <button id="esqBtnEnviar" onclick="enviarRecuperacaoSenha()" style="width:100%;padding:13px;background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:opacity .2s;">
+            Enviar Link de Recuperação
+          </button>
+        </div>
+
+        <!-- Step 2: Sucesso -->
+        <div id="esqStep2" style="display:none;text-align:center;">
+          <div style="font-size:56px;margin-bottom:16px;">📧</div>
+          <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:#0f172a;margin:0 0 10px;">E-mail enviado!</h2>
+          <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 20px;">Verifique sua caixa de entrada (e o spam). Clique no link do e-mail para redefinir sua senha.</p>
+          <button onclick="fecharModalEsqueceuSenha()" style="padding:12px 28px;background:#10b981;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">Entendido</button>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    </style>
+
+    <script>
+      function abrirModalEsqueceuSenha() {
+        const modal = document.getElementById('modalEsqueceuSenha');
+        modal.style.display = 'flex';
+        document.getElementById('esqStep1').style.display = 'block';
+        document.getElementById('esqStep2').style.display = 'none';
+        document.getElementById('esqEmailErro').style.display = 'none';
+        document.getElementById('esqEmailInput').value = '';
+      }
+      function fecharModalEsqueceuSenha() {
+        document.getElementById('modalEsqueceuSenha').style.display = 'none';
+      }
+      async function enviarRecuperacaoSenha() {
+        const emailEl = document.getElementById('esqEmailInput');
+        const erroEl = document.getElementById('esqEmailErro');
+        const btn = document.getElementById('esqBtnEnviar');
+        const email = emailEl.value.trim().toLowerCase();
+        erroEl.style.display = 'none';
+
+        if (!email || !email.includes('@')) {
+          erroEl.textContent = 'Digite um e-mail válido.';
+          erroEl.style.display = 'block';
+          emailEl.style.borderColor = '#dc2626';
+          return;
+        }
+        emailEl.style.borderColor = '#e2e8f0';
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+
+        try {
+          const resp = await fetch('https://w.ibrase.com.br/webhook/esqueceusenha', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+          const data = await resp.json();
+
+          if (data && data.email === 'existe') {
+            document.getElementById('esqStep1').style.display = 'none';
+            document.getElementById('esqStep2').style.display = 'block';
+          } else {
+            erroEl.textContent = 'E-mail não encontrado. Verifique e tente novamente.';
+            erroEl.style.display = 'block';
+            emailEl.style.borderColor = '#dc2626';
+          }
+        } catch(e) {
+          erroEl.textContent = 'Erro ao conectar. Tente novamente em instantes.';
+          erroEl.style.display = 'block';
+        }
+        btn.disabled = false;
+        btn.textContent = 'Enviar Link de Recuperação';
+      }
+      // Fechar modal clicando fora
+      document.getElementById('modalEsqueceuSenha').addEventListener('click', function(e) {
+        if (e.target === this) fecharModalEsqueceuSenha();
+      });
     </script>
 </body>
 </html>

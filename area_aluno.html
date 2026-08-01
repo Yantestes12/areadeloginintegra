@@ -897,22 +897,53 @@
       let uNome = rawNome ? rawNome.split(' ')[0] : '';
       if (uNome) uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
 
-      let items = [];
+      // Função auxiliar: extrai todas as matrículas de qualquer formato de resposta
+      function extrairTodasMatriculas(data) {
+        let todas = [];
+        try {
+          // Formato: [{dados_string: "[{email, matriculas:[...]}, ...]"}]
+          let arr = Array.isArray(data) ? data : [data];
+          for (let item of arr) {
+            if (item && item.dados_string) {
+              let parsed = typeof item.dados_string === 'string' ? JSON.parse(item.dados_string) : item.dados_string;
+              if (Array.isArray(parsed)) {
+                // Cada entrada tem {email, matriculas:[...]}
+                for (let grupo of parsed) {
+                  if (grupo && Array.isArray(grupo.matriculas)) {
+                    todas = todas.concat(grupo.matriculas);
+                  }
+                }
+              }
+            } else if (item && Array.isArray(item.matriculas)) {
+              todas = todas.concat(item.matriculas);
+            } else if (item && item.id) {
+              todas.push(item);
+            }
+          }
+          // Se não achou nada com os formatos acima, tenta o array direto
+          if (todas.length === 0 && Array.isArray(data) && data.length > 0 && data[0] && data[0].id) {
+            todas = data;
+          }
+        } catch(e) {}
+        // Remove duplicatas pelo id
+        let seen = new Set();
+        return todas.filter(m => {
+          if (!m || !m.id) return false;
+          if (seen.has(m.id)) return false;
+          seen.add(m.id);
+          return true;
+        });
+      }
+
+      // Tenta carregar do cache primeiro
       try {
         const rawDados = getStoredVal('usuario_dados');
         if (rawDados) {
-          let p = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
-          if (Array.isArray(p)) {
-            if (p[0] && Array.isArray(p[0].matriculas)) items = p[0].matriculas;
-            else if (p[0] && Array.isArray(p[0].projetos_inscritos)) items = p[0].projetos_inscritos;
-            else items = p;
-          } else if (p && typeof p === 'object') {
-            if (Array.isArray(p.matriculas)) items = p.matriculas;
-            else if (Array.isArray(p.projetos_inscritos)) items = p.projetos_inscritos;
-            else if (p.id) items = [p];
-          }
+          let parsed = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
+          let fromCache = extrairTodasMatriculas(parsed);
+          if (fromCache.length > 0) items = fromCache;
         }
-      } catch(e){}
+      } catch(e) {}
 
       // Busca matrículas em tempo real via buscarmatricula?email= (sempre atualizado)
       const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta');
@@ -921,11 +952,9 @@
           const respMat = await fetch(`https://w.ibrase.com.br/webhook/buscarmatricula?email=${encodeURIComponent(uEmail)}`);
           const freshData = await respMat.json();
           if (freshData) {
-            // Retorna array de objetos de matrícula diretamente
-            let arr = Array.isArray(freshData) ? freshData : (freshData.matriculas || freshData.dados || []);
-            if (arr.length > 0) {
-              items = arr;
-              // Atualiza cache local também
+            let fromWebhook = extrairTodasMatriculas(freshData);
+            if (fromWebhook.length > 0) {
+              items = fromWebhook;
               sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
             }
           }

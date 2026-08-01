@@ -764,7 +764,8 @@
                             if (uDados) {
                                 let p = JSON.parse(uDados);
                                 if (Array.isArray(p)) p = p[0] || {};
-                                if (p.email && (!uEmail || uEmail.includes('{{'))) uEmail = p.email;
+                                // NUNCA sobrescrever uEmail com dados internos:
+                                // p.email é o email do aluno (campo da matrícula), não o email_conta de login
                                 if (Array.isArray(p.matriculas) && p.matriculas.length > 0) {
                                     const m0 = p.matriculas[0];
                                     const nomeReal = m0.aluno_nome || m0.nome_aluno || m0.nome || m0.name;

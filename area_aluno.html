@@ -914,26 +914,24 @@
         }
       } catch(e){}
 
-      // Atualização em tempo real das matrículas via webhook loginaluno se necessário
+      // Busca matrículas em tempo real via buscarmatricula?email= (sempre atualizado)
       const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta');
-      const shouldForce = sessionStorage.getItem('force_refresh_matriculas') === 'true';
-      if (uEmail && (shouldForce || items.length === 0)) {
+      if (uEmail) {
         try {
-          const respMat = await fetch('https://w.ibrase.com.br/webhook/loginaluno', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: uEmail })
-          });
+          const respMat = await fetch(`https://w.ibrase.com.br/webhook/buscarmatricula?email=${encodeURIComponent(uEmail)}`);
           const freshData = await respMat.json();
           if (freshData) {
-            sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
-            sessionStorage.removeItem('force_refresh_matriculas');
-            let p = Array.isArray(freshData) ? freshData[0] : freshData;
-            if (p && Array.isArray(p.matriculas)) items = p.matriculas;
-            else if (Array.isArray(freshData)) items = freshData;
+            // Retorna array de objetos de matrícula diretamente
+            let arr = Array.isArray(freshData) ? freshData : (freshData.matriculas || freshData.dados || []);
+            if (arr.length > 0) {
+              items = arr;
+              // Atualiza cache local também
+              sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
+            }
           }
         } catch(errMat) {
-          console.warn('Atualização de matrículas via webhook:', errMat);
+          console.warn('Erro ao buscar matrículas via webhook:', errMat);
+          // Mantém dados em cache se houver falha de rede
         }
       }
 

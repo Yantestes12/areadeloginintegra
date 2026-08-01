@@ -851,7 +851,8 @@
     }
 
     function getStoredVal(key) {
-      return localStorage.getItem(key) || getCookie(key) || '';
+      // sessionStorage tem prioridade: contém os dados do login atual
+      return sessionStorage.getItem(key) || localStorage.getItem(key) || getCookie(key) || '';
     }
 
     let currentMatriculasList = [];

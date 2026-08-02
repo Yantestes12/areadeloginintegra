@@ -1881,10 +1881,14 @@ window.dadosRecentesCPF = null;
     function ativandoManual(el) {
         if(el) {
             el.readOnly = false;
+            el.disabled = false;
             el.removeAttribute('readonly');
-            el.style.backgroundColor = 'var(--input-bg)';
-            el.style.borderColor = 'var(--input-border)';
+            el.removeAttribute('disabled');
+            el.style.backgroundColor = '#ffffff';
+            el.style.borderColor = '#94a3b8';
             el.style.cursor = 'text';
+            el.style.opacity = '1';
+            el.style.pointerEvents = 'auto';
         }
     }
 
@@ -1986,6 +1990,15 @@ window.dadosRecentesCPF = null;
         currentStep = stepNum;
         updateStepVisibility();
         
+        // Se entrou no Passo 2 e o Nome não foi preenchido pela API, libera digitação incondicionalmente
+        if (stepNum === 2) {
+            var inputNome = document.getElementById('TextAreaNome');
+            if (inputNome && (!inputNome.value.trim() || inputNome.readOnly)) {
+                ativandoManual(inputNome);
+                ativandoManual(document.getElementById('TextDataNasc'));
+            }
+        }
+        
         // Garantir que a Etapa 5 (Modalidade & Núcleo) carregue automaticamente sem precisar voltar
         if (stepNum === 5) {
             var blocoMod = document.getElementById('bloco-modalidade');
@@ -2058,6 +2071,20 @@ window.dadosRecentesCPF = null;
             } else {
                 document.getElementById('erro-cpf').style.display = 'none';
                 document.getElementById('TextNumCPF').classList.remove('invalid');
+            }
+        }
+
+        // Validar explicitamente o Passo 4 antes de permitir ida para o Passo 5
+        if (step === 4) {
+            var elCid = document.getElementById('cidade_id');
+            var elBai = document.getElementById('bairro_id');
+            if (!elCid || !elCid.value || !elBai || !elBai.value) {
+                if (elCid && !elCid.value) elCid.classList.add('invalid');
+                if (elBai && !elBai.value) elBai.classList.add('invalid');
+                isValid = false;
+            } else {
+                if (elCid) elCid.classList.remove('invalid');
+                if (elBai) elBai.classList.remove('invalid');
             }
         }
 
@@ -2359,7 +2386,11 @@ window.dadosRecentesCPF = null;
             iniciar: function(cpfNum) {
                 if (buscando) return;
                 if (!validarCPF(cpfNum)) {
-                    mostrarStatusCPF('erro', '⚠️ CPF inválido. Verifique os números e tente novamente.');
+                    mostrarStatusCPF('aviso', '⚠️ CPF não localizado na consulta automática. O preenchimento manual dos dados foi liberado.');
+                    var btnManual = document.getElementById('btn-manual-cpf');
+                    if (btnManual) btnManual.style.display = 'block';
+                    ativandoManual(document.getElementById('TextAreaNome'));
+                    ativandoManual(document.getElementById('TextDataNasc'));
                     return;
                 }
                 buscando = true;
@@ -2555,14 +2586,12 @@ window.dadosRecentesCPF = null;
             setTimeout(function() {
                 mostrarStep(2);
             }, 1800);
-        },
         onFalha: function(msg) {
-            var texto = msg
-                ? '⚠️ ' + msg.replace(/^[⚠️\\s]+/, '') + ' Preencha manualmente.'
-                : '⚠️ Não conseguimos consultar o CPF automaticamente.';
-            mostrarStatusCPF('aviso', texto);
+            mostrarStatusCPF('aviso', '⚠️ CPF não encontrado na consulta automática. Os campos de Nome e Data de Nascimento já foram liberados para preenchimento manual na próxima etapa.');
             var btnManual = document.getElementById('btn-manual-cpf');
             if (btnManual) btnManual.style.display = 'block';
+            ativandoManual(document.getElementById('TextAreaNome'));
+            ativandoManual(document.getElementById('TextDataNasc'));
         }
     });
 
@@ -2976,7 +3005,9 @@ window.dadosRecentesCPF = null;
                             if (inpProjNome) inpProjNome.value = p.nome;
                             carregarCidadesPorProjeto(radio.value);
                             setTimeout(function() {
-                                avancarQuiz();
+                                if (currentStep === 3) {
+                                    mostrarStep(4);
+                                }
                             }, 500);
                         }
                     });
@@ -3704,7 +3735,7 @@ window.dadosRecentesCPF = null;
         fd.append('hora_do_aceite_aluno', horaAceiteAgora);
         fd.append('hora_aceite_coordenador', horaAceiteAgora);
 
-        // Captura estrita do e-mail e telefone da CONTA LOGADA (sem misturar com e-mail do aluno)
+        // Captura estrita do e-mail e telefone da CONTA LOGADA (usados no LOGIN)
         function getAccountOwnerData() {
             try {
                 var em = sessionStorage.getItem('usuario_email') || 

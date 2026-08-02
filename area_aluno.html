@@ -851,7 +851,7 @@
     }
 
     function getStoredVal(key) {
-      // sessionStorage tem prioridade: contém os dados do login atual
+      // Prioridade: sessionStorage (onde o login.html salva) → localStorage → cookie
       return sessionStorage.getItem(key) || localStorage.getItem(key) || getCookie(key) || '';
     }
 
@@ -898,70 +898,54 @@
       let uNome = rawNome ? rawNome.split(' ')[0] : '';
       if (uNome) uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
 
-      // Função auxiliar: extrai todas as matrículas de qualquer formato de resposta
-      function extrairTodasMatriculas(data) {
-        let todas = [];
-        try {
-          // Formato: [{dados_string: "[{email, matriculas:[...]}, ...]"}]
-          let arr = Array.isArray(data) ? data : [data];
-          for (let item of arr) {
-            if (item && item.dados_string) {
-              let parsed = typeof item.dados_string === 'string' ? JSON.parse(item.dados_string) : item.dados_string;
-              if (Array.isArray(parsed)) {
-                // Cada entrada tem {email, matriculas:[...]}
-                for (let grupo of parsed) {
-                  if (grupo && Array.isArray(grupo.matriculas)) {
-                    todas = todas.concat(grupo.matriculas);
-                  }
-                }
-              }
-            } else if (item && Array.isArray(item.matriculas)) {
-              todas = todas.concat(item.matriculas);
-            } else if (item && item.id) {
-              todas.push(item);
-            }
-          }
-          // Se não achou nada com os formatos acima, tenta o array direto
-          if (todas.length === 0 && Array.isArray(data) && data.length > 0 && data[0] && data[0].id) {
-            todas = data;
-          }
-        } catch(e) {}
-        // Remove duplicatas pelo id
-        let seen = new Set();
-        return todas.filter(m => {
-          if (!m || !m.id) return false;
-          if (seen.has(m.id)) return false;
-          seen.add(m.id);
-          return true;
-        });
-      }
-
-      // Tenta carregar do cache primeiro
+      let items = [];
       try {
         const rawDados = getStoredVal('usuario_dados');
         if (rawDados) {
-          let parsed = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
-          let fromCache = extrairTodasMatriculas(parsed);
-          if (fromCache.length > 0) items = fromCache;
+          let p = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
+          if (Array.isArray(p)) {
+            if (p[0] && Array.isArray(p[0].matriculas)) items = p[0].matriculas;
+            else if (p[0] && Array.isArray(p[0].projetos_inscritos)) items = p[0].projetos_inscritos;
+            else items = p;
+          } else if (p && typeof p === 'object') {
+            if (Array.isArray(p.matriculas)) items = p.matriculas;
+            else if (Array.isArray(p.projetos_inscritos)) items = p.projetos_inscritos;
+            else if (p.id) items = [p];
+          }
         }
-      } catch(e) {}
+      } catch(e){}
 
-      // Busca matrículas em tempo real via buscarmatricula?email= (sempre atualizado)
+      // Atualização em tempo real das matrículas via webhook loginaluno se necessário
       const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta');
-      if (uEmail) {
+      const shouldForce = sessionStorage.getItem('force_refresh_matriculas') === 'true';
+      if (uEmail && (shouldForce || items.length === 0)) {
         try {
-          const respMat = await fetch(`https://w.ibrase.com.br/webhook/buscarmatricula?email=${encodeURIComponent(uEmail)}`);
+          const respMat = await fetch('https://w.ibrase.com.br/webhook/loginaluno', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: uEmail })
+          });
           const freshData = await respMat.json();
           if (freshData) {
-            let fromWebhook = extrairTodasMatriculas(freshData);
-            if (fromWebhook.length > 0) {
-              items = fromWebhook;
-              sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
+            sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
+            sessionStorage.removeItem('force_refresh_matriculas');
+            let p = Array.isArray(freshData) ? freshData[0] : freshData;
+            if (p && Array.isArray(p.matriculas)) items = p.matriculas;
+            else if (Array.isArray(freshData)) items = freshData;
+
+            // Tentar extrair o nome do usuário do retorno do webhook,
+            // mesmo quando não há matrículas cadastradas
+            if ((!uNome || uNome === 'Participante') && p) {
+              const nomeWebhook = p.nome_completo || p.nome || p.aluno_nome ||
+                                  p.nome_aluno || p.name || p.full_name || '';
+              if (nomeWebhook && !nomeWebhook.includes('{{')) {
+                uNome = nomeWebhook.split(' ')[0];
+                uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
+              }
             }
           }
         } catch(errMat) {
-          console.warn('Erro ao buscar matrículas via webhook:', errMat);
-          // Mantém dados em cache se houver falha de rede
+          console.warn('Atualização de matrículas via webhook:', errMat);
         }
       }
 
@@ -984,7 +968,27 @@
           uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
         }
       }
-      if (!uNome) uNome = 'Participante';
+
+      // Fallback extra: tentar extrair nome dos dados completos armazenados
+      if (!uNome || uNome === 'Participante') {
+        try {
+          const rawCompleto = sessionStorage.getItem('usuario_dados_completos') ||
+                              localStorage.getItem('usuario_dados_completos') ||
+                              getStoredVal('usuario_dados');
+          if (rawCompleto) {
+            let dc = typeof rawCompleto === 'string' ? JSON.parse(rawCompleto) : rawCompleto;
+            if (Array.isArray(dc)) dc = dc[0];
+            const nomeCompleto = dc && (dc.nome_completo || dc.nome || dc.aluno_nome ||
+                                        dc.nome_aluno || dc.name || dc.full_name || '');
+            if (nomeCompleto && !nomeCompleto.includes('{{')) {
+              uNome = nomeCompleto.split(' ')[0];
+              uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
+            }
+          }
+        } catch(e) {}
+      }
+
+      if (!uNome || uNome === 'Participante') uNome = 'Participante';
 
       const elWelcome = document.getElementById('display-welcome-title');
       const elTopName = document.getElementById('display-topbar-name');
@@ -1036,29 +1040,6 @@
       listBody.innerHTML = html;
     }
 
-    // Função global getF - busca valor em objeto por múltiplas chaves possíveis
-    function getF(obj, keys) {
-      if (!obj || typeof obj !== 'object') return '';
-      for (let i = 0; i < keys.length; i++) {
-        let k = keys[i];
-        if (obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') {
-          return String(obj[k]).trim();
-        }
-      }
-      let objKeys = Object.keys(obj);
-      for (let j = 0; j < keys.length; j++) {
-        let targetNorm = keys[j].toLowerCase().replace(/[^a-z0-9]/g, '');
-        for (let k = 0; k < objKeys.length; k++) {
-          let actualKey = objKeys[k];
-          let actualNorm = actualKey.toLowerCase().replace(/[^a-z0-9]/g, '');
-          if (actualNorm === targetNorm && obj[actualKey] !== undefined && obj[actualKey] !== null && String(obj[actualKey]).trim() !== '') {
-            return String(obj[actualKey]).trim();
-          }
-        }
-      }
-      return '';
-    }
-
     // 1. Visualizar PDF Oficial via Webhook buscarmatricula?id=
     async function visualizarPDFViaWebhook(matId) {
       try {
@@ -1067,7 +1048,6 @@
         const data = await resp.json();
         
         // IMPORTANTE: data.matricula é o NÚMERO de matrícula (string), NÃO um wrapper.
-        // Verificar se é array, se tem wrapper .dados, ou usar o próprio data.
         let matData;
         if (Array.isArray(data)) {
           matData = data[0];
@@ -1105,7 +1085,7 @@
         let mNome = matData.modalidade_nome || matData.nome_modalidade || matData.modalidade;
         if ((!mNome || mNome === mId || !isNaN(mNome)) && mId) {
           try {
-            const resM = await fetch('https://w.ibrase.com.br/webhook/buscarmodalidade', {
+            const resM = await fetch('https://w.ibrase.com.br/webhook/buscarnucleo', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ projeto_id: pId || 5 })
@@ -1133,7 +1113,7 @@
               body: JSON.stringify({ bairro_id: bId || 54 })
             });
             const dataN = await resN.json();
-            let arrN = Array.isArray(dataN) ? (dataN[0]?.projetos || dataN[0]?.nucleos || dataN) : (dataN.projetos || dataN.nucleos || []);
+            let arrN = Array.isArray(dataN) ? (dataN[0]?.nucleos || dataN) : (dataN.nucleos || []);
             if (Array.isArray(arrN)) {
               let nFound = arrN.find(n => String(n.id) === String(nId));
               if (nFound && (nFound.nome || nFound.nucleo_nome)) {
@@ -1423,138 +1403,41 @@
         return;
       }
 
-      function getF(obj, keys) {
-        if (!obj || typeof obj !== 'object') return '';
-        for (let i = 0; i < keys.length; i++) {
-          let k = keys[i];
-          if (obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') {
-            return String(obj[k]).trim();
-          }
-        }
-        let objKeys = Object.keys(obj);
-        for (let j = 0; j < keys.length; j++) {
-          let targetNorm = keys[j].toLowerCase().replace(/[^a-z0-9]/g, '');
-          for (let k = 0; k < objKeys.length; k++) {
-            let actualKey = objKeys[k];
-            let actualNorm = actualKey.toLowerCase().replace(/[^a-z0-9]/g, '');
-            if (actualNorm === targetNorm && obj[actualKey] !== undefined && obj[actualKey] !== null && String(obj[actualKey]).trim() !== '') {
-              return String(obj[actualKey]).trim();
-            }
-          }
-        }
-        return '';
-      }
+      const nAluno = d.aluno_nome || d.nome_aluno || d.nome || 'Não informado';
+      const cAluno = d.aluno_cpf || d.cpf || '';
+      const dNasc = d.data_nascimento || '';
+      const idadeCalc = d.idade ? (d.idade + ' anos') : '---';
+      const gen = d.sexo || d.genero || 'Não informado';
+      const escolaridadeVal = d.escolaridade || 'Não informado';
 
-      const formatarDataBr = function(val) {
-        if (!val) return 'Não informado';
-        let s = String(val).trim().split('T')[0].split(' ')[0];
-        if (s.includes('/')) return s;
-        let p = s.split('-');
-        if (p.length === 3 && p[0].length === 4) {
-          return p[2] + '/' + p[1] + '/' + p[0];
-        }
-        return s;
-      };
+      const tCamisa = d.tamanho_camisa || '---';
+      const tCalcado = d.tamanho_calcado || '---';
+      const tCalca = d.tamanho_calca || '---';
+      const alt = d.altura ? (d.altura + ' cm') : '---';
+      const pes = d.peso ? (d.peso + ' kg') : '---';
+      const raca = d.raca || '---';
 
-      const numMatricula = getF(d, ['matricula', 'id', 'num_matricula', 'numero_matricula', 'codigo_matricula']) || '---';
-      const projRaw = getF(d, ['projeto_nome', 'nome_projeto', 'projeto', 'projeto_titulo']) || 'GASCTPNA';
-      let proj = String(projRaw).replace(/GASCTPNA\s*[\/\-]\s*GASCTPNA/gi, 'GASCTPNA').trim();
-      // Se o nome do projeto for numérico (ID puro), tratar como GASCTPNA
-      if (!proj || !isNaN(proj)) {
-          proj = 'GASCTPNA';
-      }
+      const tel = d.whatsapp || d.telefone || '';
+      const email = d.email || '';
+      const cep = d.cep || '';
+      const logr = d.endereco || '';
+      const bairro = d.bairro || '';
+      const cid = d.cidade || '';
+      const uf = d.uf || '';
 
-      const subTitleHeader = (proj && proj !== 'GASCTPNA') 
-          ? ('GASCTPNA — ' + proj)
-          : 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza';
+      const uMed = d.uso_medicacao ? (d.uso_medicacao + (d.uso_medicacao_detalhes ? ': ' + d.uso_medicacao_detalhes : '')) : 'Não';
+      const pAlerg = d.possui_alergias ? (d.possui_alergias + (d.possui_alergias_detalhes ? ': ' + d.possui_alergias_detalhes : '')) : 'Não';
+      const pSaude = d.plano_saude ? (d.plano_saude + (d.plano_saude_detalhes ? ': ' + d.plano_saude_detalhes : '')) : 'Não';
+      const aMed = d.acompan_medico ? (d.acompan_medico + (d.acompan_medico_detalhes ? ': ' + d.acompan_medico_detalhes : '')) : 'Não';
+      const rFis = d.restricao_fisica ? (d.restricao_fisica + (d.restricao_fisica_detalhes ? ': ' + d.restricao_fisica_detalhes : '')) : 'Não';
+      const nEsp = d.deficiencia ? (d.deficiencia + (d.deficiencia_detalhes ? ': ' + d.deficiencia_detalhes : '')) : 'Não';
 
-      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro', 'bairro_nome']) || 'BARRA SECA';
-      const modalidade = getF(d, ['modalidade_nome', 'nome_modalidade', 'modalidade', 'modalidade_esportiva']) || 'Futebol';
-      const tur = getF(d, ['turno', 'turno_escolhido', 'turno_nome']) || 'Manhã';
+      const nResp = d.resp_nome || '';
+      const cResp = d.resp_cpf || '';
+      const parResp = d.resp_parentesco || '';
+      const tResp = d.resp_whatsapp || '';
 
-      const nAluno = getF(d, ['aluno_nome', 'nome_aluno', 'nome', 'nome_completo', 'TextAreaNome', 'TextNumCPF']) || 'Não informado';
-      const cAluno = getF(d, ['aluno_cpf', 'cpf_aluno', 'cpf', 'cpf_aluno_text', 'TextNumCPF']);
-      const dNascRaw = getF(d, ['data_nascimento', 'data de nascimento', 'aluno_data_nascimento', 'nascimento', 'dt_nascimento', 'TextDataNasc']);
-      const dNasc = formatarDataBr(dNascRaw);
-
-      const calcularIdade = function(dataNascStr) {
-          if (!dataNascStr) return 'Não informada';
-          var str = String(dataNascStr).trim().split('T')[0].split(' ')[0];
-          var dia, mes, ano;
-          if (str.indexOf('/') !== -1) {
-              var partes = str.split('/');
-              if (partes.length >= 3) {
-                  dia = parseInt(partes[0], 10);
-                  mes = parseInt(partes[1], 10) - 1;
-                  ano = parseInt(partes[2], 10);
-              }
-          } else if (str.indexOf('-') !== -1) {
-              var partes = str.split('-');
-              if (partes.length >= 3) {
-                  if (partes[0].length === 4) {
-                      ano = parseInt(partes[0], 10);
-                      mes = parseInt(partes[1], 10) - 1;
-                      dia = parseInt(partes[2], 10);
-                  } else {
-                      dia = parseInt(partes[0], 10);
-                      mes = parseInt(partes[1], 10) - 1;
-                      ano = parseInt(partes[2], 10);
-                  }
-              }
-          }
-          if (!ano || isNaN(ano) || isNaN(mes) || isNaN(dia)) return 'Não informada';
-          var hoje = new Date();
-          var idade = hoje.getFullYear() - ano;
-          var m = hoje.getMonth() - mes;
-          if (m < 0 || (m === 0 && hoje.getDate() < dia)) {
-              idade--;
-          }
-          return (idade >= 0 && idade < 120) ? idade + ' anos' : 'Não informada';
-      };
-
-      const idadeCalc = (getF(d, ['idade', 'idade_aluno', 'idade_anos']) ? (getF(d, ['idade', 'idade_aluno', 'idade_anos']) + ' anos') : null) || calcularIdade(dNasc);
-
-      const gen = getF(d, ['sexo', 'genero', 'genero_aluno', 'sexo_aluno']) || 'Não informado';
-      const escolaridadeVal = getF(d, ['escolaridade', 'escolaridade_aluno', 'nivel_escolaridade']) || 'Não informado';
-
-      const tCamisa = getF(d, ['tamanho_camisa', 'camisa']) || '---';
-      const tCalcado = getF(d, ['tamanho_calcado', 'calcado', 'sapato']) || '---';
-      const tCalca = getF(d, ['tamanho_calca', 'calca', 'bermuda']) || '---';
-      const alt = getF(d, ['altura', 'altura_cm']) ? (getF(d, ['altura', 'altura_cm']) + ' cm') : '---';
-      const pes = getF(d, ['peso', 'peso_kg']) ? (getF(d, ['peso', 'peso_kg']) + ' kg') : '---';
-      const raca = getF(d, ['raca', 'raca_cor', 'etnia']) || '---';
-
-      const tel = getF(d, ['whatsapp', 'telefone', 'celular', 'telefone_aluno']);
-      const email = getF(d, ['email', 'email_aluno']);
-      const cep = getF(d, ['cep', 'cep_aluno']);
-      const logr = getF(d, ['endereco', 'logradouro', 'rua']) ? (getF(d, ['endereco', 'logradouro', 'rua']) + (getF(d, ['numero']) ? ', Nº ' + getF(d, ['numero']) : '')) : '';
-      const bairro = getF(d, ['bairro', 'bairro_nome']);
-      const cid = getF(d, ['cidade', 'cidade_nome']);
-      const uf = getF(d, ['uf', 'estado']);
-
-      const uMed = getF(d, ['uso_medicacao']) ? (getF(d, ['uso_medicacao']) + (getF(d, ['uso_medicacao_detalhes']) ? ': ' + getF(d, ['uso_medicacao_detalhes']) : '')) : 'Não';
-      const pAlerg = getF(d, ['possui_alergias']) ? (getF(d, ['possui_alergias']) + (getF(d, ['possui_alergias_detalhes']) ? ': ' + getF(d, ['possui_alergias_detalhes']) : '')) : 'Não';
-      const pSaude = getF(d, ['plano_saude']) ? (getF(d, ['plano_saude']) + (getF(d, ['plano_saude_detalhes']) ? ': ' + getF(d, ['plano_saude_detalhes']) : '')) : 'Não';
-      const aMed = getF(d, ['acompan_medico']) ? (getF(d, ['acompan_medico']) + (getF(d, ['acompan_medico_detalhes']) ? ': ' + getF(d, ['acompan_medico_detalhes']) : '')) : 'Não';
-      const rFis = getF(d, ['restricao_fisica']) ? (getF(d, ['restricao_fisica']) + (getF(d, ['restricao_fisica_detalhes']) ? ': ' + getF(d, ['restricao_fisica_detalhes']) : '')) : 'Não';
-      const nEsp = getF(d, ['deficiencia', 'necessidade_especial']) ? (getF(d, ['deficiencia', 'necessidade_especial']) + (getF(d, ['deficiencia_detalhes', 'necessidade_especial_detalhes']) ? ': ' + getF(d, ['deficiencia_detalhes', 'necessidade_especial_detalhes']) : '')) : 'Não';
-
-      const nResp = getF(d, ['resp_nome', 'nome_responsavel', 'responsavel_nome']);
-      const cResp = getF(d, ['resp_cpf', 'cpf_responsavel', 'responsavel_cpf']);
-      const parResp = getF(d, ['resp_parentesco', 'grau_parentesco', 'parentesco']);
-      const tResp = getF(d, ['resp_whatsapp', 'telefone_responsavel', 'whatsapp_responsavel']);
-
-      const formatarDataHoraBr = function(val) {
-          if (!val) return '';
-          var sVal = String(val).trim();
-          if (sVal.includes('/')) return sVal;
-          try {
-              var dObj = new Date(sVal);
-              if (!isNaN(dObj.getTime())) return dObj.toLocaleString('pt-BR');
-          } catch(e){}
-          return sVal;
-      };
-
+      const subTitleHeader = "Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza";
       const tokenProtocolo = getF(d, ['PROTOCOLO', 'protocolo', 'hash_protocolo']) || '';
 
       const horaAceiteAluno = getF(d, ['hora do aceite aluno', 'hora_do_aceite_aluno', 'hora_aceite_aluno', 'aceite_aluno_em']) || formatarDataHoraBr(getF(d, ['created_at']));

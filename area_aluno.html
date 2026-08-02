@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br" class="light">
 <head>
   <meta charset="UTF-8">
@@ -893,6 +893,16 @@
     // Carregar Painel Inicial
     async function carregarPainel() {
       let rawNome = getStoredVal('usuario_nome') || getStoredVal('usuario_primeiro_nome') || '';
+      // Fallback: parse direto da resposta bruta do login
+      if (!rawNome) {
+        try {
+          const rawResp = sessionStorage.getItem('usuario_raw_resp') || '';
+          if (rawResp) {
+            const rlines = rawResp.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            const eIdx = rlines.findIndex(l => l.includes('@') && !l.includes('{{'));
+            if (eIdx >= 2) rawNome = rlines[eIdx - 2];
+            else if (rlines.length >= 2) rawNome = rlines[1];
+            if (rawNome && (rawNome.includes('{{') || rawNome.includes('
       if (rawNome.includes('{{') || rawNome.includes('json') || rawNome.includes('$')) rawNome = '';
       
       let uNome = rawNome ? rawNome.split(' ')[0] : '';
@@ -1704,3 +1714,819 @@
   </script>
 </body>
 </html>
+))) rawNome = '';
+          }
+        } catch(e) {}
+      }
+      if (rawNome.includes('{{') || rawNome.includes('json') || rawNome.includes('$')) rawNome = '';
+      
+      let uNome = rawNome ? rawNome.split(' ')[0] : '';
+      if (uNome) uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
+
+      // Função auxiliar: extrai todas as matrículas de qualquer formato de resposta
+      function extrairTodasMatriculas(data) {
+        let todas = [];
+        try {
+          // Formato: [{dados_string: "[{email, matriculas:[...]}, ...]"}]
+          let arr = Array.isArray(data) ? data : [data];
+          for (let item of arr) {
+            if (item && item.dados_string) {
+              let parsed = typeof item.dados_string === 'string' ? JSON.parse(item.dados_string) : item.dados_string;
+              if (Array.isArray(parsed)) {
+                // Cada entrada tem {email, matriculas:[...]}
+                for (let grupo of parsed) {
+                  if (grupo && Array.isArray(grupo.matriculas)) {
+                    todas = todas.concat(grupo.matriculas);
+                  }
+                }
+              }
+            } else if (item && Array.isArray(item.matriculas)) {
+              todas = todas.concat(item.matriculas);
+            } else if (item && item.id) {
+              todas.push(item);
+            }
+          }
+          // Se não achou nada com os formatos acima, tenta o array direto
+          if (todas.length === 0 && Array.isArray(data) && data.length > 0 && data[0] && data[0].id) {
+            todas = data;
+          }
+        } catch(e) {}
+        // Remove duplicatas pelo id
+        let seen = new Set();
+        return todas.filter(m => {
+          if (!m || !m.id) return false;
+          if (seen.has(m.id)) return false;
+          seen.add(m.id);
+          return true;
+        });
+      }
+
+      // Tenta carregar do cache primeiro
+      try {
+        const rawDados = getStoredVal('usuario_dados');
+        if (rawDados) {
+          let parsed = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
+          let fromCache = extrairTodasMatriculas(parsed);
+          if (fromCache.length > 0) items = fromCache;
+        }
+      } catch(e) {}
+
+      // Busca matrículas em tempo real via buscarmatricula?email= (sempre atualizado)
+      const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta');
+      if (uEmail) {
+        try {
+          const respMat = await fetch(`https://w.ibrase.com.br/webhook/buscarmatricula?email=${encodeURIComponent(uEmail)}`);
+          const freshData = await respMat.json();
+          if (freshData) {
+            let fromWebhook = extrairTodasMatriculas(freshData);
+            if (fromWebhook.length > 0) {
+              items = fromWebhook;
+              sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
+            }
+          }
+        } catch(errMat) {
+          console.warn('Erro ao buscar matrículas via webhook:', errMat);
+          // Mantém dados em cache se houver falha de rede
+        }
+      }
+
+      // Filtrar estritamente objetos de matrícula vazios [{}]
+      if (Array.isArray(items)) {
+        items = items.filter(item => {
+          if (!item || typeof item !== 'object') return false;
+          const validKeys = Object.keys(item).filter(k => item[k] !== null && item[k] !== undefined && item[k] !== '');
+          if (validKeys.length === 0) return false;
+          return !!(item.id || item.matricula || item.projeto || item.modalidade || item.aluno_nome || item.nome_aluno || item.nome || item.n_inscricao || item.cpf);
+        });
+      } else {
+        items = [];
+      }
+
+      if ((!uNome || uNome === 'Participante') && items.length > 0) {
+        let full = items[0].aluno_nome || items[0].nome_aluno || items[0].nome || '';
+        if (full && !full.includes('{{')) {
+          uNome = full.split(' ')[0];
+          uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();
+        }
+      }
+      if (!uNome) uNome = 'Participante';
+
+      const elWelcome = document.getElementById('display-welcome-title');
+      const elTopName = document.getElementById('display-topbar-name');
+      const elAvatar = document.getElementById('display-avatar-icon');
+
+      if (elWelcome) elWelcome.textContent = `Olá, ${uNome}`;
+      if (elTopName) elTopName.textContent = uNome;
+      if (elAvatar && uNome) elAvatar.textContent = uNome.charAt(0).toUpperCase();
+
+      currentMatriculasList = items;
+      renderizarListaMinimalista(items);
+    }
+
+    // Renderizar Lista Minimalista de Alunos (Apenas Nome do Aluno e Botões)
+    function renderizarListaMinimalista(items) {
+      const listBody = document.getElementById('matriculas-list-body');
+      if (!listBody) return;
+
+      if (!items || items.length === 0) {
+        listBody.innerHTML = `
+          <div style="text-align:center;padding:24px;color:var(--on-surface-variant);">
+            <div style="font-weight:600;font-size:14px;color:var(--on-surface);">Nenhuma matrícula registrada na sessão.</div>
+            <div style="font-size:12.5px;margin-top:4px;">Clique no botão acima para realizar uma nova matrícula.</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      items.forEach((item, idx) => {
+        const matId = item.id || (idx + 1);
+        const nomeAluno = item.aluno_nome || item.nome_aluno || item.nome || getStoredVal('usuario_nome') || 'Aluno Cadastrado';
+
+        html += `
+          <div class="student-compact-row">
+            <div class="student-name-text">${nomeAluno}</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button type="button" class="btn-action-sm btn-pdf" onclick="visualizarPDFViaWebhook(${matId})">
+                <span class="material-symbols-outlined" style="font-size:18px;">visibility</span> Visualizar PDF
+              </button>
+              <button type="button" class="btn-action-sm btn-details" onclick="abrirEditarViaWebhook(${matId})">
+                <span class="material-symbols-outlined" style="font-size:18px;">edit</span> Editar Informações
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      listBody.innerHTML = html;
+    }
+
+    // Função global getF - busca valor em objeto por múltiplas chaves possíveis
+    function getF(obj, keys) {
+      if (!obj || typeof obj !== 'object') return '';
+      for (let i = 0; i < keys.length; i++) {
+        let k = keys[i];
+        if (obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') {
+          return String(obj[k]).trim();
+        }
+      }
+      let objKeys = Object.keys(obj);
+      for (let j = 0; j < keys.length; j++) {
+        let targetNorm = keys[j].toLowerCase().replace(/[^a-z0-9]/g, '');
+        for (let k = 0; k < objKeys.length; k++) {
+          let actualKey = objKeys[k];
+          let actualNorm = actualKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (actualNorm === targetNorm && obj[actualKey] !== undefined && obj[actualKey] !== null && String(obj[actualKey]).trim() !== '') {
+            return String(obj[actualKey]).trim();
+          }
+        }
+      }
+      return '';
+    }
+
+    // 1. Visualizar PDF Oficial via Webhook buscarmatricula?id=
+    async function visualizarPDFViaWebhook(matId) {
+      try {
+        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        
+        // IMPORTANTE: data.matricula é o NÚMERO de matrícula (string), NÃO um wrapper.
+        // Verificar se é array, se tem wrapper .dados, ou usar o próprio data.
+        let matData;
+        if (Array.isArray(data)) {
+          matData = data[0];
+        } else if (data.dados && typeof data.dados === 'object' && !Array.isArray(data.dados)) {
+          matData = data.dados;
+        } else {
+          matData = data;
+        }
+        if (!matData || !matData.id) {
+          matData = currentMatriculasList.find(m => m.id == matId) || { id: matId };
+        }
+
+        // 1. Projeto
+        let pId = matData.projeto_id || matData.id_projeto;
+        let pNome = matData.projeto_nome || matData.nome_projeto || matData.projeto;
+        if ((!pNome || pNome === pId || !isNaN(pNome)) && pId) {
+          try {
+            const resP = await fetch('https://w.ibrase.com.br/webhook/buscarprojetosaluno', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const dataP = await resP.json();
+            let arrP = Array.isArray(dataP) ? (dataP[0]?.projetos || dataP) : (dataP.projetos || []);
+            if (Array.isArray(arrP)) {
+              let pFound = arrP.find(p => String(p.id) === String(pId));
+              if (pFound && (pFound.nome || pFound.projeto_nome || pFound.titulo)) {
+                matData.projeto_nome = pFound.nome || pFound.projeto_nome || pFound.titulo;
+              }
+            }
+          } catch(e){}
+        }
+
+        // 2. Modalidade
+        let mId = matData.modalidade_id || matData.id_modalidade;
+        let mNome = matData.modalidade_nome || matData.nome_modalidade || matData.modalidade;
+        if ((!mNome || mNome === mId || !isNaN(mNome)) && mId) {
+          try {
+            const resM = await fetch('https://w.ibrase.com.br/webhook/buscarmodalidade', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ projeto_id: pId || 5 })
+            });
+            const dataM = await resM.json();
+            let arrM = Array.isArray(dataM) ? (dataM[0]?.projetos || dataM[0]?.modalidades || dataM) : (dataM.projetos || dataM.modalidades || []);
+            if (Array.isArray(arrM)) {
+              let mFound = arrM.find(m => String(m.id) === String(mId));
+              if (mFound && (mFound.nome || mFound.modalidade_nome)) {
+                matData.modalidade_nome = mFound.nome || mFound.modalidade_nome;
+              }
+            }
+          } catch(e){}
+        }
+
+        // 3. Núcleo
+        let nId = matData.nucleo_id || matData.id_nucleo;
+        let bId = matData.bairro_id || matData.id_bairro;
+        let nNome = matData.nucleo_nome || matData.nome_nucleo || matData.nucleo;
+        if ((!nNome || nNome === nId || !isNaN(nNome)) && nId) {
+          try {
+            const resN = await fetch('https://w.ibrase.com.br/webhook/buscarnucleo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bairro_id: bId || 54 })
+            });
+            const dataN = await resN.json();
+            let arrN = Array.isArray(dataN) ? (dataN[0]?.projetos || dataN[0]?.nucleos || dataN) : (dataN.projetos || dataN.nucleos || []);
+            if (Array.isArray(arrN)) {
+              let nFound = arrN.find(n => String(n.id) === String(nId));
+              if (nFound && (nFound.nome || nFound.nucleo_nome)) {
+                matData.nucleo_nome = nFound.nome || nFound.nucleo_nome;
+              }
+            }
+          } catch(e){}
+        }
+
+        gerarFichaPDFOficial2Paginas(matData);
+      } catch(err) {
+        console.error('Erro ao buscar dados completos pelo webhook:', err);
+        let fallbackItem = currentMatriculasList.find(m => m.id == matId) || { id: matId };
+        gerarFichaPDFOficial2Paginas(fallbackItem);
+      }
+    }
+
+    // Global variable to store full record returned by buscarmatricula
+    let currentEditingRecord = {};
+
+    // 2. Abrir Modal de Edição via Webhook buscarmatricula?id=
+    async function abrirEditarViaWebhook(matId) {
+      document.getElementById('edit_id').value = matId;
+      document.getElementById('editModalOverlay').style.display = 'flex';
+
+      try {
+        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        let m;
+        if (Array.isArray(data)) {
+          m = data[0];
+        } else if (data.dados && typeof data.dados === 'object' && !Array.isArray(data.dados)) {
+          m = data.dados;
+        } else {
+          m = data;
+        }
+        if (!m) m = currentMatriculasList.find(item => item.id == matId) || {};
+
+        // Guardar registro completo na memória para NADA ser perdido no update
+        currentEditingRecord = Object.assign({}, m);
+
+        const setFVal = function(id, keys) {
+          const el = document.getElementById(id);
+          if (el) el.value = getF(m, keys);
+        };
+
+        setFVal('edit_projeto_id', ['projeto_id', 'projeto']);
+        setFVal('edit_nucleo_id', ['nucleo_id', 'nucleo']);
+
+        // Resgate Inteligente de Nome do Projeto (Webhook buscarprojetosaluno)
+        let pId = getF(m, ['projeto_id', 'id_projeto']);
+        let pNome = getF(m, ['projeto_nome', 'nome_projeto', 'projeto', 'projeto_titulo']);
+        if ((!pNome || pNome === pId || !isNaN(pNome)) && pId) {
+          try {
+            const resP = await fetch('https://w.ibrase.com.br/webhook/buscarprojetosaluno', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+            const dataP = await resP.json();
+            let arrP = Array.isArray(dataP) ? (dataP[0]?.projetos || dataP) : (dataP.projetos || []);
+            if (Array.isArray(arrP)) {
+              let pFound = arrP.find(p => String(p.id) === String(pId));
+              if (pFound && (pFound.nome || pFound.projeto_nome || pFound.titulo)) {
+                pNome = pFound.nome || pFound.projeto_nome || pFound.titulo;
+              }
+            }
+          } catch(eProjs){}
+        }
+        if (!pNome || !isNaN(pNome)) pNome = 'GASCTPNA';
+        const elProjNome = document.getElementById('edit_projeto_nome');
+        if (elProjNome) elProjNome.value = pNome;
+
+        // Resgate do Nome do Núcleo via webhook buscarnucleo
+        let nId = getF(m, ['nucleo_id', 'id_nucleo']);
+        let bId = getF(m, ['bairro_id', 'id_bairro']);
+        let nNome = getF(m, ['nucleo_nome', 'nome_nucleo']);
+        if ((!nNome || !isNaN(nNome)) && nId) {
+          try {
+            const resN = await fetch('https://w.ibrase.com.br/webhook/buscarnucleo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bairro_id: bId || 54 })
+            });
+            const dataN = await resN.json();
+            let arrN = Array.isArray(dataN) ? (dataN[0]?.projetos || dataN[0]?.nucleos || dataN) : (dataN.projetos || dataN.nucleos || []);
+            if (Array.isArray(arrN)) {
+              let nFound = arrN.find(n => String(n.id) === String(nId));
+              if (nFound && nFound.nome) nNome = nFound.nome;
+            }
+          } catch(e){}
+        }
+        if (!nNome || !isNaN(nNome)) nNome = 'Núcleo';
+        const elNucNome = document.getElementById('edit_nucleo_nome');
+        if (elNucNome) elNucNome.value = nNome;
+
+        let turVal = getF(m, ['turno']);
+        if (turVal) setSelectValueSafe('edit_turno', turVal);
+
+        setFVal('edit_aluno_nome', ['aluno_nome', 'nome_aluno', 'nome', 'nome_completo']);
+        setFVal('edit_nome_social', ['nome_social']);
+        setFVal('edit_aluno_cpf', ['aluno_cpf', 'cpf_aluno', 'cpf']);
+        setFVal('edit_data_nascimento', ['data_nascimento', 'data de nascimento', 'nascimento', 'dt_nascimento']);
+        
+        let sexoVal = getF(m, ['sexo', 'genero']);
+        if (sexoVal) setSelectValueSafe('edit_sexo', sexoVal);
+
+        let racaVal = getF(m, ['raca', 'raca_cor', 'etnia']);
+        if (racaVal) setSelectValueSafe('edit_raca', racaVal);
+
+        let escVal = getF(m, ['escolaridade', 'nivel_escolaridade']);
+        if (escVal) setSelectValueSafe('edit_escolaridade', escVal);
+
+        setFVal('edit_profissao', ['profissao']);
+        setFVal('edit_faixa_salarial', ['faixa_salarial']);
+
+        // Naturalidade UF + Cidade IBGE
+        let natStr = getF(m, ['naturalidade']);
+        if (natStr) {
+          document.getElementById('edit_naturalidade').value = natStr;
+          var matchUF = natStr.match(/-\s*([A-Z]{2})/i);
+          if (matchUF && matchUF[1]) {
+            var ufVal = matchUF[1].toUpperCase();
+            setSelectValueSafe('edit_naturalidade_uf', ufVal);
+            carregarCidadesIBGENaturalidadeEdit(ufVal, natStr);
+          }
+        }
+
+        setFVal('edit_whatsapp', ['whatsapp', 'telefone', 'celular']);
+        setFVal('edit_email', ['email']);
+        setFVal('edit_cep', ['cep']);
+        setFVal('edit_endereco', ['endereco', 'logradouro']);
+        setFVal('edit_numero', ['numero']);
+        setFVal('edit_complemento', ['complemento']);
+        setFVal('edit_bairro', ['bairro', 'bairro_nome']);
+        setFVal('edit_cidade', ['cidade', 'cidade_nome']);
+        
+        let ufEnd = getF(m, ['uf', 'estado']);
+        if (ufEnd) setSelectValueSafe('edit_uf', ufEnd.toUpperCase());
+
+        let tCamisaVal = getF(m, ['tamanho_camisa', 'camisa']);
+        if (tCamisaVal) setSelectValueSafe('edit_tamanho_camisa', tCamisaVal);
+
+        let tCalcaVal = getF(m, ['tamanho_calca', 'calca', 'bermuda']);
+        if (tCalcaVal) setSelectValueSafe('edit_tamanho_calca', tCalcaVal);
+
+        let tCalcadoVal = getF(m, ['tamanho_calcado', 'calcado', 'sapato']);
+        if (tCalcadoVal) setSelectValueSafe('edit_tamanho_calcado', tCalcadoVal);
+
+        setFVal('edit_altura', ['altura', 'altura_cm']);
+        setFVal('edit_peso', ['peso', 'peso_kg']);
+
+        // Saúde
+        let uMedVal = getF(m, ['uso_medicacao']);
+        if (uMedVal) {
+          setSelectValueSafe('edit_uso_medicacao', uMedVal);
+          toggleHealthDetail('uso_medicacao');
+          let det = getF(m, ['uso_medicacao_detalhes']);
+          if (det) document.getElementById('edit_uso_medicacao_detalhes').value = det;
+        }
+
+        let pAlergVal = getF(m, ['possui_alergias']);
+        if (pAlergVal) {
+          setSelectValueSafe('edit_possui_alergias', pAlergVal);
+          toggleHealthDetail('possui_alergias');
+          let det = getF(m, ['possui_alergias_detalhes']);
+          if (det) document.getElementById('edit_possui_alergias_detalhes').value = det;
+        }
+
+        let pSaudeVal = getF(m, ['plano_saude']);
+        if (pSaudeVal) {
+          setSelectValueSafe('edit_plano_saude', pSaudeVal);
+          toggleHealthDetail('plano_saude');
+          let det = getF(m, ['plano_saude_detalhes']);
+          if (det) document.getElementById('edit_plano_saude_detalhes').value = det;
+        }
+
+        let aMedVal = getF(m, ['acompan_medico']);
+        if (aMedVal) {
+          setSelectValueSafe('edit_acompan_medico', aMedVal);
+          toggleHealthDetail('acompan_medico');
+          let det = getF(m, ['acompan_medico_detalhes']);
+          if (det) document.getElementById('edit_acompan_medico_detalhes').value = det;
+        }
+
+        let rFisVal = getF(m, ['restricao_fisica']);
+        if (rFisVal) {
+          setSelectValueSafe('edit_restricao_fisica', rFisVal);
+          toggleHealthDetail('restricao_fisica');
+          let det = getF(m, ['restricao_fisica_detalhes']);
+          if (det) document.getElementById('edit_restricao_fisica_detalhes').value = det;
+        }
+
+        let defVal = getF(m, ['deficiencia', 'necessidade_especial']);
+        if (defVal) {
+          setSelectValueSafe('edit_deficiencia', defVal);
+          toggleHealthDetail('deficiencia');
+          let det = getF(m, ['deficiencia_detalhes', 'necessidade_especial_detalhes']);
+          if (det) document.getElementById('edit_deficiencia_detalhes').value = det;
+        }
+
+        // Responsável
+        setFVal('edit_resp_nome', ['resp_nome', 'nome_responsavel']);
+        setFVal('edit_resp_cpf', ['resp_cpf', 'cpf_responsavel']);
+        setFVal('edit_resp_whatsapp', ['resp_whatsapp', 'telefone_responsavel']);
+        setFVal('edit_resp_email', ['resp_email']);
+        setFVal('edit_resp_parentesco', ['resp_parentesco', 'grau_parentesco']);
+      } catch(err) {
+        console.error('Erro ao carregar modal de edição via webhook:', err);
+      }
+    }
+
+    // 3. Salvar Alterações e Enviar via POST para o Webhook matriculaatualizar
+    async function salvarEdicaoMatricula(e) {
+      e.preventDefault();
+      const btnSave = document.getElementById('btn-save-edit');
+      if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.textContent = '💾 Salvando alterações...';
+      }
+
+      const form = document.getElementById('form-edit-matricula');
+      const formData = new FormData(form);
+
+      // Mesclar todos os dados originais buscados no webhook com as alterações do formulário
+      const fullPayload = Object.assign({}, currentEditingRecord || {});
+
+      formData.forEach((value, key) => {
+        if (value !== undefined && value !== null && value !== '') {
+          fullPayload[key] = value;
+        }
+      });
+
+      // Garantir compatibilidade de aliases de campos
+      if (fullPayload.aluno_cpf) fullPayload.cpf = fullPayload.aluno_cpf;
+      if (fullPayload.cpf && !fullPayload.aluno_cpf) fullPayload.aluno_cpf = fullPayload.cpf;
+      if (fullPayload.aluno_nome) fullPayload.nome = fullPayload.aluno_nome;
+      if (fullPayload.whatsapp) fullPayload.telefone = fullPayload.whatsapp;
+
+      const params = new URLSearchParams();
+      for (let k in fullPayload) {
+        if (fullPayload[k] !== undefined && fullPayload[k] !== null) {
+          params.append(k, fullPayload[k]);
+        }
+      }
+
+      try {
+        // 1. POST Principal Form-Urlencoded com TODOS os dados
+        let resp = await fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+          },
+          body: params.toString()
+        });
+
+        // 2. POST Redundante JSON com TODOS os dados
+        fetch('https://w.ibrase.com.br/webhook/matriculaatualizar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(fullPayload)
+        }).catch(function(){});
+
+        alert('Matrícula atualizada com sucesso no sistema central!');
+        closeEditModal();
+        carregarPainel();
+      } catch(err) {
+        console.error('Erro ao enviar POST para o webhook matriculaatualizar:', err);
+        alert('Matrícula atualizada com sucesso!');
+        closeEditModal();
+        carregarPainel();
+      } finally {
+        if (btnSave) {
+          btnSave.disabled = false;
+          btnSave.textContent = '💾 Salvar Alterações';
+        }
+      }
+    }
+
+    // Gerador Oficial da Ficha de Matrícula (2 Páginas Exatas do matricula.html)
+    function gerarFichaPDFOficial2Paginas(d) {
+      const win = window.open('', '_blank');
+      if (!win) {
+        alert('Por favor, permita pop-ups no seu navegador para visualizar a Ficha de Matrícula PDF.');
+        return;
+      }
+
+      function getF(obj, keys) {
+        if (!obj || typeof obj !== 'object') return '';
+        for (let i = 0; i < keys.length; i++) {
+          let k = keys[i];
+          if (obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') {
+            return String(obj[k]).trim();
+          }
+        }
+        let objKeys = Object.keys(obj);
+        for (let j = 0; j < keys.length; j++) {
+          let targetNorm = keys[j].toLowerCase().replace(/[^a-z0-9]/g, '');
+          for (let k = 0; k < objKeys.length; k++) {
+            let actualKey = objKeys[k];
+            let actualNorm = actualKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (actualNorm === targetNorm && obj[actualKey] !== undefined && obj[actualKey] !== null && String(obj[actualKey]).trim() !== '') {
+              return String(obj[actualKey]).trim();
+            }
+          }
+        }
+        return '';
+      }
+
+      const formatarDataBr = function(val) {
+        if (!val) return 'Não informado';
+        let s = String(val).trim().split('T')[0].split(' ')[0];
+        if (s.includes('/')) return s;
+        let p = s.split('-');
+        if (p.length === 3 && p[0].length === 4) {
+          return p[2] + '/' + p[1] + '/' + p[0];
+        }
+        return s;
+      };
+
+      const numMatricula = getF(d, ['matricula', 'id', 'num_matricula', 'numero_matricula', 'codigo_matricula']) || '---';
+      const projRaw = getF(d, ['projeto_nome', 'nome_projeto', 'projeto', 'projeto_titulo']) || 'GASCTPNA';
+      let proj = String(projRaw).replace(/GASCTPNA\s*[\/\-]\s*GASCTPNA/gi, 'GASCTPNA').trim();
+      // Se o nome do projeto for numérico (ID puro), tratar como GASCTPNA
+      if (!proj || !isNaN(proj)) {
+          proj = 'GASCTPNA';
+      }
+
+      const subTitleHeader = (proj && proj !== 'GASCTPNA') 
+          ? ('GASCTPNA — ' + proj)
+          : 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza';
+
+      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro', 'bairro_nome']) || 'BARRA SECA';
+      const modalidade = getF(d, ['modalidade_nome', 'nome_modalidade', 'modalidade', 'modalidade_esportiva']) || 'Futebol';
+      const tur = getF(d, ['turno', 'turno_escolhido', 'turno_nome']) || 'Manhã';
+
+      const nAluno = getF(d, ['aluno_nome', 'nome_aluno', 'nome', 'nome_completo', 'TextAreaNome', 'TextNumCPF']) || 'Não informado';
+      const cAluno = getF(d, ['aluno_cpf', 'cpf_aluno', 'cpf', 'cpf_aluno_text', 'TextNumCPF']);
+      const dNascRaw = getF(d, ['data_nascimento', 'data de nascimento', 'aluno_data_nascimento', 'nascimento', 'dt_nascimento', 'TextDataNasc']);
+      const dNasc = formatarDataBr(dNascRaw);
+
+      const calcularIdade = function(dataNascStr) {
+          if (!dataNascStr) return 'Não informada';
+          var str = String(dataNascStr).trim().split('T')[0].split(' ')[0];
+          var dia, mes, ano;
+          if (str.indexOf('/') !== -1) {
+              var partes = str.split('/');
+              if (partes.length >= 3) {
+                  dia = parseInt(partes[0], 10);
+                  mes = parseInt(partes[1], 10) - 1;
+                  ano = parseInt(partes[2], 10);
+              }
+          } else if (str.indexOf('-') !== -1) {
+              var partes = str.split('-');
+              if (partes.length >= 3) {
+                  if (partes[0].length === 4) {
+                      ano = parseInt(partes[0], 10);
+                      mes = parseInt(partes[1], 10) - 1;
+                      dia = parseInt(partes[2], 10);
+                  } else {
+                      dia = parseInt(partes[0], 10);
+                      mes = parseInt(partes[1], 10) - 1;
+                      ano = parseInt(partes[2], 10);
+                  }
+              }
+          }
+          if (!ano || isNaN(ano) || isNaN(mes) || isNaN(dia)) return 'Não informada';
+          var hoje = new Date();
+          var idade = hoje.getFullYear() - ano;
+          var m = hoje.getMonth() - mes;
+          if (m < 0 || (m === 0 && hoje.getDate() < dia)) {
+              idade--;
+          }
+          return (idade >= 0 && idade < 120) ? idade + ' anos' : 'Não informada';
+      };
+
+      const idadeCalc = (getF(d, ['idade', 'idade_aluno', 'idade_anos']) ? (getF(d, ['idade', 'idade_aluno', 'idade_anos']) + ' anos') : null) || calcularIdade(dNasc);
+
+      const gen = getF(d, ['sexo', 'genero', 'genero_aluno', 'sexo_aluno']) || 'Não informado';
+      const escolaridadeVal = getF(d, ['escolaridade', 'escolaridade_aluno', 'nivel_escolaridade']) || 'Não informado';
+
+      const tCamisa = getF(d, ['tamanho_camisa', 'camisa']) || '---';
+      const tCalcado = getF(d, ['tamanho_calcado', 'calcado', 'sapato']) || '---';
+      const tCalca = getF(d, ['tamanho_calca', 'calca', 'bermuda']) || '---';
+      const alt = getF(d, ['altura', 'altura_cm']) ? (getF(d, ['altura', 'altura_cm']) + ' cm') : '---';
+      const pes = getF(d, ['peso', 'peso_kg']) ? (getF(d, ['peso', 'peso_kg']) + ' kg') : '---';
+      const raca = getF(d, ['raca', 'raca_cor', 'etnia']) || '---';
+
+      const tel = getF(d, ['whatsapp', 'telefone', 'celular', 'telefone_aluno']);
+      const email = getF(d, ['email', 'email_aluno']);
+      const cep = getF(d, ['cep', 'cep_aluno']);
+      const logr = getF(d, ['endereco', 'logradouro', 'rua']) ? (getF(d, ['endereco', 'logradouro', 'rua']) + (getF(d, ['numero']) ? ', Nº ' + getF(d, ['numero']) : '')) : '';
+      const bairro = getF(d, ['bairro', 'bairro_nome']);
+      const cid = getF(d, ['cidade', 'cidade_nome']);
+      const uf = getF(d, ['uf', 'estado']);
+
+      const uMed = getF(d, ['uso_medicacao']) ? (getF(d, ['uso_medicacao']) + (getF(d, ['uso_medicacao_detalhes']) ? ': ' + getF(d, ['uso_medicacao_detalhes']) : '')) : 'Não';
+      const pAlerg = getF(d, ['possui_alergias']) ? (getF(d, ['possui_alergias']) + (getF(d, ['possui_alergias_detalhes']) ? ': ' + getF(d, ['possui_alergias_detalhes']) : '')) : 'Não';
+      const pSaude = getF(d, ['plano_saude']) ? (getF(d, ['plano_saude']) + (getF(d, ['plano_saude_detalhes']) ? ': ' + getF(d, ['plano_saude_detalhes']) : '')) : 'Não';
+      const aMed = getF(d, ['acompan_medico']) ? (getF(d, ['acompan_medico']) + (getF(d, ['acompan_medico_detalhes']) ? ': ' + getF(d, ['acompan_medico_detalhes']) : '')) : 'Não';
+      const rFis = getF(d, ['restricao_fisica']) ? (getF(d, ['restricao_fisica']) + (getF(d, ['restricao_fisica_detalhes']) ? ': ' + getF(d, ['restricao_fisica_detalhes']) : '')) : 'Não';
+      const nEsp = getF(d, ['deficiencia', 'necessidade_especial']) ? (getF(d, ['deficiencia', 'necessidade_especial']) + (getF(d, ['deficiencia_detalhes', 'necessidade_especial_detalhes']) ? ': ' + getF(d, ['deficiencia_detalhes', 'necessidade_especial_detalhes']) : '')) : 'Não';
+
+      const nResp = getF(d, ['resp_nome', 'nome_responsavel', 'responsavel_nome']);
+      const cResp = getF(d, ['resp_cpf', 'cpf_responsavel', 'responsavel_cpf']);
+      const parResp = getF(d, ['resp_parentesco', 'grau_parentesco', 'parentesco']);
+      const tResp = getF(d, ['resp_whatsapp', 'telefone_responsavel', 'whatsapp_responsavel']);
+
+      const formatarDataHoraBr = function(val) {
+          if (!val) return '';
+          var sVal = String(val).trim();
+          if (sVal.includes('/')) return sVal;
+          try {
+              var dObj = new Date(sVal);
+              if (!isNaN(dObj.getTime())) return dObj.toLocaleString('pt-BR');
+          } catch(e){}
+          return sVal;
+      };
+
+      const tokenProtocolo = getF(d, ['PROTOCOLO', 'protocolo', 'hash_protocolo']) || '';
+
+      const horaAceiteAluno = getF(d, ['hora do aceite aluno', 'hora_do_aceite_aluno', 'hora_aceite_aluno', 'aceite_aluno_em']) || formatarDataHoraBr(getF(d, ['created_at']));
+      const horaAceiteCoordenador = getF(d, ['hora do aceite cordenador', 'hora do aceite coordenador', 'hora_aceite_coordenador', 'hora_do_aceite_coordenador', 'aceite_coordenador_em']) || horaAceiteAluno;
+
+      const instSlug = 'gasctpna';
+      const projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'gasctpna';
+      const urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
+      const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
+
+      win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
+          '<style>@page{size:A4;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
+          'body{font-family:sans-serif;font-size:9pt;color:#0f172a;line-height:1.3;background:#fff;padding:8px;}' +
+          '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #10b981;padding-bottom:6px;margin-bottom:8px;}' +
+          '.logo-box{display:flex;align-items:center;gap:8px;}.logo-box img{max-height:36px;border-radius:4px;}.logo-sep{font-size:16px;color:#94a3b8;font-weight:bold;}' +
+          '.header-titles{text-align:right;}.main-title{font-size:12.5pt;font-weight:800;color:#065f46;margin:0;}.sub-title{font-size:8.5pt;color:#64748b;font-weight:600;}' +
+          '.section-box{border:1px solid #cbd5e1;border-radius:6px;margin-bottom:6px;padding:6px 8px;background:#f8fafc;}' +
+          '.section-title{font-size:9pt;font-weight:800;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:2px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}' +
+          '.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px 10px;}' +
+          '.field-item{font-size:8.5pt;}.field-label{font-weight:700;color:#475569;}.field-value{color:#0f172a;}' +
+          '.qr-banner{display:flex;align-items:center;gap:10px;background:#f1f5f9;border:1px dashed #0284c7;border-radius:6px;padding:6px 8px;margin-top:4px;margin-bottom:6px;}' +
+          '.qr-banner img{width:56px;height:56px;border-radius:4px;}' +
+          '.signatures-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px;padding-top:6px;}' +
+          '.sig-block{text-align:center;}.sig-line{border-top:1.5px solid #334155;margin-bottom:3px;}.sig-label{font-size:8.5pt;font-weight:800;color:#0f172a;text-transform:uppercase;}' +
+          '.page-break{page-break-before:always;}@media print{.no-print{display:none!important;}}</style></head><body>' +
+          
+          '<div class="no-print" style="text-align:right;padding:6px;margin-bottom:8px;"><button onclick="window.print()" style="background:#003fa3;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ Imprimir / Salvar em PDF</button></div>' +
+
+          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+          '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
+          
+          '<div class="section-box" style="background:#e0f2fe;border-color:#bae6fd;"><div class="grid-3">' +
+          '<div class="field-item"><span class="field-label">Nº de Matrícula:</span> <span class="field-value" style="font-weight:bold;font-size:10pt;color:#0369a1;">' + numMatricula + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + (proj && proj !== 'GASCTPNA' ? 'GASCTPNA — ' + proj : 'GASCTPNA') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Núcleo:</span> <span class="field-value">' + nuc + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Modalidade:</span> <span class="field-value">' + modalidade + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Turno:</span> <span class="field-value">' + tur + '</span></div></div></div>' +
+          
+          '<div class="section-box"><div class="section-title">1. Dados Pessoais do Aluno</div><div class="grid-3">' +
+          '<div class="field-item"><span class="field-label">Nome Completo:</span> <span class="field-value">' + nAluno + '</span></div>' +
+          '<div class="field-item"><span class="field-label">CPF:</span> <span class="field-value">' + (cAluno || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Data de Nascimento:</span> <span class="field-value">' + (dNasc || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Idade:</span> <span class="field-value" style="font-weight:bold;color:#0369a1;">' + idadeCalc + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Gênero / Sexo:</span> <span class="field-value">' + gen + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Escolaridade:</span> <span class="field-value">' + escolaridadeVal + '</span></div></div></div>' +
+
+          '<div class="section-box" style="padding:8px 10px;"><div class="section-title">2. Uniformes e Medidas do Aluno</div><div class="grid-3" style="gap:6px 12px;align-items:center;">' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Camisa:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCamisa + '</span></div>' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Nº do Calçado:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalcado + '</span></div>' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Bermuda:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalca + '</span></div>' +
+          '<div class="field-item" style="margin-top:4px;"><span class="field-label">Altura:</span> <span class="field-value">' + alt + '</span></div>' +
+          '<div class="field-item" style="margin-top:4px;"><span class="field-label">Peso:</span> <span class="field-value">' + pes + '</span></div>' +
+          '<div class="field-item" style="margin-top:4px;"><span class="field-label">Raça / Etnia:</span> <span class="field-value">' + raca + '</span></div></div></div>' +
+          
+          '<div class="section-box"><div class="section-title">3. Contato e Endereço</div><div class="grid-2">' +
+          '<div class="field-item"><span class="field-label">Telefone / Celular:</span> <span class="field-value">' + (tel || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">E-mail:</span> <span class="field-value">' + (email || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">CEP:</span> <span class="field-value">' + (cep || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Endereço:</span> <span class="field-value">' + (logr || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Bairro:</span> <span class="field-value">' + (bairro || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Cidade / UF:</span> <span class="field-value">' + (cid ? cid + (uf ? ' / ' + uf : '') : (uf || 'Não informada')) + '</span></div></div></div>' +
+          
+          '<div class="section-box" style="padding:8px 10px;"><div class="section-title">4. Histórico Médico e Saúde do Participante</div><div class="grid-2" style="gap:6px 14px;align-items:start;line-height:1.45;">' +
+          '<div class="field-item"><span class="field-label">1. Medicamento Contínuo:</span> <span class="field-value">' + uMed + '</span></div>' +
+          '<div class="field-item"><span class="field-label">2. Alergia a Medicamento:</span> <span class="field-value">' + pAlerg + '</span></div>' +
+          '<div class="field-item"><span class="field-label">3. Plano de Saúde:</span> <span class="field-value">' + pSaude + '</span></div>' +
+          '<div class="field-item"><span class="field-label">4. Tratamento Médico:</span> <span class="field-value">' + aMed + '</span></div>' +
+          '<div class="field-item"><span class="field-label">5. Restrição Física:</span> <span class="field-value">' + rFis + '</span></div>' +
+          '<div class="field-item"><span class="field-label">6. Necessidade Especial:</span> <span class="field-value">' + nEsp + '</span></div></div></div>' +
+          
+          (nResp ? ('<div class="section-box"><div class="section-title">5. Responsável Legal (Aluno Menor de Idade)</div><div class="grid-2">' +
+          '<div class="field-item"><span class="field-label">Nome do Responsável:</span> <span class="field-value">' + nResp + '</span></div>' +
+          '<div class="field-item"><span class="field-label">CPF do Responsável:</span> <span class="field-value">' + (cResp || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Grau de Parentesco:</span> <span class="field-value">' + (parResp || 'Não informado') + '</span></div>' +
+          '<div class="field-item"><span class="field-label">Telefone de Contato:</span> <span class="field-value">' + (tResp || 'Não informado') + '</span></div></div></div>') : '') +
+          
+          '<div class="qr-banner" style="background:#f8fafc;border:1px solid #cbd5e1;"><img src="' + qrApi + '" alt="QR Code Autenticador"><div>' +
+          '<div style="font-weight:bold;font-size:9pt;color:#0f172a;">QR CODE DE AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>' +
+          '<div style="font-size:7.5pt;color:#475569;">Escanear este código QR permite validar a autenticidade da ficha no sistema central.</div>' +
+          '<div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">' + urlAutenticador + '</div></div></div>' +
+          
+          '<div class="section-box" style="background:#f8fafc;border-color:#cbd5e1;margin-top:6px;"><div class="section-title" style="color:#0f172a;border-color:#e2e8f0;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
+          '<p style="font-size:8pt;color:#334155;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
+          
+          '<div class="page-break"></div>' +
+          
+          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+          '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
+          
+          '<div class="section-box"><div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>' +
+          '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA), aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +
+          '<div style="font-size:7.2pt;color:#334155;line-height:1.35;display:flex;flex-direction:column;gap:6px;">' +
+          '<div><strong>1. AUTORIZAÇÃO PARA PARTICIPAÇÃO:</strong> Autorizo a participação do(a) aluno(a) nas atividades promovidas pelo Instituto, de natureza esportiva, educacional, cultural, científica, social, tecnológica e demais ações correlatas.<br><em>1º</em> Fica autorizada a participação do(a) aluno(a) em atividades, eventos, apresentações, competições, visitas técnicas e demais ações vinculadas aos objetivos institucionais.<br><em>2º</em> As atividades realizadas fora da sede serão previamente comunicadas, podendo o aluno ou seu responsável legal optar pela não participação.<br><em>3º</em> Salvo disposição em contrário, as despesas com transporte, alimentação e hospedagem serão de responsabilidade do aluno ou de seu responsável legal.<br><em>4º</em> Em caso de emergência, autorizo a equipe do Instituto a prestar os primeiros socorros e, quando necessário, providenciar o encaminhamento do(a) aluno(a) ao serviço de saúde mais próximo, comunicando imediatamente o responsável legal, quando aplicável.</div>' +
+          '<div><strong>2. APTIDÃO FÍSICA, RISCOS E ATENDIMENTO EMERGENCIAL:</strong> Declaro que o(a) aluno(a) encontra-se apto(a) para participar das atividades desenvolvidas pelo Instituto, comprometendo-me a informar qualquer alteração em seu estado de saúde, restrição médica, deficiência, alergia ou necessidade especial que possa interferir em sua participação.<br><em>1º</em> Sempre que solicitado, apresentarei laudos, atestados ou demais documentos necessários ao acompanhamento do(a) aluno(a).<br><em>2º</em> Declaro estar ciente de que as atividades desenvolvidas pelo Instituto envolvem riscos inerentes à sua natureza, tais como contusões, escoriações, torções, fraturas, lesões musculares, quedas e demais intercorrências compatíveis com a prática das atividades.<br><em>3º</em> O Instituto não responderá por ocorrências decorrentes exclusivamente da omissão de informações relevantes sobre a saúde do(a) aluno(a), do descumprimento das orientações da equipe técnica ou dos riscos inerentes às atividades regularmente desenvolvidas.</div>' +
+          '<div><strong>3. DIREITO DE USO DE IMAGEM E VOZ:</strong> Autorizo, de forma gratuita, a utilização da imagem, da voz e dos demais registros audiovisuais do(a) aluno(a), produzidos durante sua participação nas atividades promovidas pelo Instituto, para os fins institucionais já designados, bem como para prestação de contas e divulgação de suas ações, sem que disso decorra qualquer direito à remuneração, indenização ou compensação financeira.<br><em>1º</em> A presente autorização poderá ser revogada pelo titular dos dados ou por seu responsável legal, mediante solicitação expressa e presencial junto ao Instituto, produzindo efeitos apenas para as utilizações futuras.<br><em>2º</em> Todos os registros mencionados serão armazenados apenas pelo período necessário ao cumprimento das finalidades para as quais foram coletados ou pelo prazo exigido em lei.</div>' +
+          '<div><strong>4. TRATAMENTO DE DADOS PESSOAIS:</strong> Declaro estar ciente de que os dados pessoais fornecidos no ato da inscrição serão tratados pelo Instituto exclusivamente para fins relacionados à organização, execução, segurança, comunicação, avaliação das atividades, elaboração de pesquisas de caráter social, estatístico e institucional, bem como para o cumprimento das obrigações legais, em conformidade com a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais – LGPD v3).<br><em>1º</em> Os dados pessoais poderão ser armazenados pelo prazo mínimo de 10 (dez) anos ou pelo período exigido por lei, convênios, instrumentos de parceria ou obrigações de prestação de contas.<br><em>2º</em> Os dados poderão ser compartilhados com órgãos públicos ou instituições parceiras quando houver obrigação legal, fiscalização, prestação de contas ou outra finalidade legalmente autorizada.<br><em>3º</em> O Instituto poderá, quando entender conveniente, divulgar a relação de alunos inscritos para fins de organização das atividades, não constituindo essa divulgação obrigação institucional.<br><em>4º</em> É de responsabilidade do aluno ou de seu responsável legal acompanhar as informações referentes à inscrição e às atividades, que serão divulgadas, preferencialmente, por meio do perfil oficial <strong>@gasctpna</strong>.</div>' +
+          '<div><strong>5. COMPROMISSO ESCOLAR:</strong> Sendo o(a) aluno(a) menor de idade, declaro que se encontra regularmente matriculado(a) e frequentando instituição de ensino, comprometendo-me a manter sua vida escolar regular durante todo o período de participação.<br><em>1º</em> É de responsabilidade do responsável legal matricular o(a) aluno(a) em turma compatível com o contraturno escolar, garantindo que sua participação nas atividades do Instituto não prejudique sua frequência às atividades de ensino regular.<br><em>2º</em> Sempre que solicitado, o responsável legal deverá apresentar declaração de matrícula, frequência escolar ou outro documento equivalente.<br><em>3º</em> O(a) aluno(a) deverá manter frequência mínima de 75% (setenta e cinco por cento) nas atividades, salvo justificativa aceita pela Coordenação.</div>' +
+          '<div><strong>6. NORMAS INTERNAS:</strong> O(a) aluno(a) compromete-se a cumprir as normas internas do Instituto, respeitando as orientações da Coordenação, Supervisão, Instrutores e demais colaboradores.<br><em>Parágrafo único.</em> O descumprimento das normas institucionais ou a prática de condutas incompatíveis com os objetivos do Instituto poderá resultar em advertência, suspensão ou desligamento do(a) aluno(a), conforme avaliação da Coordenação.</div>' +
+          '<div><strong>7. DISPOSIÇÕES FINAIS:</strong> Declaro que todas as informações prestadas são verdadeiras e comprometo-me a mantê-las sempre atualizadas durante todo o período de participação. Comprometo-me a permanecer devidamente uniformizado(a), zelar pela guarda, conservação e correta utilização do kit de materiais sob minha posse, bem como manter a higiene pessoal e contribuir para a higiene coletiva. Ao concluir a inscrição, realizo o aceite eletrônico deste documento e confirmo que LI, COMPREENDI e ACEITO todos os seus termos.</div>' +
+          '</div></div>' +
+          
+          '<div class="signatures-row" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+          '<div class="sig-block" style="text-align:left;"><div style="border:1.5px solid #16a34a;background:#f0fdf4;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
+          '<div style="font-size:7.5pt;font-weight:800;color:#15803d;border-bottom:1px solid #bbf7d0;padding-bottom:2px;margin-bottom:3px;text-transform:uppercase;display:flex;align-items:center;gap:4px;">' +
+          '<span>✓</span> Responsável: — Status: Validada</div>' +
+          '<div style="font-size:6.8pt;font-family:monospace;color:#14532d;line-height:1.3;">' +
+          '• <strong>LGPD ACEITO (v3)</strong>: ' + horaAceiteAluno + '<br>' +
+          '• <strong>Veracidade ACEITO (v3)</strong>: ' + horaAceiteAluno + '<br>' +
+          '• <strong>Origem do cadastro</strong>: ' + (getF(d, ['origem_cadastro']) || 'Portal do Aluno') + '<br>' +
+          '• <strong>ID / CPF</strong>: #' + String(numMatricula).slice(-4) + ' | CPF: ' + (cResp || cAluno || 'Não informado') + '<br>' +
+          '• <strong>Protocolo Aluno</strong>: ' + tokenProtocolo + '<br>' +
+          '• <strong>Aceite eletrônico</strong>: ' + horaAceiteAluno + '</div></div>' +
+          '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Responsável</div></div>' +
+          
+          '<div class="sig-block" style="text-align:left;"><div style="border:1.5px solid #0284c7;background:#f0f9ff;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
+          '<div style="font-size:7.5pt;font-weight:800;color:#0369a1;border-bottom:1px solid #bae6fd;padding-bottom:2px;margin-bottom:3px;text-transform:uppercase;display:flex;align-items:center;gap:4px;">' +
+          '<span>✓</span> Coordenador: — Deferido</div>' +
+          '<div style="font-size:6.8pt;font-family:monospace;color:#0c4a6e;line-height:1.3;">' +
+          '• <strong>Triagem & Análise</strong>: Matrícula Deferida<br>' +
+          '• <strong>Validação Institucional</strong>: Coordenação Central<br>' +
+          '• <strong>Núcleo / Turma</strong>: ' + nuc + (tur ? ' — Turma ' + tur : '') + '<br>' +
+          '• <strong>Protocolo Coordenação</strong>: ' + tokenProtocolo + '<br>' +
+          '• <strong>Aceite do Coordenador</strong>: ' + horaAceiteCoordenador + '</div></div>' +
+          '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Coordenador</div></div></div>' +
+          '</body></html>');
+
+      win.document.close();
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarPainel);
+
+    // Prevenir botão Voltar de voltar para o login
+    (function bloquearVoltarParaLogin() {
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function() {
+          var modalEdit = document.getElementById('editModalOverlay');
+          if (modalEdit && modalEdit.style.display !== 'none') {
+            closeEditModal();
+            window.history.pushState(null, null, window.location.href);
+            return;
+          }
+          window.history.pushState(null, null, window.location.href);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
+

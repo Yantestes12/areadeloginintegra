@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -123,10 +123,10 @@
 </div>
 
 <script>
-    // Pega o token da URL: ?token=XXX
+    // Pega o email e id da URL: ?email=XXX&id=YYY
     const urlParams = new URLSearchParams(window.location.search);
-    const resetToken = urlParams.get('token') || '';
-    const resetEmail = urlParams.get('email') || '';
+    const resetEmail = decodeURIComponent(urlParams.get('email') || '');
+    const resetId    = urlParams.get('id') || '';
 
     function toggleSenha(inputId, btn) {
         const input = document.getElementById(inputId);
@@ -174,7 +174,7 @@
             erroEl.textContent = 'As senhas não coincidem.';
             erroEl.style.display = 'block'; return;
         }
-        if (!resetToken && !resetEmail) {
+        if (!resetEmail) {
             erroEl.textContent = 'Link de recuperação inválido. Solicite um novo.';
             erroEl.style.display = 'block'; return;
         }
@@ -183,10 +183,10 @@
         btn.textContent = 'Redefinindo...';
 
         try {
-            const resp = await fetch('https://w.ibrase.com.br/webhook/redefinirsenha', {
+            const resp = await fetch('https://w.ibrase.com.br/webhook/trocarsenha', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: resetToken, email: resetEmail, nova_senha: senha })
+                body: JSON.stringify({ email: resetEmail, id: resetId, nova_senha: senha })
             });
             const data = await resp.json();
 
@@ -207,3 +207,5 @@
 </script>
 </body>
 </html>
+
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -794,6 +794,10 @@
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
+                        localStorage.setItem('usuario_nome', uNome);
+                        localStorage.setItem('usuario_email', uEmail);
+                        localStorage.setItem('usuario_id', uId);
+                        localStorage.setItem('usuario_logado', 'true');
 
                         setTimeout(() => {
                             window.location.href = 'area_aluno.html';
@@ -908,3 +912,4 @@
     </script>
 </body>
 </html>
+

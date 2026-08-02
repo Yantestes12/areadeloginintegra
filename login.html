@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -793,17 +793,7 @@
                         sessionStorage.setItem('usuario_telefone', uTelefone);
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
-                        sessionStorage.setItem('usuario_raw_resp', text);
                         localStorage.setItem('usuario_dados', uDados);
-                        localStorage.setItem('usuario_nome', uNome);
-                        localStorage.setItem('usuario_email', uEmail);
-                        localStorage.setItem('usuario_id', uId);
-                        localStorage.setItem('usuario_logado', 'true');
-                        // Cookie fallback - garante persistencia em qualquer cenario
-                        document.cookie = 'usuario_nome=' + encodeURIComponent(uNome) + '; path=/; max-age=86400';
-                        document.cookie = 'usuario_email=' + encodeURIComponent(uEmail) + '; path=/; max-age=86400';
-                        document.cookie = 'usuario_id=' + encodeURIComponent(uId) + '; path=/; max-age=86400';
-                        document.cookie = 'usuario_logado=true; path=/; max-age=86400';
 
                         setTimeout(() => {
                             window.location.href = 'area_aluno.html';
@@ -918,6 +908,3 @@
     </script>
 </body>
 </html>
-
-
-

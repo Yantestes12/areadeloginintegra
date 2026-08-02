@@ -894,19 +894,6 @@
     async function carregarPainel() {
       let rawNome = getStoredVal('usuario_nome') || getStoredVal('usuario_primeiro_nome') || '';
       if (rawNome.includes('{{') || rawNome.includes('json') || rawNome.includes('$')) rawNome = '';
-      // Fallback: extrai nome diretamente do texto bruto da resposta do login
-      if (!rawNome) {
-        try {
-          var rawResp = sessionStorage.getItem('usuario_raw_resp') || '';
-          if (rawResp) {
-            var rlines = rawResp.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
-            var eIdx = -1;
-            for (var ri = 0; ri < rlines.length; ri++) { if (rlines[ri].indexOf('@') !== -1 && rlines[ri].indexOf('{{') === -1) { eIdx = ri; break; } }
-            var candidate = eIdx >= 2 ? rlines[eIdx - 2] : (rlines.length >= 2 ? rlines[1] : '');
-            if (candidate && candidate.indexOf('{{') === -1 && candidate.indexOf('$') === -1) rawNome = candidate;
-          }
-        } catch(e) {}
-      }
       
       let uNome = rawNome ? rawNome.split(' ')[0] : '';
       if (uNome) uNome = uNome.charAt(0).toUpperCase() + uNome.slice(1).toLowerCase();

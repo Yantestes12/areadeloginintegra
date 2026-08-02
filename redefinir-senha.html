@@ -14,17 +14,12 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             padding: 20px;
         }
         .card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 44px 36px;
-            max-width: 440px;
-            width: 100%;
+            background: #fff; border-radius: 24px; padding: 44px 36px;
+            max-width: 440px; width: 100%;
             box-shadow: 0 32px 80px rgba(0,0,0,0.25);
             animation: slideUp .4s ease;
         }
@@ -34,31 +29,19 @@
             background: linear-gradient(135deg, #1e40af, #2563eb);
             border-radius: 18px;
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 28px;
+            margin: 0 auto 20px; font-size: 28px;
         }
         h1 { font-size: 22px; font-weight: 800; color: #0f172a; text-align: center; margin-bottom: 8px; }
-        .subtitle { color: #64748b; font-size: 14px; text-align: center; margin-bottom: 28px; line-height: 1.5; }
-        .email-badge {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 13px;
-            color: #1e40af;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 20px;
-            word-break: break-all;
-        }
+        .subtitle { color: #64748b; font-size: 14px; text-align: center; margin-bottom: 24px; line-height: 1.5; }
         label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
         .input-wrap { position: relative; margin-bottom: 16px; }
-        input[type="password"], input[type="text"] {
+        input[type="password"], input[type="text"], input[type="email"] {
             width: 100%; padding: 13px 44px 13px 14px;
             border: 1.5px solid #e2e8f0; border-radius: 10px;
             font-size: 15px; outline: none; transition: border .2s;
             font-family: inherit; color: #0f172a;
         }
+        input[type="email"] { padding: 13px 14px; }
         input:focus { border-color: #2563eb; }
         .toggle-pw {
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
@@ -72,7 +55,7 @@
             background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #fff; border: none; border-radius: 10px;
             font-size: 15px; font-weight: 700; cursor: pointer;
-            font-family: inherit; transition: opacity .2s; margin-top: 8px;
+            font-family: inherit; margin-top: 8px; transition: opacity .2s;
         }
         .btn:disabled { opacity: .6; cursor: not-allowed; }
         .btn:hover:not(:disabled) { opacity: .9; }
@@ -92,23 +75,29 @@
 <div class="card">
     <div class="logo-row">
         <img src="logo_integra.png" alt="INTEGRA">
-        <span style="color:#cbd5e1;font-size:18px;">×</span>
+        <span style="color:#cbd5e1;font-size:18px;">x</span>
         <img src="logo_gasctpna.jpg" alt="GASCTPNA">
     </div>
 
     <div id="formBox">
         <div class="icon-box">🔐</div>
         <h1>Redefinir Senha</h1>
-        <p class="subtitle">Digite sua nova senha abaixo.</p>
+        <p class="subtitle">Confirme seu e-mail e escolha uma nova senha.</p>
 
-        <div id="emailBadge" class="email-badge" style="display:none;"></div>
         <div id="erroMsg" class="erro"></div>
+
+        <div>
+            <label>Seu e-mail</label>
+            <div class="input-wrap">
+                <input type="email" id="inputEmail" placeholder="seu@email.com">
+            </div>
+        </div>
 
         <div>
             <label>Nova Senha</label>
             <div class="input-wrap">
-                <input type="password" id="novaSenha" placeholder="Mínimo 6 caracteres" oninput="verificarForca()">
-                <button type="button" class="toggle-pw" onclick="toggleSenha('novaSenha', this)">👁️</button>
+                <input type="password" id="novaSenha" placeholder="Minimo 6 caracteres" oninput="verificarForca()">
+                <button type="button" class="toggle-pw" onclick="toggleSenha('novaSenha',this)">👁️</button>
             </div>
             <div class="strength-bar"><div class="strength-fill" id="forcaBar"></div></div>
             <div class="strength-text" id="forcaText" style="color:#94a3b8;"></div>
@@ -118,7 +107,7 @@
             <label>Confirmar Nova Senha</label>
             <div class="input-wrap">
                 <input type="password" id="confirmarSenha" placeholder="Repita a nova senha">
-                <button type="button" class="toggle-pw" onclick="toggleSenha('confirmarSenha', this)">👁️</button>
+                <button type="button" class="toggle-pw" onclick="toggleSenha('confirmarSenha',this)">👁️</button>
             </div>
         </div>
 
@@ -129,22 +118,19 @@
     <div class="sucesso-box" id="sucessoBox">
         <div class="emoji">✅</div>
         <h2>Senha Redefinida!</h2>
-        <p>Sua senha foi atualizada com sucesso.<br>Você já pode fazer login com a nova senha.</p>
+        <p>Sua senha foi atualizada com sucesso.<br>Você ja pode fazer login com a nova senha.</p>
         <a href="login.html"><button class="btn btn-green">Ir para o Login</button></a>
     </div>
 </div>
 
 <script>
-    // Lê os params diretamente da URL desta página
+    // Tenta preencher o email a partir da URL
     const urlParams = new URLSearchParams(window.location.search);
-    const resetEmail = decodeURIComponent(urlParams.get('email') || '');
+    const emailDaUrl = decodeURIComponent(urlParams.get('email') || '');
     const resetId    = urlParams.get('id') || '';
-
-    // Mostra o email na badge se disponível
-    if (resetEmail) {
-        const badge = document.getElementById('emailBadge');
-        badge.textContent = '📧 ' + resetEmail;
-        badge.style.display = 'block';
+    const inputEmail = document.getElementById('inputEmail');
+    if (emailDaUrl) {
+        inputEmail.value = emailDaUrl;
     }
 
     function toggleSenha(inputId, btn) {
@@ -167,7 +153,7 @@
             { pct: 0, cor: '#e2e8f0', label: '' },
             { pct: 20, cor: '#ef4444', label: 'Muito fraca' },
             { pct: 40, cor: '#f97316', label: 'Fraca' },
-            { pct: 60, cor: '#eab308', label: 'Média' },
+            { pct: 60, cor: '#eab308', label: 'Media' },
             { pct: 80, cor: '#22c55e', label: 'Forte' },
             { pct: 100, cor: '#10b981', label: 'Muito forte' },
         ];
@@ -179,22 +165,23 @@
     }
 
     async function redefinirSenha() {
-        const senha = document.getElementById('novaSenha').value;
-        const confirmacao = document.getElementById('confirmarSenha').value;
-        const erroEl = document.getElementById('erroMsg');
-        const btn = document.getElementById('btnRedefinir');
+        const email    = inputEmail.value.trim();
+        const senha    = document.getElementById('novaSenha').value;
+        const confirma = document.getElementById('confirmarSenha').value;
+        const erroEl   = document.getElementById('erroMsg');
+        const btn      = document.getElementById('btnRedefinir');
         erroEl.style.display = 'none';
 
+        if (!email) {
+            erroEl.textContent = 'Informe seu e-mail.';
+            erroEl.style.display = 'block'; return;
+        }
         if (senha.length < 6) {
             erroEl.textContent = 'A senha deve ter pelo menos 6 caracteres.';
             erroEl.style.display = 'block'; return;
         }
-        if (senha !== confirmacao) {
-            erroEl.textContent = 'As senhas não coincidem.';
-            erroEl.style.display = 'block'; return;
-        }
-        if (!resetEmail) {
-            erroEl.textContent = 'Link inválido. E-mail não identificado. Solicite um novo link.';
+        if (senha !== confirma) {
+            erroEl.textContent = 'As senhas nao coincidem.';
             erroEl.style.display = 'block'; return;
         }
 
@@ -205,7 +192,7 @@
             const resp = await fetch('https://w.ibrase.com.br/webhook/trocarsenha', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: resetEmail, id: resetId, nova_senha: senha })
+                body: JSON.stringify({ email: email, id: resetId, nova_senha: senha })
             });
             const data = await resp.json();
 

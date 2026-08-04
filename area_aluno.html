@@ -931,9 +931,9 @@
         logoSrc = 'logo_auni.png';
         corBorda = '#8b5cf6';
         glowColor = 'rgba(139, 92, 246, 0.28)';
-        root.style.setProperty('--primary', '#6d28d9');
-        root.style.setProperty('--primary-container', '#8b5cf6');
-        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%)');
+        root.style.setProperty('--primary', '#4c1d95');
+        root.style.setProperty('--primary-container', '#6d28d9');
+        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #2e1065 0%, #5b21b6 100%)');
       } else if (inst === 'IVEM') {
         logoSrc = 'logo_ivem.png';
         corBorda = '#3b82f6';
@@ -950,7 +950,17 @@
         root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)');
       }
 
-      if (elLogo) elLogo.src = logoSrc;
+      if (elLogo) {
+        elLogo.src = logoSrc;
+        if (inst === 'AUNI') {
+          elLogo.style.background = '#2e1065';
+          elLogo.style.padding = '4px 6px';
+          elLogo.style.borderRadius = '6px';
+        } else {
+          elLogo.style.background = 'transparent';
+          elLogo.style.padding = '0';
+        }
+      }
       if (elBtn) {
         elBtn.style.borderColor = corBorda;
         elBtn.style.boxShadow = `0 4px 16px ${glowColor}`;
@@ -978,11 +988,12 @@
           const isSelected = (instName === instAtivo);
           let logoSrc = instName === 'IBRASE' ? 'logo_ibrase.png' : instName === 'AUNI' ? 'logo_auni.png' : instName === 'IVEM' ? 'logo_ivem.png' : 'logo_gasctpna.jpg';
           let borderHighlight = instName === 'IBRASE' ? '#f97316' : instName === 'AUNI' ? '#8b5cf6' : instName === 'IVEM' ? '#3b82f6' : '#10b981';
+          let logoBgStyle = instName === 'AUNI' ? 'background:#2e1065;padding:3px 6px;border-radius:6px;' : '';
 
           card.style.cssText = `display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;border:1.5px solid ${isSelected ? borderHighlight : 'var(--outline-variant)'};background:${isSelected ? '#f8fafc' : '#ffffff'};cursor:pointer;transition:all 0.2s ease;margin-bottom:4px;`;
           card.innerHTML = `
             <div style="display:flex;align-items:center;gap:10px;">
-              <img src="${logoSrc}" onerror="this.src='logo_integra.png'" style="height:24px;width:auto;object-fit:contain;border-radius:4px;">
+              <img src="${logoSrc}" onerror="this.src='logo_integra.png'" style="height:24px;width:auto;object-fit:contain;border-radius:4px;${logoBgStyle}">
               <span style="font-size:13px;font-weight:700;color:${isSelected ? borderHighlight : 'var(--on-surface)'};">${instName}</span>
             </div>
             ${isSelected ? `<span style="font-size:11px;font-weight:800;color:${borderHighlight};background:#e2e8f0;padding:2px 6px;border-radius:6px;">ATIVO</span>` : ''}
@@ -1191,13 +1202,14 @@
         items = [];
       }
 
-      // ORDENAÇÃO DECRESCENTE: Garante que a matrícula MAIS RECENTE fique no TOPO da lista
+      // ORDENAÇÃO DECRESCENTE E FILTRAGEM ESTRITA POR INSTITUTO ATIVO
       if (Array.isArray(items)) {
         const { instAtivo } = getDadosInstitutos();
-        const temFlag = items.some(i => i && i.instituto);
-        if (temFlag) {
-          items = items.filter(i => !i.instituto || i.instituto.toUpperCase() === instAtivo.toUpperCase());
-        }
+        items = items.filter(i => {
+          if (!i || typeof i !== 'object') return false;
+          const instItem = String(i.instituto || 'GASCTPNA').toUpperCase();
+          return instItem === instAtivo.toUpperCase();
+        });
 
         items.sort((a, b) => {
           const idA = parseInt(a.id || a.matricula || 0);

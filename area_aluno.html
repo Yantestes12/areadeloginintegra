@@ -888,7 +888,7 @@
     // =========================================================================
     function getDadosInstitutos() {
       let instAtivo = getStoredVal('instituto_ativo') || getStoredVal('instituto') || 'GASCTPNA';
-      let permitidos = ['GASCTPNA', 'IBRASE', 'AUNI', 'IVEM'];
+      let permitidos = [instAtivo];
       try {
         const rawPerm = getStoredVal('institutos_permitidos');
         if (rawPerm) {
@@ -896,11 +896,13 @@
           if (Array.isArray(parsed) && parsed.length > 0) permitidos = parsed;
         }
       } catch(e) {}
-      const todos = ['GASCTPNA', 'IBRASE', 'AUNI', 'IVEM'];
-      todos.forEach(inst => {
-        if (!permitidos.includes(inst)) permitidos.push(inst);
-      });
-      return { instAtivo: instAtivo.toUpperCase(), permitidos: permitidos.map(x => String(x).toUpperCase()) };
+
+      permitidos = permitidos.map(x => String(x).toUpperCase());
+      if (!permitidos.includes(instAtivo.toUpperCase())) {
+        permitidos.unshift(instAtivo.toUpperCase());
+      }
+      permitidos = [...new Set(permitidos)];
+      return { instAtivo: instAtivo.toUpperCase(), permitidos: permitidos };
     }
 
     function aplicarTemaEInstituto(institutoAtivo) {

@@ -812,8 +812,9 @@
 
   <script>
     function logout() {
+      sessionStorage.clear();
       localStorage.clear();
-      window.location.href = 'login';
+      window.location.href = 'login.html';
     }
 
     
@@ -887,7 +888,14 @@
     // 🎨 SISTEMA INTELIGENTE DE TEMAS E MULTI-INSTITUTOS ("PADRÃO NETFLIX")
     // =========================================================================
     function getDadosInstitutos() {
-      let instAtivo = getStoredVal('instituto_ativo') || getStoredVal('instituto') || 'GASCTPNA';
+      let defaultSiteInst = 'GASCTPNA';
+      const host = window.location.hostname.toLowerCase();
+      if (host.includes('ivem')) defaultSiteInst = 'IVEM';
+      else if (host.includes('auni')) defaultSiteInst = 'AUNI';
+      else if (host.includes('ibrase')) defaultSiteInst = 'IBRASE';
+      else if (host.includes('gasctpna')) defaultSiteInst = 'GASCTPNA';
+
+      let instAtivo = sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || defaultSiteInst;
       let permitidos = [instAtivo];
       try {
         const rawPerm = getStoredVal('institutos_permitidos');

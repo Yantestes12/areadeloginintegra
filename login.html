@@ -718,7 +718,8 @@
                 btnSubmit.textContent = 'Autenticando...';
 
                 try {
-                    const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&instituicao=GASCTPNA&instituto=GASCTPNA`;
+                    const instOrigem = urlParams.get('instituto') || urlParams.get('instituicao') || sessionStorage.getItem('instituto') || localStorage.getItem('instituto') || '';
+                    const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&instituto=${encodeURIComponent(instOrigem)}`;
                     const res = await fetch(url);
                     const text = await res.text();
                     const respText = text.trim().toLowerCase();
@@ -763,6 +764,23 @@
                             if (p.telefone && !p.telefone.toString().includes('{{')) uTelefone = limpaTemplate(String(p.telefone));
                             if (p.email && !p.email.includes('{{') && p.email.toLowerCase() !== 'sem_email') uEmail = limpaTemplate(p.email).toLowerCase();
                             if (p.id) uId = limpaTemplate(String(p.id));
+
+                            // Salva a estrutura multi-institutos para o seletor na Área do Aluno
+                            if (p.instituto_ativo) {
+                                sessionStorage.setItem('instituto_ativo', p.instituto_ativo);
+                                localStorage.setItem('instituto_ativo', p.instituto_ativo);
+                            } else if (instOrigem) {
+                                sessionStorage.setItem('instituto_ativo', instOrigem.toUpperCase());
+                                localStorage.setItem('instituto_ativo', instOrigem.toUpperCase());
+                            }
+                            if (p.institutos_permitidos && Array.isArray(p.institutos_permitidos)) {
+                                sessionStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
+                                localStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
+                            }
+                            if (p.matriculas_por_instituto) {
+                                sessionStorage.setItem('matriculas_por_instituto', JSON.stringify(p.matriculas_por_instituto));
+                                localStorage.setItem('matriculas_por_instituto', JSON.stringify(p.matriculas_por_instituto));
+                            }
 
                             // Extrai e achata a lista de matrículas para uDados
                             let flatMat = [];
@@ -823,6 +841,14 @@
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
+                        if (p && p.instituto_ativo) {
+                            sessionStorage.setItem('instituto_ativo', p.instituto_ativo);
+                            localStorage.setItem('instituto_ativo', p.instituto_ativo);
+                        }
+                        if (p && p.institutos_permitidos) {
+                            sessionStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
+                            localStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
+                        }
 
                         setTimeout(() => {
                             window.location.href = 'area_aluno.html';

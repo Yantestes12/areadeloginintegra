@@ -409,11 +409,25 @@
     <!-- Greeting Header -->
     <section class="greeting-section">
       <h1 id="display-welcome-title">Olá, Participante!</h1>
-      <p>Bem-vindo(a) ao seu Painel do Aluno GASCTPNA</p>
+      <p id="display-welcome-subtitle">Bem-vindo(a) ao seu Painel do Aluno INTEGRA</p>
 
-      <div style="margin-top:14px;display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--outline-variant);border-radius:14px;padding:10px 18px;box-shadow:0 4px 14px rgba(0,26,65,0.03);">
-        <img src="logo_gasctpna.jpg" onerror="this.src='logo_integra.png';" style="height:34px;width:auto;object-fit:contain;border-radius:6px;">
-        <div style="font-size:13px;font-weight:800;color:var(--on-surface);letter-spacing:0.03em;">GASCTPNA</div>
+      <div id="badge-instituto-container" style="margin-top:14px;position:relative;display:inline-block;">
+        <div id="btn-switch-institutos" onclick="toggleDropdownInstitutos()" style="display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:2px solid var(--outline-variant);border-radius:14px;padding:8px 16px;box-shadow:0 4px 14px rgba(0,26,65,0.05);cursor:pointer;transition:all 0.25s ease;">
+          <img id="logo-instituto-ativo" src="logo_gasctpna.jpg" onerror="this.src='logo_integra.png';" style="height:32px;width:auto;object-fit:contain;border-radius:6px;">
+          <div id="text-instituto-ativo" style="font-size:13.5px;font-weight:800;color:var(--on-surface);letter-spacing:0.03em;">GASCTPNA</div>
+          <span id="arrow-switch-instituto" class="material-symbols-outlined" style="display:none;font-size:22px;color:var(--on-surface-variant);transition:transform 0.2s ease;">expand_more</span>
+        </div>
+
+        <!-- Menu suspenso inteligente de troca (exclusivo para quem tem mais de um cadastro) -->
+        <div id="dropdown-switch-institutos" style="display:none;position:absolute;top:100%;left:0;margin-top:8px;background:#ffffff;border:1px solid var(--outline-variant);border-radius:14px;padding:12px;box-shadow:0 12px 32px rgba(0,26,65,0.18);z-index:999;min-width:260px;">
+          <div style="font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:0.05em;padding:4px 6px 8px;border-bottom:1px solid var(--surface-container-low);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:16px;">swap_horiz</span>
+            <span>Alternar Instituto de Acesso</span>
+          </div>
+          <div id="lista-institutos-dropdown" style="display:flex;flex-direction:column;gap:6px;">
+            <!-- Preenchido via JS -->
+          </div>
+        </div>
       </div>
     </section>
 
@@ -869,6 +883,151 @@
 
     let currentMatriculasList = [];
 
+    // =========================================================================
+    // 🎨 SISTEMA INTELIGENTE DE TEMAS E MULTI-INSTITUTOS ("PADRÃO NETFLIX")
+    // =========================================================================
+    function getDadosInstitutos() {
+      let instAtivo = getStoredVal('instituto_ativo') || getStoredVal('instituto') || 'GASCTPNA';
+      let permitidos = ['GASCTPNA', 'IBRASE', 'AUNI', 'IVEM'];
+      try {
+        const rawPerm = getStoredVal('institutos_permitidos');
+        if (rawPerm) {
+          const parsed = JSON.parse(rawPerm);
+          if (Array.isArray(parsed) && parsed.length > 0) permitidos = parsed;
+        }
+      } catch(e) {}
+      const todos = ['GASCTPNA', 'IBRASE', 'AUNI', 'IVEM'];
+      todos.forEach(inst => {
+        if (!permitidos.includes(inst)) permitidos.push(inst);
+      });
+      return { instAtivo: instAtivo.toUpperCase(), permitidos: permitidos.map(x => String(x).toUpperCase()) };
+    }
+
+    function aplicarTemaEInstituto(institutoAtivo) {
+      const inst = String(institutoAtivo || 'GASCTPNA').toUpperCase();
+      const root = document.documentElement;
+      const elLogo = document.getElementById('logo-instituto-ativo');
+      const elText = document.getElementById('text-instituto-ativo');
+      const elBtn = document.getElementById('btn-switch-institutos');
+      const elSub = document.getElementById('display-welcome-subtitle');
+
+      if (elText) elText.textContent = inst;
+      if (elSub) elSub.textContent = `Bem-vindo(a) ao seu Painel do Aluno - ${inst}`;
+
+      let logoSrc = 'logo_gasctpna.jpg';
+      let corBorda = '#10b981';
+      let glowColor = 'rgba(16, 185, 129, 0.22)';
+
+      if (inst === 'IBRASE') {
+        logoSrc = 'logo_ibrase.png';
+        corBorda = '#f97316';
+        glowColor = 'rgba(249, 115, 22, 0.28)';
+        root.style.setProperty('--primary', '#ea580c');
+        root.style.setProperty('--primary-container', '#f97316');
+        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #c2410c 0%, #f97316 100%)');
+      } else if (inst === 'AUNI') {
+        logoSrc = 'logo_auni.png';
+        corBorda = '#8b5cf6';
+        glowColor = 'rgba(139, 92, 246, 0.28)';
+        root.style.setProperty('--primary', '#6d28d9');
+        root.style.setProperty('--primary-container', '#8b5cf6');
+        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%)');
+      } else if (inst === 'IVEM') {
+        logoSrc = 'logo_ivem.png';
+        corBorda = '#3b82f6';
+        glowColor = 'rgba(59, 130, 246, 0.28)';
+        root.style.setProperty('--primary', '#0284c7');
+        root.style.setProperty('--primary-container', '#3b82f6');
+        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #0369a1 0%, #3b82f6 100%)');
+      } else {
+        logoSrc = 'logo_gasctpna.jpg';
+        corBorda = '#10b981';
+        glowColor = 'rgba(16, 185, 129, 0.22)';
+        root.style.setProperty('--primary', '#047857');
+        root.style.setProperty('--primary-container', '#10b981');
+        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)');
+      }
+
+      if (elLogo) elLogo.src = logoSrc;
+      if (elBtn) {
+        elBtn.style.borderColor = corBorda;
+        elBtn.style.boxShadow = `0 4px 16px ${glowColor}`;
+      }
+    }
+
+    function renderizarSeletorInstitutos() {
+      const { instAtivo, permitidos } = getDadosInstitutos();
+      aplicarTemaEInstituto(instAtivo);
+
+      const elArrow = document.getElementById('arrow-switch-instituto');
+      const elLista = document.getElementById('lista-institutos-dropdown');
+      const elBtn = document.getElementById('btn-switch-institutos');
+
+      if (elArrow) elArrow.style.display = 'inline-block';
+      if (elBtn) {
+        elBtn.style.cursor = 'pointer';
+        elBtn.title = 'Clique para alternar entre os institutos ou trocar de conta';
+      }
+
+      if (elLista) {
+        elLista.innerHTML = '';
+        permitidos.forEach(instName => {
+          const card = document.createElement('div');
+          const isSelected = (instName === instAtivo);
+          let logoSrc = instName === 'IBRASE' ? 'logo_ibrase.png' : instName === 'AUNI' ? 'logo_auni.png' : instName === 'IVEM' ? 'logo_ivem.png' : 'logo_gasctpna.jpg';
+          let borderHighlight = instName === 'IBRASE' ? '#f97316' : instName === 'AUNI' ? '#8b5cf6' : instName === 'IVEM' ? '#3b82f6' : '#10b981';
+
+          card.style.cssText = `display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;border:1.5px solid ${isSelected ? borderHighlight : 'var(--outline-variant)'};background:${isSelected ? '#f8fafc' : '#ffffff'};cursor:pointer;transition:all 0.2s ease;margin-bottom:4px;`;
+          card.innerHTML = `
+            <div style="display:flex;align-items:center;gap:10px;">
+              <img src="${logoSrc}" onerror="this.src='logo_integra.png'" style="height:24px;width:auto;object-fit:contain;border-radius:4px;">
+              <span style="font-size:13px;font-weight:700;color:${isSelected ? borderHighlight : 'var(--on-surface)'};">${instName}</span>
+            </div>
+            ${isSelected ? `<span style="font-size:11px;font-weight:800;color:${borderHighlight};background:#e2e8f0;padding:2px 6px;border-radius:6px;">ATIVO</span>` : ''}
+          `;
+          card.onclick = (e) => {
+            e.stopPropagation();
+            selecionarInstituto(instName);
+          };
+          elLista.appendChild(card);
+        });
+
+        // Botão de Sair / Trocar de Usuário
+        const logoutBtn = document.createElement('div');
+        logoutBtn.style.cssText = `display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;margin-top:8px;border-radius:10px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;font-size:12.5px;font-weight:700;cursor:pointer;transition:all 0.2s ease;`;
+        logoutBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">logout</span> Sair / Trocar de Usuário`;
+        logoutBtn.onclick = (e) => {
+          e.stopPropagation();
+          logout();
+        };
+        elLista.appendChild(logoutBtn);
+      }
+    }
+
+    function toggleDropdownInstitutos() {
+      const elDrop = document.getElementById('dropdown-switch-institutos');
+      if (elDrop) {
+        elDrop.style.display = (elDrop.style.display === 'none' || elDrop.style.display === '') ? 'block' : 'none';
+      }
+    }
+
+    function selecionarInstituto(novoInst) {
+      sessionStorage.setItem('instituto_ativo', novoInst);
+      localStorage.setItem('instituto_ativo', novoInst);
+      const elDrop = document.getElementById('dropdown-switch-institutos');
+      if (elDrop) elDrop.style.display = 'none';
+      renderizarSeletorInstitutos();
+      carregarPainel();
+    }
+
+    document.addEventListener('click', function(e) {
+      const container = document.getElementById('badge-instituto-container');
+      const drop = document.getElementById('dropdown-switch-institutos');
+      if (container && drop && !container.contains(e.target)) {
+        drop.style.display = 'none';
+      }
+    });
+
     // IBGE Cidades Loader para Modal de Edição
     function carregarCidadesIBGENaturalidadeEdit(uf, cidadePreSelecionada = '') {
       var selectCid = document.getElementById('edit_naturalidade_cidade');
@@ -904,6 +1063,7 @@
 
     // Carregar Painel Inicial
     async function carregarPainel() {
+      renderizarSeletorInstitutos();
       let rawNome = getStoredVal('usuario_nome') || getStoredVal('usuario_primeiro_nome') || '';
       if (rawNome.includes('{{') || rawNome.includes('json') || rawNome.includes('$')) rawNome = '';
       
@@ -1031,6 +1191,12 @@
 
       // ORDENAÇÃO DECRESCENTE: Garante que a matrícula MAIS RECENTE fique no TOPO da lista
       if (Array.isArray(items)) {
+        const { instAtivo } = getDadosInstitutos();
+        const temFlag = items.some(i => i && i.instituto);
+        if (temFlag) {
+          items = items.filter(i => !i.instituto || i.instituto.toUpperCase() === instAtivo.toUpperCase());
+        }
+
         items.sort((a, b) => {
           const idA = parseInt(a.id || a.matricula || 0);
           const idB = parseInt(b.id || b.matricula || 0);

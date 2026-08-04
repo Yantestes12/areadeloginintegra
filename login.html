@@ -718,7 +718,15 @@
                 btnSubmit.textContent = 'Autenticando...';
 
                 try {
-                    const instOrigem = urlParams.get('instituto') || urlParams.get('instituicao') || sessionStorage.getItem('instituto') || localStorage.getItem('instituto') || '';
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let defaultInst = '';
+                    const host = window.location.hostname.toLowerCase();
+                    if (host.includes('ivem')) defaultInst = 'IVEM';
+                    else if (host.includes('auni')) defaultInst = 'AUNI';
+                    else if (host.includes('ibrase')) defaultInst = 'IBRASE';
+                    else if (host.includes('gasctpna')) defaultInst = 'GASCTPNA';
+
+                    const instOrigem = urlParams.get('instituto') || urlParams.get('instituicao') || urlParams.get('inst') || sessionStorage.getItem('instituto') || localStorage.getItem('instituto') || defaultInst;
                     const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&instituto=${encodeURIComponent(instOrigem)}`;
                     const res = await fetch(url);
                     const text = await res.text();
@@ -757,7 +765,6 @@
                         } catch(e) { p = null; }
 
                         if (p && typeof p === 'object') {
-                            // Extrai os campos da CONTA do usuário do objeto raiz JSON
                             const nomeVal = p.nome || p.nome_completo || p.name || '';
                             if (nomeVal && !nomeVal.includes('{{')) uNome = limpaTemplate(nomeVal);
 
@@ -765,24 +772,6 @@
                             if (p.email && !p.email.includes('{{') && p.email.toLowerCase() !== 'sem_email') uEmail = limpaTemplate(p.email).toLowerCase();
                             if (p.id) uId = limpaTemplate(String(p.id));
 
-                            // Salva a estrutura multi-institutos para o seletor na Área do Aluno
-                            if (p.instituto_ativo) {
-                                sessionStorage.setItem('instituto_ativo', p.instituto_ativo);
-                                localStorage.setItem('instituto_ativo', p.instituto_ativo);
-                            } else if (instOrigem) {
-                                sessionStorage.setItem('instituto_ativo', instOrigem.toUpperCase());
-                                localStorage.setItem('instituto_ativo', instOrigem.toUpperCase());
-                            }
-                            if (p.institutos_permitidos && Array.isArray(p.institutos_permitidos)) {
-                                sessionStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
-                                localStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
-                            }
-                            if (p.matriculas_por_instituto) {
-                                sessionStorage.setItem('matriculas_por_instituto', JSON.stringify(p.matriculas_por_instituto));
-                                localStorage.setItem('matriculas_por_instituto', JSON.stringify(p.matriculas_por_instituto));
-                            }
-
-                            // Extrai e achata a lista de matrículas para uDados
                             let flatMat = [];
                             let rawMat = p.matriculas || p.projetos_inscritos || p;
                             if (Array.isArray(rawMat)) {
@@ -798,7 +787,6 @@
                             }
                             uDados = JSON.stringify(flatMat);
                         } else {
-                            // Fallback texto puro linha por linha
                             const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
                             if (lines.length >= 2) uNome = limpaTemplate(lines[1]);
                             if (lines.length >= 3) uTelefone = limpaTemplate(lines[2]);
@@ -816,7 +804,6 @@
                             if (isFinite(jStart2)) uDados = text.substring(jStart2).trim();
                         }
 
-                        // Proteção total contra sem_email ou template vazio no email da conta
                         if (!uEmail || uEmail === 'sem_email' || uEmail.includes('{{')) {
                             uEmail = username.trim().toLowerCase();
                         }
@@ -830,6 +817,7 @@
                             localStorage.removeItem('usuario_senha');
                         }
 
+                        // LIMPA O SESSIONSTORAGE PRIMEIRO, ANTES DE POPULAR OS DADOS DO LOGIN!
                         sessionStorage.clear();
                         localStorage.removeItem('usuario_dados');
                         localStorage.removeItem('usuario_dados_completos');
@@ -841,13 +829,19 @@
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
-                        if (p && p.instituto_ativo) {
-                            sessionStorage.setItem('instituto_ativo', p.instituto_ativo);
-                            localStorage.setItem('instituto_ativo', p.instituto_ativo);
-                        }
-                        if (p && p.institutos_permitidos) {
+
+                        // SALVA O INSTITUTO ATIVO E PERMITIDOS
+                        const instAtivoFinal = (p && p.instituto_ativo) ? p.instituto_ativo : (instOrigem ? instOrigem.toUpperCase() : 'GASCTPNA');
+                        sessionStorage.setItem('instituto_ativo', instAtivoFinal);
+                        localStorage.setItem('instituto_ativo', instAtivoFinal);
+
+                        if (p && p.institutos_permitidos && Array.isArray(p.institutos_permitidos)) {
                             sessionStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
                             localStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
+                        }
+                        if (p && p.matriculas_por_instituto) {
+                            sessionStorage.setItem('matriculas_por_instituto', JSON.stringify(p.matriculas_por_instituto));
+                            localStorage.setItem('matriculas_por_instituto', JSON.stringify(p.matriculas_por_instituto));
                         }
 
                         setTimeout(() => {

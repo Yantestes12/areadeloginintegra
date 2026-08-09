@@ -2986,7 +2986,8 @@ window.dadosRecentesCPF = null;
         
         fetch(API.buscarProjetos, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'}
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ instituto: window.integraInstitutoFinal || 'GASCTPNA' })
         })
             .then(function(r){ return r.json(); })
             .then(function(data){
@@ -3130,7 +3131,7 @@ window.dadosRecentesCPF = null;
         }
 
         var promises = [];
-        var req = {method:'POST',headers:{'Content-Type':'application/json'}};
+        var req = {method:'POST',headers:{'Content-Type':'application/json'}, body: JSON.stringify({ instituto: window.integraInstitutoFinal || 'GASCTPNA' })};
         if(!_cacheCidades) promises.push(fetch(API.buscarCidades, req).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheCidades=d.projetos||d.cidades||[]; }));
         else promises.push(Promise.resolve());
         if(!_cacheBairros) promises.push(fetch(API.buscarBairros, req).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheBairros=d.projetos||d.bairros||[]; }));
@@ -3189,7 +3190,7 @@ window.dadosRecentesCPF = null;
             }
 
             var promises = [];
-            var req = {method:'POST',headers:{'Content-Type':'application/json'}};
+            var req = {method:'POST',headers:{'Content-Type':'application/json'}, body: JSON.stringify({ instituto: window.integraInstitutoFinal || 'GASCTPNA' })};
             if(!_cacheBairros) promises.push(fetch(API.buscarBairros, req).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheBairros=d.projetos||d.bairros||[]; }));
             else promises.push(Promise.resolve());
             if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, req).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheNucleos=d.projetos||d.nucleos||[]; }));
@@ -3250,10 +3251,10 @@ window.dadosRecentesCPF = null;
             // Carregar ambos os caches em paralelo
             var promises = [];
             if(!_cacheNucleos) {
-                promises.push(fetch(API.buscarNucleos, {method:'POST',headers:{'Content-Type':'application/json'}}).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheNucleos=d.projetos||d.nucleos||[]; }));
+                promises.push(fetch(API.buscarNucleos, {method:'POST',headers:{'Content-Type':'application/json'}, body: JSON.stringify({ instituto: window.integraInstitutoFinal || 'GASCTPNA' })}).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheNucleos=d.projetos||d.nucleos||[]; }));
             } else { promises.push(Promise.resolve()); }
             if(!_cacheModalidades) {
-                promises.push(fetch(API.buscarModalidades, {method:'POST',headers:{'Content-Type':'application/json'}}).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheModalidades=d.projetos||d.modalidades||[]; }));
+                promises.push(fetch(API.buscarModalidades, {method:'POST',headers:{'Content-Type':'application/json'}, body: JSON.stringify({ instituto: window.integraInstitutoFinal || 'GASCTPNA' })}).then(function(r){return r.json();}).then(function(raw){ var d=Array.isArray(raw)?raw[0]:raw; _cacheModalidades=d.projetos||d.modalidades||[]; }));
             } else { promises.push(Promise.resolve()); }
             Promise.all(promises).then(function(){ processar(_cacheNucleos, _cacheModalidades); }).catch(function(){ mostrarMensagem('erro','Erro ao buscar modalidades. Tente novamente.'); });
         });
@@ -3460,7 +3461,7 @@ window.dadosRecentesCPF = null;
             } // end processarNucleos
             
             if(_cacheNucleos) { processarNucleos(_cacheNucleos); return; }
-            fetch(API.buscarNucleos, { method:'POST', headers:{'Content-Type':'application/json'} })
+            fetch(API.buscarNucleos, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ instituto: window.integraInstitutoFinal || 'GASCTPNA' }) })
             .then(function(r){ return r.json(); })
             .then(function(raw){
                 var data = Array.isArray(raw) ? raw[0] : raw;

@@ -984,7 +984,9 @@
         <div class="logo-partnership">
             <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA" style="max-height: 55px; width: auto; border-radius:8px;">
             <span class="logo-separator">×</span>
-            <img src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="GASCTPNA" style="max-height: 55px; width: auto; border-radius:8px;">
+            <div id="dynamic-inst-logo-container" style="display:flex;">
+                <img id="dynamic-inst-logo" src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="Instituto" style="max-height: 55px; width: auto; border-radius:8px;">
+            </div>
         </div>
         <div class="login-title">Matrícula Online</div>
         <div class="login-sub">Ficha de matrícula simplificada</div>
@@ -2335,7 +2337,7 @@ window.dadosRecentesCPF = null;
             var ctrl = new AbortController();
             var abortId = setTimeout(function() { ctrl.abort(); }, reqTimeout);
 
-            var url = API.consultarCPF + '?cpf=' + encodeURIComponent(cpfNum) + '&data_nascimento=&instituicao=GASCTPNA&instituto=GASCTPNA';
+            var url = API.consultarCPF + '?cpf=' + encodeURIComponent(cpfNum) + '&data_nascimento=&instituicao=' + instFinal + '&instituto=' + instFinal;
             fetch(url, {
                 method:  'GET',
                 signal:  ctrl.signal
@@ -3951,16 +3953,27 @@ window.dadosRecentesCPF = null;
 
                     var uf = getV('uf') || getV('estado') || '';
 
+                    
+                    var instFinal = window.integraInstitutoFinal || 'GASCTPNA';
+                    var instConfigs = {
+                        'GASCTPNA': { logo: 'logo_gasctpna.jpg', nomeFull: 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA)', headerName: 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza', social: '@gasctpna' },
+                        'IBRASE': { logo: 'logo_ibrase.png', nomeFull: 'Instituto Brasileiro de Apoio Social, Esporte e Cultura (IBRASE)', headerName: 'Instituto Brasileiro de Apoio Social, Esporte e Cultura', social: '@ibrase' },
+                        'AUNI': { logo: 'logo_auni.png', nomeFull: 'Associação Universal de Apoio (AUNI)', headerName: 'Associação Universal de Apoio', social: '@auni_brasil' },
+                        'IVEM': { logo: 'logo_ivem.png', nomeFull: 'Instituto Vida em Movimento (IVEM)', headerName: 'Instituto Vida em Movimento', social: '@instituto_ivem' }
+                    };
+                    var instConf = instConfigs[instFinal] || instConfigs['GASCTPNA'];
+
                     var projSel = document.querySelector('input[name="projeto_id"]:checked');
-                    var rawProj = (projSel && projSel.parentNode ? projSel.parentNode.innerText : '') || getV('projeto_nome') || 'GASCTPNA';
-                    var proj = cleanText(rawProj).replace(/GASCTPNA\s*[\/\-]\s*GASCTPNA/gi, 'GASCTPNA').trim() || 'GASCTPNA';
-                    if (!proj || proj.toUpperCase() === 'GASCTPNA') {
-                        proj = 'GASCTPNA';
+                    var rawProj = (projSel && projSel.parentNode ? projSel.parentNode.innerText : '') || getV('projeto_nome') || instFinal;
+                    var regexReplace = new RegExp(instFinal + '\\s*[\\/\\-]\\s*' + instFinal, 'gi');
+                    var proj = cleanText(rawProj).replace(regexReplace, instFinal).trim() || instFinal;
+                    if (!proj || proj.toUpperCase() === instFinal.toUpperCase()) {
+                        proj = instFinal;
                     }
 
-                    var subTitleHeader = (proj && proj !== 'GASCTPNA')
-                        ? ('GASCTPNA — ' + proj)
-                        : 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza';
+                    var subTitleHeader = (proj && proj !== instFinal)
+                        ? (instFinal + ' — ' + proj)
+                        : instConf.headerName;
 
                     var nucSel = document.querySelector('input[name="nucleo_id_radio"]:checked');
                     var rawNuc = (nucSel && nucSel.parentNode ? nucSel.parentNode.innerText : '') || getV('nucleo_nome') || 'Núcleo Central';
@@ -3993,8 +4006,8 @@ window.dadosRecentesCPF = null;
                     var dataCoordenador = new Date(agoraMat.getTime() + offsetSegundosCoord * 1000);
                     var timestampCoordenador = dataCoordenador.toLocaleString('pt-BR');
 
-                    var instSlug = 'gasctpna';
-                    var projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'gasctpna';
+                    var instSlug = instFinal.toLowerCase();
+                    var projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || instSlug;
                     var urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
                     var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
@@ -4017,12 +4030,12 @@ window.dadosRecentesCPF = null;
                         '.sig-block{text-align:center;}.sig-line{border-top:1.5px solid #334155;margin-bottom:3px;}.sig-label{font-size:8.5pt;font-weight:800;color:#0f172a;text-transform:uppercase;}' +
                         '.page-break{page-break-before:always;}@media print{.no-print{display:none!important;}}</style></head><body>' +
                         
-                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + (instFinal === 'AUNI' ? '<div style="background:#2e1065;padding:2px 6px;border-radius:4px;display:flex;"><img src="'+instConf.logo+'" alt="'+instFinal+'"></div>' : '<img src="'+instConf.logo+'" alt="'+instFinal+'">') + '</div>' +
                         '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
                         
                         '<div class="section-box" style="background:#e0f2fe;border-color:#bae6fd;"><div class="grid-3">' +
                         '<div class="field-item"><span class="field-label">Nº de Matrícula:</span> <span class="field-value" style="font-weight:bold;font-size:10pt;color:#0369a1;">' + numMatricula + '</span></div>' +
-                        '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + (proj && proj !== 'GASCTPNA' ? 'GASCTPNA — ' + proj : 'GASCTPNA') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + (proj && proj !== 'GASCTPNA' ? instFinal + ' — ' + proj : instFinal) + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Núcleo:</span> <span class="field-value">' + nuc + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Modalidade:</span> <span class="field-value">' + modalidade + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Turno:</span> <span class="field-value">' + tur + '</span></div></div></div>' +
@@ -4075,18 +4088,18 @@ window.dadosRecentesCPF = null;
                         
                         '<div class="page-break"></div>' +
                         
-                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + (instFinal === 'AUNI' ? '<div style="background:#2e1065;padding:2px 6px;border-radius:4px;display:flex;"><img src="'+instConf.logo+'" alt="'+instFinal+'"></div>' : '<img src="'+instConf.logo+'" alt="'+instFinal+'">') + '</div>' +
                         '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
                         
                         
                         
                         '<div class="section-box"><div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>' +
-                        '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA), aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +
+                        '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo ' + instConf.nomeFull + ', aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +
                         '<div style="font-size:7.2pt;color:#334155;line-height:1.35;display:flex;flex-direction:column;gap:6px;">' +
                         '<div><strong>1. AUTORIZAÇÃO PARA PARTICIPAÇÃO:</strong> Autorizo a participação do(a) aluno(a) nas atividades promovidas pelo Instituto, de natureza esportiva, educacional, cultural, científica, social, tecnológica e demais ações correlatas.<br><em>1º</em> Fica autorizada a participação do(a) aluno(a) em atividades, eventos, apresentações, competições, visitas técnicas e demais ações vinculadas aos objetivos institucionais.<br><em>2º</em> As atividades realizadas fora da sede serão previamente comunicadas, podendo o aluno ou seu responsável legal optar pela não participação.<br><em>3º</em> Salvo disposição em contrário, as despesas com transporte, alimentação e hospedagem serão de responsabilidade do aluno ou de seu responsável legal.<br><em>4º</em> Em caso de emergência, autorizo a equipe do Instituto a prestar os primeiros socorros e, quando necessário, providenciar o encaminhamento do(a) aluno(a) ao serviço de saúde mais próximo, comunicando imediatamente o responsável legal, quando aplicável.</div>' +
                         '<div><strong>2. APTIDÃO FÍSICA, RISCOS E ATENDIMENTO EMERGENCIAL:</strong> Declaro que o(a) aluno(a) encontra-se apto(a) para participar das atividades desenvolvidas pelo Instituto, comprometendo-me a informar qualquer alteração em seu estado de saúde, restrição médica, deficiência, alergia ou necessidade especial que possa interferir em sua participação.<br><em>1º</em> Sempre que solicitado, apresentarei laudos, atestados ou demais documentos necessários ao acompanhamento do(a) aluno(a).<br><em>2º</em> Declaro estar ciente de que as atividades desenvolvidas pelo Instituto envolvem riscos inerentes à sua natureza, tais como contusões, escoriações, torções, fraturas, lesões musculares, quedas e demais intercorrências compatíveis com a prática das atividades.<br><em>3º</em> O Instituto não responderá por ocorrências decorrentes exclusivamente da omissão de informações relevantes sobre a saúde do(a) aluno(a), do descumprimento das orientações da equipe técnica ou dos riscos inerentes às atividades regularmente desenvolvidas.</div>' +
                         '<div><strong>3. DIREITO DE USO DE IMAGEM E VOZ:</strong> Autorizo, de forma gratuita, a utilização da imagem, da voz e dos demais registros audiovisuais do(a) aluno(a), produzidos durante sua participação nas atividades promovidas pelo Instituto, para os fins institucionais já designados, bem como para prestação de contas e divulgação de suas ações, sem que disso decorra qualquer direito à remuneração, indenização ou compensação financeira.<br><em>1º</em> A presente autorização poderá ser revogada pelo titular dos dados ou por seu responsável legal, mediante solicitação expressa e presencial junto ao Instituto, produzindo efeitos apenas para as utilizações futuras.<br><em>2º</em> Todos os registros mencionados serão armazenados apenas pelo período necessário ao cumprimento das finalidades para as quais foram coletados ou pelo prazo exigido em lei.</div>' +
-                        '<div><strong>4. TRATAMENTO DE DADOS PESSOAIS:</strong> Declaro estar ciente de que os dados pessoais fornecidos no ato da inscrição serão tratados pelo Instituto exclusivamente para fins relacionados à organização, execução, segurança, comunicação, avaliação das atividades, elaboração de pesquisas de caráter social, estatístico e institucional, bem como para o cumprimento das obrigações legais, em conformidade com a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais – LGPD).<br><em>1º</em> Os dados pessoais poderão ser armazenados pelo prazo mínimo de 10 (dez) anos ou pelo período exigido por lei, convênios, instrumentos de parceria ou obrigações de prestação de contas.<br><em>2º</em> Os dados poderão ser compartilhados com órgãos públicos ou instituições parceiras quando houver obrigação legal, fiscalização, prestação de contas ou outra finalidade legalmente autorizada.<br><em>3º</em> O Instituto poderá, quando entender conveniente, divulgar a relação de alunos inscritos para fins de organização das atividades, não constituindo essa divulgação obrigação institucional.<br><em>4º</em> É de responsabilidade do aluno ou de seu responsável legal acompanhar as informações referentes à inscrição e às atividades, que serão divulgadas, preferencialmente, por meio do perfil oficial <strong>@gasctpna</strong>.</div>' +
+                        '<div><strong>4. TRATAMENTO DE DADOS PESSOAIS:</strong> Declaro estar ciente de que os dados pessoais fornecidos no ato da inscrição serão tratados pelo Instituto exclusivamente para fins relacionados à organização, execução, segurança, comunicação, avaliação das atividades, elaboração de pesquisas de caráter social, estatístico e institucional, bem como para o cumprimento das obrigações legais, em conformidade com a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais – LGPD).<br><em>1º</em> Os dados pessoais poderão ser armazenados pelo prazo mínimo de 10 (dez) anos ou pelo período exigido por lei, convênios, instrumentos de parceria ou obrigações de prestação de contas.<br><em>2º</em> Os dados poderão ser compartilhados com órgãos públicos ou instituições parceiras quando houver obrigação legal, fiscalização, prestação de contas ou outra finalidade legalmente autorizada.<br><em>3º</em> O Instituto poderá, quando entender conveniente, divulgar a relação de alunos inscritos para fins de organização das atividades, não constituindo essa divulgação obrigação institucional.<br><em>4º</em> É de responsabilidade do aluno ou de seu responsável legal acompanhar as informações referentes à inscrição e às atividades, que serão divulgadas, preferencialmente, por meio do perfil oficial <strong>' + instConf.social + '</strong>.</div>' +
                         '<div><strong>5. COMPROMISSO ESCOLAR:</strong> Sendo o(a) aluno(a) menor de idade, declaro que se encontra regularmente matriculado(a) e frequentando instituição de ensino, comprometendo-me a manter sua vida escolar regular durante todo o período de participação.<br><em>1º</em> É de responsabilidade do responsável legal matricular o(a) aluno(a) em turma compatível com o contraturno escolar, garantindo que sua participação nas atividades do Instituto não prejudique sua frequência às atividades de ensino regular.<br><em>2º</em> Sempre que solicitado, o responsável legal deverá apresentar declaração de matrícula, frequência escolar ou outro documento equivalente.<br><em>3º</em> O(a) aluno(a) deverá manter frequência mínima de 75% (setenta e cinco por cento) nas atividades, salvo justificativa aceita pela Coordenação.</div>' +
                         '<div><strong>6. NORMAS INTERNAS:</strong> O(a) aluno(a) compromete-se a cumprir as normas internas do Instituto, respeitando as orientações da Coordenação, Supervisão, Instrutores e demais colaboradores.<br><em>Parágrafo único.</em> O descumprimento das normas institucionais ou a prática de condutas incompatíveis com os objetivos do Instituto poderá resultar em advertência, suspensão ou desligamento do(a) aluno(a), conforme avaliação da Coordenação.</div>' +
                         '<div><strong>7. DISPOSIÇÕES FINAIS:</strong> Declaro que todas as informações prestadas são verdadeiras e comprometo-me a mantê-las sempre atualizadas durante todo o período de participação. Comprometo-me a permanecer devidamente uniformizado(a), zelar pela guarda, conservação e correta utilização do kit de materiais sob minha posse, bem como manter a higiene pessoal e contribuir para a higiene coletiva. Ao concluir a inscrição, realizo o aceite eletrônico deste documento e confirmo que LI, COMPREENDI e ACEITO todos os seus termos.</div>' +
@@ -4119,7 +4132,52 @@ window.dadosRecentesCPF = null;
                         '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Coordenador</div></div></div>' +
                         
                         '<div class="no-print" style="text-align:center;margin-top:15px;"><button onclick="window.print()" style="background:#10b981;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Salvar em PDF / Imprimir Ficha</button></div>' +
-                        '</body></html>');
+                        '
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var instParam = (urlParams.get('inst') || urlParams.get('instituto') || '').toUpperCase();
+        var host = window.location.hostname.toLowerCase();
+        
+        var defaultInst = 'GASCTPNA';
+        if (host.includes('ibrase')) defaultInst = 'IBRASE';
+        else if (host.includes('auni')) defaultInst = 'AUNI';
+        else if (host.includes('ivem')) defaultInst = 'IVEM';
+        
+        var instFinal = instParam || defaultInst;
+        if (!['GASCTPNA', 'IBRASE', 'AUNI', 'IVEM'].includes(instFinal)) {
+            instFinal = 'GASCTPNA';
+        }
+        
+        var logoImg = document.getElementById('dynamic-inst-logo');
+        var logoContainer = document.getElementById('dynamic-inst-logo-container');
+        if (logoImg) {
+            logoImg.alt = instFinal;
+            if (instFinal === 'IBRASE') {
+                logoImg.src = 'logo_ibrase.png';
+            } else if (instFinal === 'AUNI') {
+                logoImg.src = 'logo_auni.png';
+                if(logoContainer) {
+                    logoContainer.style.background = '#2e1065';
+                    logoContainer.style.padding = '4px 8px';
+                    logoContainer.style.borderRadius = '8px';
+                }
+            } else if (instFinal === 'IVEM') {
+                logoImg.src = 'logo_ivem.png';
+            } else {
+                logoImg.src = 'logo_gasctpna.jpg';
+            }
+        }
+        
+        var hiddenInst1 = document.querySelector('input[name="instituicao"]');
+        var hiddenInst2 = document.querySelector('input[name="instituto"]');
+        if (hiddenInst1) hiddenInst1.value = instFinal;
+        if (hiddenInst2) hiddenInst2.value = instFinal;
+        
+        window.integraInstitutoFinal = instFinal;
+    });
+</script>
+</body></html>');
                     win.document.close();
                 };
 
@@ -4208,6 +4266,51 @@ window.dadosRecentesCPF = null;
             if (input) input.value = '';
         }
     }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var instParam = (urlParams.get('inst') || urlParams.get('instituto') || '').toUpperCase();
+        var host = window.location.hostname.toLowerCase();
+        
+        var defaultInst = 'GASCTPNA';
+        if (host.includes('ibrase')) defaultInst = 'IBRASE';
+        else if (host.includes('auni')) defaultInst = 'AUNI';
+        else if (host.includes('ivem')) defaultInst = 'IVEM';
+        
+        var instFinal = instParam || defaultInst;
+        if (!['GASCTPNA', 'IBRASE', 'AUNI', 'IVEM'].includes(instFinal)) {
+            instFinal = 'GASCTPNA';
+        }
+        
+        var logoImg = document.getElementById('dynamic-inst-logo');
+        var logoContainer = document.getElementById('dynamic-inst-logo-container');
+        if (logoImg) {
+            logoImg.alt = instFinal;
+            if (instFinal === 'IBRASE') {
+                logoImg.src = 'logo_ibrase.png';
+            } else if (instFinal === 'AUNI') {
+                logoImg.src = 'logo_auni.png';
+                if(logoContainer) {
+                    logoContainer.style.background = '#2e1065';
+                    logoContainer.style.padding = '4px 8px';
+                    logoContainer.style.borderRadius = '8px';
+                }
+            } else if (instFinal === 'IVEM') {
+                logoImg.src = 'logo_ivem.png';
+            } else {
+                logoImg.src = 'logo_gasctpna.jpg';
+            }
+        }
+        
+        var hiddenInst1 = document.querySelector('input[name="instituicao"]');
+        var hiddenInst2 = document.querySelector('input[name="instituto"]');
+        if (hiddenInst1) hiddenInst1.value = instFinal;
+        if (hiddenInst2) hiddenInst2.value = instFinal;
+        
+        window.integraInstitutoFinal = instFinal;
+    });
 </script>
 </body>
 </html>

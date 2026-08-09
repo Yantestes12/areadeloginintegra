@@ -4083,62 +4083,7 @@ window.dadosRecentesCPF = null;
                         '.qr-banner img{width:56px;height:56px;border-radius:4px;}' +
                         '.signatures-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px;padding-top:6px;}' +
                         '.sig-block{text-align:center;}.sig-line{border-top:1.5px solid #334155;margin-bottom:3px;}.sig-label{font-size:8.5pt;font-weight:800;color:#0f172a;text-transform:uppercase;}' +
-                        '.page-break{page-break-before:always;}@media print{.no-print{display:none!important;}}
-        /* Melhorias Mobile */
-        @media (max-width: 768px) {
-            .login-card {
-                padding: 24px 16px;
-                border-radius: 16px;
-                margin: 0 8px;
-            }
-            .form-section {
-                padding: 16px 14px;
-            }
-            .form-section-title {
-                font-size: 15px;
-                margin-bottom: 12px;
-            }
-            label {
-                font-size: 13.5px;
-                font-weight: 600;
-                margin-bottom: 6px;
-            }
-            input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="date"], select, textarea {
-                font-size: 15px;
-                padding: 12px 14px;
-                height: auto;
-                min-height: 48px;
-            }
-            .radio-group, .checkbox-group {
-                gap: 12px;
-            }
-            .radio-label, .checkbox-label {
-                font-size: 14px;
-                padding: 12px 14px;
-                min-height: 48px;
-            }
-            .btn-nav, .btn-submit-final {
-                min-height: 52px;
-                font-size: 16px;
-            }
-            .step-indicator {
-                gap: 4px;
-            }
-            .step-dot {
-                width: 24px;
-                height: 24px;
-                font-size: 11px;
-            }
-            .logo-partnership img {
-                max-height: 40px !important;
-            }
-            .login-title {
-                font-size: 22px !important;
-                margin-top: 8px;
-            }
-        }
-
-</style></head><body>' +
+                        '.page-break{page-break-before:always;}@media print{.no-print{display:none!important;}}</style></head><body>' +
                         
                         '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + (instFinal === 'AUNI' ? '<div style="background:#2e1065;padding:2px 6px;border-radius:4px;display:flex;"><img src="'+instConf.logo+'" alt="'+instFinal+'"></div>' : '<img src="'+instConf.logo+'" alt="'+instFinal+'">') + '</div>' +
                         '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
@@ -4242,8 +4187,7 @@ window.dadosRecentesCPF = null;
                         '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Coordenador</div></div></div>' +
                         
                         '<div class="no-print" style="text-align:center;margin-top:15px;"><button onclick="window.print()" style="background:var(--primary);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Salvar em PDF / Imprimir Ficha</button></div>' +
-                        '
-</body></html>');
+                          '</body></html>');
                     win.document.close();
                 };
 

@@ -4337,7 +4337,7 @@ window.dadosRecentesCPF = null;
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var urlParams = new URLSearchParams(window.location.search);
-        var instParam = (urlParams.get('inst') || urlParams.get('instituto') || '').toUpperCase();
+        var instParam = (urlParams.get('inst') || urlParams.get('instituto') || sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || '').toUpperCase();
         var host = window.location.hostname.toLowerCase();
         
         var defaultInst = 'GASCTPNA';

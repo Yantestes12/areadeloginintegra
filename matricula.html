@@ -2392,7 +2392,8 @@ window.dadosRecentesCPF = null;
             var ctrl = new AbortController();
             var abortId = setTimeout(function() { ctrl.abort(); }, reqTimeout);
 
-            var url = API.consultarCPF + '?cpf=' + encodeURIComponent(cpfNum) + '&data_nascimento=&instituicao=' + instFinal + '&instituto=' + instFinal;
+            var inst = window.integraInstitutoFinal || 'GASCTPNA';
+              var url = API.consultarCPF + '?cpf=' + encodeURIComponent(cpfNum) + '&data_nascimento=&instituicao=' + inst + '&instituto=' + inst;
             fetch(url, {
                 method:  'GET',
                 signal:  ctrl.signal

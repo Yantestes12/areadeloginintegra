@@ -1824,14 +1824,25 @@
 
     // ═══════ CONFIGURAÇÃO CENTRALIZADA DE APIS ═══════
     var getInst = function() { 
+        if (window.integraInstitutoFinal) return window.integraInstitutoFinal;
+        var el = document.querySelector('input[name="instituto"]'); 
+        if (el && el.value) return el.value;
+        var el2 = document.querySelector('input[name="instituicao"]'); 
+        if (el2 && el2.value) return el2.value;
         var h = window.location.hostname.toLowerCase();
         if(h.indexOf('auni') !== -1) return 'AUNI';
         if(h.indexOf('ivem') !== -1) return 'IVEM';
         if(h.indexOf('gasctpna') !== -1) return 'GASCTPNA';
         if(h.indexOf('ibrase') !== -1) return 'IBRASE';
-        var el = document.querySelector('input[name="instituto"]'); 
-        return el ? el.value : 'GASCTPNA'; 
+        return 'AUNI'; 
     };
+    function getReqOptions() {
+        return {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ instituto: getInst(), instituicao: getInst() })
+        };
+    }
     var API = {
         consultarCPF:      'https://w.ibrase.com.br/webhook/consultarcpf',
         buscarProjetos:    'https://w.ibrase.com.br/webhook/buscarprojetosaluno',
@@ -2942,10 +2953,7 @@ window.dadosRecentesCPF = null;
         }
         container.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:20px 0;">Carregando projetos do Supabase…</div>';
         
-        fetch(API.buscarProjetos, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'}
-        })
+        fetch(API.buscarProjetos, getReqOptions())
             .then(function(r){ return r.json(); })
             .then(function(data){
                 if (Array.isArray(data)) {
@@ -3091,7 +3099,7 @@ window.dadosRecentesCPF = null;
         }
 
         var promises = [];
-        var req = {method:'POST',headers:{'Content-Type':'application/json'}};
+        var req = getReqOptions();
         if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, req).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
         else promises.push(Promise.resolve());
         if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, req).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
@@ -3151,7 +3159,7 @@ window.dadosRecentesCPF = null;
             }
 
             var promises = [];
-            var req = {method:'POST',headers:{'Content-Type':'application/json'}};
+            var req = getReqOptions();
             if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, req).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
             else promises.push(Promise.resolve());
             if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, req).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
@@ -3212,10 +3220,10 @@ window.dadosRecentesCPF = null;
             // Carregar ambos os caches em paralelo
             var promises = [];
             if(!_cacheNucleos) {
-                promises.push(fetch(API.buscarNucleos, {method:'POST',headers:{'Content-Type':'application/json'}}).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
+                promises.push(fetch(API.buscarNucleos, getReqOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
             } else { promises.push(Promise.resolve()); }
             if(!_cacheModalidades) {
-                promises.push(fetch(API.buscarModalidades, {method:'POST',headers:{'Content-Type':'application/json'}}).then(function(r){return r.json();}).then(function(raw){ _cacheModalidades = _parseN8N(raw, 'modalidades'); }));
+                promises.push(fetch(API.buscarModalidades, getReqOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheModalidades = _parseN8N(raw, 'modalidades'); }));
             } else { promises.push(Promise.resolve()); }
             Promise.all(promises).then(function(){ processar(_cacheNucleos, _cacheModalidades); }).catch(function(){ mostrarMensagem('erro','Erro ao buscar modalidades. Tente novamente.'); });
         });

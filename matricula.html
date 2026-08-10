@@ -1001,7 +1001,7 @@
 
         <form id="form-matricula" action="#" method="post" enctype="multipart/form-data" autocomplete="off" novalidate>
             <input type="hidden" name="instituicao"            value="GASCTPNA">
-            <input type="hidden" name="instituto"              value="GASCTPNA">
+            <input type="hidden" name="instituto"              value="AUNI">
             <input type="hidden" name="acao"                   value="salvar_matricula">
             <input type="hidden" id="numero_matricula"         name="numero_matricula"         value="">
             <input type="hidden" id="lgpd_aceite"              name="lgpd_aceite"              value="0">
@@ -2351,7 +2351,7 @@ window.dadosRecentesCPF = null;
             var ctrl = new AbortController();
             var abortId = setTimeout(function() { ctrl.abort(); }, reqTimeout);
 
-            var url = API.consultarCPF + '?cpf=' + encodeURIComponent(cpfNum) + '&data_nascimento=&instituicao=GASCTPNA&instituto=GASCTPNA';
+            var url = API.consultarCPF + '?cpf=' + encodeURIComponent(cpfNum) + '&data_nascimento=&instituicao=' + getInst() + '&instituto=' + getInst();
             fetch(url, {
                 method:  'GET',
                 signal:  ctrl.signal

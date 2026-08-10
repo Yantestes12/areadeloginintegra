@@ -1826,13 +1826,13 @@
     var getInst = function() { 
         if (window.integraInstitutoFinal) return window.integraInstitutoFinal;
         try {
-            var stInst = sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || sessionStorage.getItem('instituto') || localStorage.getItem('instituto');
-            if (stInst && stInst.trim()) return stInst.trim().toUpperCase();
-        } catch(e) {}
-        try {
             var urlParams = new URLSearchParams(window.location.search);
             var urlInst = urlParams.get('instituto') || urlParams.get('instituicao') || urlParams.get('inst');
             if (urlInst && urlInst.trim()) return urlInst.trim().toUpperCase();
+        } catch(e) {}
+        try {
+            var stInst = sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || sessionStorage.getItem('instituto') || localStorage.getItem('instituto');
+            if (stInst && stInst.trim()) return stInst.trim().toUpperCase();
         } catch(e) {}
         var h = window.location.hostname.toLowerCase();
         if(h.indexOf('auni') !== -1) return 'AUNI';

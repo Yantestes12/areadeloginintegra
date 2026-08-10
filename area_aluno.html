@@ -433,7 +433,7 @@
 
     <!-- Action Card Fazer Matrícula -->
     <section>
-      <button class="card-action-primary" onclick="window.location.href='matricula.html'">
+      <button class="card-action-primary" onclick="var inst = (sessionStorage.getItem('instituto_ativo')||localStorage.getItem('instituto_ativo')||'AUNI'); window.location.href='matricula.html?instituto=' + encodeURIComponent(inst)">
         <div style="display:flex;align-items:center;gap:16px;">
           <div class="card-icon-box-white">
             <span class="material-symbols-outlined" style="font-size:32px;font-variation-settings:'FILL' 1;">rocket_launch</span>

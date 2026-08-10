@@ -1825,15 +1825,24 @@
     // ═══════ CONFIGURAÇÃO CENTRALIZADA DE APIS ═══════
     var getInst = function() { 
         if (window.integraInstitutoFinal) return window.integraInstitutoFinal;
-        var el = document.querySelector('input[name="instituto"]'); 
-        if (el && el.value) return el.value;
-        var el2 = document.querySelector('input[name="instituicao"]'); 
-        if (el2 && el2.value) return el2.value;
+        try {
+            var stInst = sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || sessionStorage.getItem('instituto') || localStorage.getItem('instituto');
+            if (stInst && stInst.trim()) return stInst.trim().toUpperCase();
+        } catch(e) {}
+        try {
+            var urlParams = new URLSearchParams(window.location.search);
+            var urlInst = urlParams.get('instituto') || urlParams.get('instituicao') || urlParams.get('inst');
+            if (urlInst && urlInst.trim()) return urlInst.trim().toUpperCase();
+        } catch(e) {}
         var h = window.location.hostname.toLowerCase();
         if(h.indexOf('auni') !== -1) return 'AUNI';
         if(h.indexOf('ivem') !== -1) return 'IVEM';
         if(h.indexOf('gasctpna') !== -1) return 'GASCTPNA';
         if(h.indexOf('ibrase') !== -1) return 'IBRASE';
+        var el = document.querySelector('input[name="instituto"]'); 
+        if (el && el.value) return el.value;
+        var el2 = document.querySelector('input[name="instituicao"]'); 
+        if (el2 && el2.value) return el2.value;
         return 'AUNI'; 
     };
     function getReqOptions() {
@@ -3114,6 +3123,12 @@ window.dadosRecentesCPF = null;
     }
 
     document.addEventListener('DOMContentLoaded', function(){
+        var activeInst = getInst();
+        var elInst = document.querySelector('input[name="instituto"]');
+        if (elInst) elInst.value = activeInst;
+        var elInst2 = document.querySelector('input[name="instituicao"]');
+        if (elInst2) elInst2.value = activeInst;
+
         function getCs(){ return document.getElementById('cidade_id'); }
         function getBs(){ return document.getElementById('bairro_id'); }
 

@@ -3103,6 +3103,7 @@ window.dadosRecentesCPF = null;
        CIDADES / BAIRROS / MODALIDADE / TURNO
     ════════════════════════════════════════════════════════════════ */
     function carregarCidadesPorProjeto(projetoId){
+        window.currentProjetoIdSelecionado = parseInt(projetoId) || 0;
         var cs = document.getElementById('cidade_id');
         var bs = document.getElementById('bairro_id');
         function isAtivo(val) {
@@ -3115,15 +3116,16 @@ window.dadosRecentesCPF = null;
             if(blocoLocal) blocoLocal.style.display = 'block';
             var cs2 = document.getElementById('cidade_id');
             
+            var pIdCurrent = window.currentProjetoIdSelecionado;
             var nucleosAtivos = (nucleos || []).filter(function(n) { 
-                return (!projetoId || parseInt(n.projeto_id) === parseInt(projetoId)) && isAtivo(n.ativo); 
+                return (!pIdCurrent || parseInt(n.projeto_id) === pIdCurrent) && isAtivo(n.ativo); 
             });
             var espacosIds = {};
             nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacosIds[n.espaco_id] = true; });
             
             var espacosAtivos = (espacos || []).filter(function(e) { 
                 var matchNucleo = Object.keys(espacosIds).length === 0 || espacosIds[e.id] || espacosIds[String(e.id)];
-                var matchProjeto = !projetoId || !e.projeto_id || parseInt(e.projeto_id) === parseInt(projetoId);
+                var matchProjeto = !pIdCurrent || !e.projeto_id || parseInt(e.projeto_id) === pIdCurrent;
                 return matchNucleo && matchProjeto && isAtivo(e.ativo); 
             });
 
@@ -3152,12 +3154,17 @@ window.dadosRecentesCPF = null;
                 });
                 if (nomesCidades.length === 1) {
                     cs2.value = nomesCidades[0];
-                    setTimeout(function() {
-                        cs2.dispatchEvent(new Event('change', { bubbles: true }));
-                    }, 50);
                 }
             }
             setRequiredIn('bloco-local', true);
+
+            // Popula os Bairros/Polos de imediato para a cidade selecionada
+            var cidadeSelecionada = (cs2 && cs2.value) ? cs2.value : nomesCidades[0];
+            if (cidadeSelecionada) {
+                if (typeof window.preencherBairrosGlobal === 'function') {
+                    window.preencherBairrosGlobal(espacos, nucleos, cidadeSelecionada, pIdCurrent);
+                }
+            }
         }
 
         var promises = [];
@@ -3203,10 +3210,15 @@ window.dadosRecentesCPF = null;
             esconder(['bloco-modalidade','bloco-nucleo']);
             if(!cNome || !pId) return;
 
-            function preencherBairros(espacos, nucleos) {
-                var bs2=getBs();
+            window.preencherBairrosGlobal = function(espacos, nucleos, cNomeParam, pIdParam) {
+                var bs2 = getBs();
+                if(!bs2) return;
+                var cNome = cNomeParam || (getCs() ? getCs().value : '');
+                var pIdNum = parseInt(pIdParam) || window.currentProjetoIdSelecionado || parseInt((document.querySelector('input[name="projeto_id"]:checked')||{}).value||0);
+                if (!cNome || !pIdNum) return;
+
                 var nucleosAtivos = (nucleos || []).filter(function(n) { 
-                    return (!pId || parseInt(n.projeto_id) === pId) && isAtivo(n.ativo); 
+                    return (!pIdNum || parseInt(n.projeto_id) === pIdNum) && isAtivo(n.ativo); 
                 });
                 var espacoIds = {};
                 nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacoIds[n.espaco_id] = true; });
@@ -3222,7 +3234,7 @@ window.dadosRecentesCPF = null;
                 }
 
                 if(!filtrados.length){
-                    if(bs2) bs2.innerHTML='<option value="">Nenhum bairro disponível.</option>';
+                    bs2.innerHTML='<option value="">Nenhum bairro disponível.</option>';
                     return;
                 }
                 if(bs2){
@@ -3240,6 +3252,9 @@ window.dadosRecentesCPF = null;
                         }, 50);
                     }
                 }
+            };
+            function preencherBairros(espacos, nucleos) {
+                window.preencherBairrosGlobal(espacos, nucleos);
             }
 
             var promises = [];

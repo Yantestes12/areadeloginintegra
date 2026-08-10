@@ -984,7 +984,7 @@
         <div class="logo-partnership">
             <img src="logo_integra_simbolo.gif" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INTEGRA" style="max-height: 55px; width: auto; border-radius:8px;">
             <span class="logo-separator">×</span>
-            <img src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="GASCTPNA" style="max-height: 55px; width: auto; border-radius:8px;">
+            <img id="logo-header-instituto" src="logo_gasctpna.jpg" onerror="this.onerror=null; this.src='logo_integra.png';" alt="INSTITUTO" style="max-height: 55px; width: auto; border-radius:8px;">
         </div>
         <div class="login-title">Matrícula Online</div>
         <div class="login-sub">Ficha de matrícula simplificada</div>
@@ -1845,6 +1845,28 @@
         if (el2 && el2.value) return el2.value;
         return 'AUNI'; 
     };
+    function getInstitutoLogoInfo() {
+        var inst = getInst();
+        if (inst === 'IBRASE') return { src: 'logo_ibrase.png', alt: 'IBRASE' };
+        if (inst === 'AUNI') return { src: 'logo_auni.png', alt: 'AUNI' };
+        if (inst === 'IVEM') return { src: 'logo_ivem.png', alt: 'IVEM' };
+        return { src: 'logo_gasctpna.jpg', alt: 'GASCTPNA' };
+    }
+    function atualizarLogosFormulario() {
+        var info = getInstitutoLogoInfo();
+        var imgHeader = document.getElementById('logo-header-instituto');
+        if (imgHeader) {
+            imgHeader.src = info.src;
+            imgHeader.alt = info.alt;
+            if (info.alt === 'AUNI') {
+                imgHeader.style.background = '#2e1065';
+                imgHeader.style.padding = '3px 6px';
+            } else {
+                imgHeader.style.background = 'transparent';
+                imgHeader.style.padding = '0';
+            }
+        }
+    }
     function getGetOptions() {
         return { method: 'GET' };
     }
@@ -3158,6 +3180,7 @@ window.dadosRecentesCPF = null;
         if (elInst) elInst.value = activeInst;
         var elInst2 = document.querySelector('input[name="instituicao"]');
         if (elInst2) elInst2.value = activeInst;
+        atualizarLogosFormulario();
 
         function getCs(){ return document.getElementById('cidade_id'); }
         function getBs(){ return document.getElementById('bairro_id'); }
@@ -4047,16 +4070,19 @@ window.dadosRecentesCPF = null;
 
                     var uf = getV('uf') || getV('estado') || '';
 
-                    var projSel = document.querySelector('input[name="projeto_id"]:checked');
-                    var rawProj = (projSel && projSel.parentNode ? projSel.parentNode.innerText : '') || getV('projeto_nome') || 'GASCTPNA';
-                    var proj = cleanText(rawProj).replace(/GASCTPNA\s*[\/\-]\s*GASCTPNA/gi, 'GASCTPNA').trim() || 'GASCTPNA';
-                    if (!proj || proj.toUpperCase() === 'GASCTPNA') {
-                        proj = 'GASCTPNA';
-                    }
+                    var logoInfo = getInstitutoLogoInfo();
+                    var instName = getInst();
+                    var logoInstHtml = (logoInfo.alt === 'AUNI') 
+                        ? '<div style="background:#2e1065;padding:2px 6px;border-radius:4px;display:flex;"><img src="' + logoInfo.src + '" alt="' + logoInfo.alt + '"></div>'
+                        : '<img src="' + logoInfo.src + '" alt="' + logoInfo.alt + '">';
 
-                    var subTitleHeader = (proj && proj !== 'GASCTPNA')
-                        ? ('GASCTPNA — ' + proj)
-                        : 'Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza';
+                    var projSel = document.querySelector('input[name="projeto_id"]:checked');
+                    var rawProj = (projSel && projSel.parentNode ? projSel.parentNode.innerText : '') || getV('projeto_nome') || instName;
+                    var proj = cleanText(rawProj).trim() || instName;
+
+                    var subTitleHeader = (proj && proj.toUpperCase() !== instName)
+                        ? (instName + ' — ' + proj)
+                        : instName;
 
                     var nucSel = document.querySelector('input[name="nucleo_id_radio"]:checked');
                     var rawNuc = (nucSel && nucSel.parentNode ? nucSel.parentNode.innerText : '') || getV('nucleo_nome') || 'Núcleo Central';
@@ -4081,29 +4107,22 @@ window.dadosRecentesCPF = null;
                     var parResp = getV('grau_parentesco') || getV('resp_parentesco');
                     var tResp = getV('resp_whatsapp') || getV('telefone_responsavel');
 
-                    var agoraMat = new Date();
-                    var timestampExato = agoraMat.toLocaleString('pt-BR');
-                    
-                    // Timestamp do Coordenador (aleatório entre 1m11s [71s] e 3m21s [201s] após a inscrição do aluno)
-                    var offsetSegundosCoord = Math.floor(Math.random() * (201 - 71 + 1)) + 71;
-                    var dataCoordenador = new Date(agoraMat.getTime() + offsetSegundosCoord * 1000);
-                    var timestampCoordenador = dataCoordenador.toLocaleString('pt-BR');
-
-                    var instSlug = 'gasctpna';
-                    var projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'gasctpna';
+                    var instSlug = instName.toLowerCase();
+                    var projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || instSlug;
                     var urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
                     var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
-                    var tokenProtocolo = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
-                    var tokenProtocoloCoord = (Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2) + Math.random().toString(16).substring(2)).substring(0, 32);
-
+                    var win = window.open('', '_blank');
+                    if (!win) {
+                        mostrarMensagem('erro', 'Bloqueador de pop-ups ativado. Permita pop-ups para visualizar a Ficha.');
+                        return;
+                    }
                     win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
-                        '<style>@page{size:A4;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
-                        'body{font-family:sans-serif;font-size:9pt;color:#0f172a;line-height:1.3;background:#fff;padding:8px;}' +
-                        '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #10b981;padding-bottom:6px;margin-bottom:8px;}' +
-                        '.logo-box{display:flex;align-items:center;gap:8px;}.logo-box img{max-height:36px;border-radius:4px;}.logo-sep{font-size:16px;color:#94a3b8;font-weight:bold;}' +
-                        '.header-titles{text-align:right;}.main-title{font-size:12.5pt;font-weight:800;color:#065f46;margin:0;}.sub-title{font-size:8.5pt;color:#64748b;font-weight:600;}' +
-                        '.section-box{border:1px solid #cbd5e1;border-radius:6px;margin-bottom:6px;padding:6px 8px;background:#f8fafc;}' +
+                        '<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#0f172a;background:#fff;padding:12px;font-size:9pt;line-height:1.2;}' +
+                        '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #0284c7;padding-bottom:6px;margin-bottom:8px;}' +
+                        '.logo-box{display:flex;align-items:center;gap:6px;}.logo-box img{height:30px;width:auto;object-fit:contain;}.logo-sep{font-weight:700;color:#94a3b8;font-size:11pt;}' +
+                        '.header-titles{text-align:right;}.main-title{font-size:12pt;font-weight:900;color:#0369a1;letter-spacing:0.5px;}.sub-title{font-size:8.5pt;font-weight:700;color:#475569;}' +
+                        '.section-box{border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;margin-bottom:6px;background:#fff;}' +
                         '.section-title{font-size:9pt;font-weight:800;color:#0f172a;border-bottom:1px solid #e2e8f0;padding-bottom:2px;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}' +
                         '.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px 10px;}' +
                         '.field-item{font-size:8.5pt;}.field-label{font-weight:700;color:#475569;}.field-value{color:#0f172a;}' +
@@ -4113,12 +4132,12 @@ window.dadosRecentesCPF = null;
                         '.sig-block{text-align:center;}.sig-line{border-top:1.5px solid #334155;margin-bottom:3px;}.sig-label{font-size:8.5pt;font-weight:800;color:#0f172a;text-transform:uppercase;}' +
                         '.page-break{page-break-before:always;}@media print{.no-print{display:none!important;}}</style></head><body>' +
                         
-                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + logoInstHtml + '</div>' +
                         '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
                         
                         '<div class="section-box" style="background:#e0f2fe;border-color:#bae6fd;"><div class="grid-3">' +
                         '<div class="field-item"><span class="field-label">Nº de Matrícula:</span> <span class="field-value" style="font-weight:bold;font-size:10pt;color:#0369a1;">' + numMatricula + '</span></div>' +
-                        '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + (proj && proj !== 'GASCTPNA' ? 'GASCTPNA — ' + proj : 'GASCTPNA') + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Projeto:</span> <span class="field-value" style="font-weight:bold;">' + (proj && proj !== instName ? instName + ' — ' + proj : instName) + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Núcleo:</span> <span class="field-value">' + nuc + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Modalidade:</span> <span class="field-value">' + modalidade + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Turno:</span> <span class="field-value">' + tur + '</span></div></div></div>' +
@@ -4171,10 +4190,8 @@ window.dadosRecentesCPF = null;
                         
                         '<div class="page-break"></div>' +
                         
-                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span><img src="logo_gasctpna.jpg" alt="GASCTPNA"></div>' +
+                        '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + logoInstHtml + '</div>' +
                         '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
-                        
-                        
                         
                         '<div class="section-box"><div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>' +
                         '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA), aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +

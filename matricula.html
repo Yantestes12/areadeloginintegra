@@ -3217,11 +3217,16 @@ window.dadosRecentesCPF = null;
                 var pIdNum = parseInt(pIdParam) || window.currentProjetoIdSelecionado || parseInt((document.querySelector('input[name="projeto_id"]:checked')||{}).value||0);
                 if (!cNome || !pIdNum) return;
 
+                function isAtivo(val) {
+                    if (val === undefined || val === null) return true;
+                    return val === true || val === 1 || val === 'true' || val === '1' || val === 't';
+                }
+
                 var nucleosAtivos = (nucleos || []).filter(function(n) { 
                     return (!pIdNum || parseInt(n.projeto_id) === pIdNum) && isAtivo(n.ativo); 
                 });
                 var espacoIds = {};
-                nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacoIds[n.espaco_id] = true; });
+                nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacoIds[n.espaco_id] = n.nome || true; });
                 
                 var filtrados = (espacos || []).filter(function(e){ 
                     var matchCidade = (e.cidade === cNome) || (e.bairro === cNome) || (!e.cidade && cNome === "Campos dos Goytacazes") || (cNome && String(e.cidade).trim().toLowerCase() === String(cNome).trim().toLowerCase());
@@ -3242,7 +3247,8 @@ window.dadosRecentesCPF = null;
                     filtrados.forEach(function(e){
                         var o=document.createElement('option'); 
                         o.value=e.id; 
-                        o.textContent=e.nome ? e.nome : (e.bairro || ('Polo ' + e.id)); 
+                        var nomeDoNucleo = (typeof espacoIds[e.id] === 'string' ? espacoIds[e.id] : (typeof espacoIds[String(e.id)] === 'string' ? espacoIds[String(e.id)] : null));
+                        o.textContent = nomeDoNucleo ? nomeDoNucleo : (e.nome ? e.nome : (e.bairro || ('Polo ' + e.id))); 
                         bs2.appendChild(o);
                     });
                     if (filtrados.length === 1) {

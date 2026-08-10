@@ -1845,6 +1845,9 @@
         if (el2 && el2.value) return el2.value;
         return 'AUNI'; 
     };
+    function getGetOptions() {
+        return { method: 'GET' };
+    }
     function getReqOptions() {
         return {
             method: 'POST',
@@ -3117,10 +3120,9 @@ window.dadosRecentesCPF = null;
         }
 
         var promises = [];
-        var req = getReqOptions();
-        if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, req).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
+        if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
         else promises.push(Promise.resolve());
-        if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, req).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
+        if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
         else promises.push(Promise.resolve());
 
         Promise.all(promises).then(function(){
@@ -3193,10 +3195,9 @@ window.dadosRecentesCPF = null;
             }
 
             var promises = [];
-            var req = getReqOptions();
-            if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, req).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
+            if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
             else promises.push(Promise.resolve());
-            if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, req).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
+            if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
             else promises.push(Promise.resolve());
 
             Promise.all(promises).then(function(){
@@ -3254,7 +3255,7 @@ window.dadosRecentesCPF = null;
             // Carregar ambos os caches em paralelo
             var promises = [];
             if(!_cacheNucleos) {
-                promises.push(fetch(API.buscarNucleos, getReqOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
+                promises.push(fetch(API.buscarNucleos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
             } else { promises.push(Promise.resolve()); }
             if(!_cacheModalidades) {
                 promises.push(fetch(API.buscarModalidades, getReqOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheModalidades = _parseN8N(raw, 'modalidades'); }));

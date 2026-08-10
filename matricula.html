@@ -3128,6 +3128,12 @@ window.dadosRecentesCPF = null;
                 nomesCidades.forEach(function(c){
                     var o=document.createElement('option'); o.value=c; o.textContent=c; cs2.appendChild(o);
                 });
+                if (nomesCidades.length === 1) {
+                    cs2.value = nomesCidades[0];
+                    setTimeout(function() {
+                        cs2.dispatchEvent(new Event('change', { bubbles: true }));
+                    }, 50);
+                }
             }
             setRequiredIn('bloco-local', true);
         }
@@ -3847,6 +3853,14 @@ window.dadosRecentesCPF = null;
         if (valBairroResidencia) {
             fd.set('bairro', valBairroResidencia);
             fd.set('bairro_residencia', valBairroResidencia);
+        }
+
+        // Cidade / Polo do Projeto
+        var elCidSelect = document.getElementById('cidade_id') || document.querySelector('select[name="cidade_id"]');
+        if (elCidSelect && elCidSelect.value) {
+            fd.set('cidade', elCidSelect.value);
+            fd.set('cidade_polo', elCidSelect.value);
+            fd.set('cidade_nome', elCidSelect.value);
         }
 
         // Bairro / Polo do Projeto (agora carrega o espaco_id da localidade, mantendo o name legado)

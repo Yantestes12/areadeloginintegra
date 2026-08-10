@@ -1900,13 +1900,26 @@
     var _cacheNucleos = null;
 
     function _parseN8N(raw, key) {
-        if(Array.isArray(raw)) {
-            if(raw.length > 0 && typeof raw[0] === 'object' && (raw[0][key] || raw[0]['projetos'])) {
-                return raw[0][key] || raw[0]['projetos'] || [];
+        if (!raw) return [];
+        if (Array.isArray(raw)) {
+            if (raw.length > 0 && typeof raw[0] === 'object') {
+                if (Array.isArray(raw[0][key])) return raw[0][key];
+                if (Array.isArray(raw[0]['value'])) return raw[0]['value'];
+                if (Array.isArray(raw[0]['projetos'])) return raw[0]['projetos'];
+                if (Array.isArray(raw[0]['data'])) return raw[0]['data'];
             }
             return raw;
         }
-        return raw ? (raw[key] || raw['projetos'] || []) : [];
+        if (typeof raw === 'object') {
+            if (Array.isArray(raw[key])) return raw[key];
+            if (Array.isArray(raw['value'])) return raw['value'];
+            if (Array.isArray(raw['projetos'])) return raw['projetos'];
+            if (Array.isArray(raw['data'])) return raw['data'];
+            if (Array.isArray(raw['espacos'])) return raw['espacos'];
+            if (Array.isArray(raw['nucleos'])) return raw['nucleos'];
+            if (Array.isArray(raw['modalidades'])) return raw['modalidades'];
+        }
+        return [];
     }
 
     // Controle de passos do Quiz (1 a 10)

@@ -3189,7 +3189,7 @@ window.dadosRecentesCPF = null;
                 nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacoIds[n.espaco_id] = true; });
                 
                 var filtrados = (espacos || []).filter(function(e){ 
-                    var matchCidade = (e.cidade === cNome) || (e.bairro === cNome) || (!e.cidade && cNome === "Campos dos Goytacazes");
+                    var matchCidade = (e.cidade === cNome) || (e.bairro === cNome) || (!e.cidade && cNome === "Campos dos Goytacazes") || (cNome && String(e.cidade).trim().toLowerCase() === String(cNome).trim().toLowerCase());
                     var matchNucleo = Object.keys(espacoIds).length === 0 || espacoIds[e.id] || espacoIds[String(e.id)];
                     return matchCidade && matchNucleo && isAtivo(e.ativo); 
                 });
@@ -3207,9 +3207,15 @@ window.dadosRecentesCPF = null;
                     filtrados.forEach(function(e){
                         var o=document.createElement('option'); 
                         o.value=e.id; 
-                        o.textContent=e.nome ? (e.nome + (e.bairro ? ' - ' + e.bairro : '')) : (e.bairro || 'Sem Bairro'); 
+                        o.textContent=e.nome ? e.nome : (e.bairro || ('Polo ' + e.id)); 
                         bs2.appendChild(o);
                     });
+                    if (filtrados.length === 1) {
+                        bs2.value = filtrados[0].id;
+                        setTimeout(function() {
+                            bs2.dispatchEvent(new Event('change', { bubbles: true }));
+                        }, 50);
+                    }
                 }
             }
 

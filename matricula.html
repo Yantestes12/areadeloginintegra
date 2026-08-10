@@ -3067,28 +3067,37 @@ window.dadosRecentesCPF = null;
     function carregarCidadesPorProjeto(projetoId){
         var cs = document.getElementById('cidade_id');
         var bs = document.getElementById('bairro_id');
-        ['bloco-local','bloco-modalidade','bloco-nucleo'].forEach(function(id){
-            var el = document.getElementById(id); if(el){ el.style.display='none'; setRequiredIn(id,false); }
-        });
-        if(!projetoId) return;
-        if(cs){ cs.innerHTML='<option value="">Carregando cidades…</option>'; cs.disabled=true; }
-        if(bs){ bs.innerHTML='<option value="">Selecione a cidade primeiro…</option>'; bs.disabled=true; }
+        function isAtivo(val) {
+            if (val === undefined || val === null) return true;
+            return val === true || val === 1 || val === 'true' || val === '1' || val === 't';
+        }
 
         function preencherCidades(espacos, nucleos) {
             var blocoLocal = document.getElementById('bloco-local');
             if(blocoLocal) blocoLocal.style.display = 'block';
             var cs2 = document.getElementById('cidade_id');
             
-            // Simula INNER JOIN: apenas espaços que tem núcleo ativo no projeto
-            var nucleosAtivos = nucleos.filter(function(n) { return parseInt(n.projeto_id) === parseInt(projetoId) && (n.ativo===true||n.ativo===1); });
+            var nucleosAtivos = (nucleos || []).filter(function(n) { 
+                return (!projetoId || parseInt(n.projeto_id) === parseInt(projetoId)) && isAtivo(n.ativo); 
+            });
             var espacosIds = {};
             nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacosIds[n.espaco_id] = true; });
             
-            var espacosAtivos = espacos.filter(function(e) { return espacosIds[e.id] && (e.ativo===true||e.ativo===1); });
+            var espacosAtivos = (espacos || []).filter(function(e) { 
+                var matchNucleo = Object.keys(espacosIds).length === 0 || espacosIds[e.id] || espacosIds[String(e.id)];
+                var matchProjeto = !projetoId || !e.projeto_id || parseInt(e.projeto_id) === parseInt(projetoId);
+                return matchNucleo && matchProjeto && isAtivo(e.ativo); 
+            });
+
+            if (!espacosAtivos.length) {
+                espacosAtivos = (espacos || []).filter(function(e) { return isAtivo(e.ativo); });
+            }
+
             var nomesCidades = [];
             espacosAtivos.forEach(function(e) {
-                if(e.cidade && nomesCidades.indexOf(e.cidade) === -1) {
-                    nomesCidades.push(e.cidade);
+                var cName = (e.cidade && String(e.cidade).trim()) ? String(e.cidade).trim() : (e.bairro && String(e.bairro).trim() ? String(e.bairro).trim() : "Campos dos Goytacazes");
+                if(nomesCidades.indexOf(cName) === -1) {
+                    nomesCidades.push(cName);
                 }
             });
             nomesCidades.sort();
@@ -3143,7 +3152,7 @@ window.dadosRecentesCPF = null;
         // ── Cidade → Bairros (via webhook) ──────────────────────────────
         document.addEventListener('change', function(e){
             if(!e.target || e.target.id !== 'cidade_id') return;
-            var cNome=e.target.value; // Agora o value é a string da cidade
+            var cNome=e.target.value; 
             var pId=parseInt((document.querySelector('input[name="projeto_id"]:checked')||{}).value||0);
             var bs=getBs();
             if(bs){ bs.innerHTML='<option value="">Carregando bairros…</option>'; bs.disabled=true; }
@@ -3152,12 +3161,22 @@ window.dadosRecentesCPF = null;
 
             function preencherBairros(espacos, nucleos) {
                 var bs2=getBs();
-                // Simula INNER JOIN: espacos daquela cidade que tenham nucleos ativos no projeto
-                var nucleosAtivos = nucleos.filter(function(n) { return parseInt(n.projeto_id) === pId && (n.ativo===true||n.ativo===1); });
+                var nucleosAtivos = (nucleos || []).filter(function(n) { 
+                    return (!pId || parseInt(n.projeto_id) === pId) && isAtivo(n.ativo); 
+                });
                 var espacoIds = {};
                 nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacoIds[n.espaco_id] = true; });
                 
-                var filtrados = espacos.filter(function(e){ return e.cidade === cNome && espacoIds[e.id] && (e.ativo===true||e.ativo===1); });
+                var filtrados = (espacos || []).filter(function(e){ 
+                    var matchCidade = (e.cidade === cNome) || (e.bairro === cNome) || (!e.cidade && cNome === "Campos dos Goytacazes");
+                    var matchNucleo = Object.keys(espacoIds).length === 0 || espacoIds[e.id] || espacoIds[String(e.id)];
+                    return matchCidade && matchNucleo && isAtivo(e.ativo); 
+                });
+
+                if(!filtrados.length){
+                    filtrados = (espacos || []).filter(function(e){ return isAtivo(e.ativo); });
+                }
+
                 if(!filtrados.length){
                     if(bs2) bs2.innerHTML='<option value="">Nenhum bairro disponível.</option>';
                     return;
@@ -3166,7 +3185,7 @@ window.dadosRecentesCPF = null;
                     bs2.disabled=false; bs2.innerHTML='<option value="">Selecione…</option>';
                     filtrados.forEach(function(e){
                         var o=document.createElement('option'); 
-                        o.value=e.id; // VALUE OCULTO É O ID DO ESPAÇO, EMBORA O CAMPO CHAME bairro_id
+                        o.value=e.id; 
                         o.textContent=e.nome ? (e.nome + (e.bairro ? ' - ' + e.bairro : '')) : (e.bairro || 'Sem Bairro'); 
                         bs2.appendChild(o);
                     });

@@ -3123,15 +3123,9 @@ window.dadosRecentesCPF = null;
             var espacosIds = {};
             nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacosIds[n.espaco_id] = true; });
             
-            var espacosAtivos = (espacos || []).filter(function(e) { 
-                var matchNucleo = espacosIds[e.id] || espacosIds[String(e.id)];
-                var matchProjeto = !pIdCurrent || !e.projeto_id || parseInt(e.projeto_id) === pIdCurrent;
-                return matchNucleo && matchProjeto && isAtivo(e.ativo); 
-            });
-
             var nomesCidades = [];
-            espacosAtivos.forEach(function(e) {
-                var cName = (e.cidade && String(e.cidade).trim()) ? String(e.cidade).trim() : (e.bairro && String(e.bairro).trim() ? String(e.bairro).trim() : "Campos dos Goytacazes");
+            nucleosAtivos.forEach(function(n) {
+                var cName = (n.cidade && String(n.cidade).trim()) ? String(n.cidade).trim() : "Campos dos Goytacazes";
                 if(nomesCidades.indexOf(cName) === -1) {
                     nomesCidades.push(cName);
                 }
@@ -3212,13 +3206,16 @@ window.dadosRecentesCPF = null;
                 var nucleosAtivos = (nucleos || []).filter(function(n) { 
                     return (!pIdNum || parseInt(n.projeto_id) === pIdNum) && isAtivo(n.ativo); 
                 });
-                var espacoIds = {};
-                nucleosAtivos.forEach(function(n) { if(n.espaco_id) espacoIds[n.espaco_id] = n.nome || true; });
-                
-                var filtrados = (espacos || []).filter(function(e){ 
-                    var matchCidade = (e.cidade === cNome) || (e.bairro === cNome) || (!e.cidade && cNome === "Campos dos Goytacazes") || (cNome && String(e.cidade).trim().toLowerCase() === String(cNome).trim().toLowerCase());
-                    var matchNucleo = espacoIds[e.id] || espacoIds[String(e.id)];
-                    return matchCidade && matchNucleo && isAtivo(e.ativo); 
+                var espacosUnicos = {};
+                var filtrados = [];
+                nucleosAtivos.forEach(function(n) {
+                    var nCid = (n.cidade && String(n.cidade).trim()) ? String(n.cidade).trim() : "Campos dos Goytacazes";
+                    var matchCidade = (String(nCid).trim().toLowerCase() === String(cNome).trim().toLowerCase());
+                    if (matchCidade && n.espaco_id && !espacosUnicos[n.espaco_id]) {
+                        espacosUnicos[n.espaco_id] = true;
+                        var nomeExibicao = n.bairro || n.nome || ('Polo ' + n.espaco_id);
+                        filtrados.push({ id: n.espaco_id, nome: nomeExibicao });
+                    }
                 });
 
                 if(!filtrados.length){
@@ -3230,8 +3227,7 @@ window.dadosRecentesCPF = null;
                     filtrados.forEach(function(e){
                         var o=document.createElement('option'); 
                         o.value=e.id; 
-                        var nomeDoNucleo = (typeof espacoIds[e.id] === 'string' ? espacoIds[e.id] : (typeof espacoIds[String(e.id)] === 'string' ? espacoIds[String(e.id)] : null));
-                        o.textContent = nomeDoNucleo ? nomeDoNucleo : (e.nome ? e.nome : (e.bairro || ('Polo ' + e.id))); 
+                        o.textContent = e.nome; 
                         bs2.appendChild(o);
                     });
                     if (filtrados.length === 1) {
@@ -3375,10 +3371,16 @@ window.dadosRecentesCPF = null;
                     
                     var turnos = [];
                     if (n.turnos_calculados) {
-                        try {
-                            turnos = typeof n.turnos_calculados === 'string' ? JSON.parse(n.turnos_calculados) : n.turnos_calculados;
-                            turnos = [...new Set(turnos)];
-                        } catch(e){}
+                        if (typeof n.turnos_calculados === 'string') {
+                            if (n.turnos_calculados.trim().startsWith('[')) {
+                                try { turnos = JSON.parse(n.turnos_calculados); } catch(e){}
+                            } else {
+                                turnos = n.turnos_calculados.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t; });
+                            }
+                        } else if (Array.isArray(n.turnos_calculados)) {
+                            turnos = n.turnos_calculados;
+                        }
+                        turnos = [...new Set(turnos)];
                     }
                     n.turnos = turnos;
                     

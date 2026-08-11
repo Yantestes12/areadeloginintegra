@@ -3158,13 +3158,11 @@ window.dadosRecentesCPF = null;
         }
 
         var promises = [];
-        if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
-        else promises.push(Promise.resolve());
         if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
         else promises.push(Promise.resolve());
 
         Promise.all(promises).then(function(){
-            preencherCidades(_cacheEspacos, _cacheNucleos);
+            preencherCidades(null, _cacheNucleos);
         }).catch(function(){
             var cs2 = document.getElementById('cidade_id');
             if(cs2) cs2.innerHTML='<option value="">Erro ao carregar cidades.</option>';
@@ -3248,17 +3246,15 @@ window.dadosRecentesCPF = null;
             esconder(['bloco-modalidade','bloco-nucleo']);
             if(!cNome || !pId) return;
             function preencherBairros(espacos, nucleos) {
-                window.preencherBairrosGlobal(espacos, nucleos);
+                window.preencherBairrosGlobal(null, nucleos);
             }
 
             var promises = [];
-            if(!_cacheEspacos) promises.push(fetch(API.buscarEspacos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheEspacos = _parseN8N(raw, 'espacos'); }));
-            else promises.push(Promise.resolve());
             if(!_cacheNucleos) promises.push(fetch(API.buscarNucleos, getGetOptions()).then(function(r){return r.json();}).then(function(raw){ _cacheNucleos = _parseN8N(raw, 'nucleos'); }));
             else promises.push(Promise.resolve());
 
             Promise.all(promises).then(function(){
-                preencherBairros(_cacheEspacos, _cacheNucleos);
+                preencherBairros(null, _cacheNucleos);
             }).catch(function(){ var bs2=getBs(); if(bs2) bs2.innerHTML='<option value="">Erro ao carregar.</option>'; });
         });
 

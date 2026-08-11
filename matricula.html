@@ -4131,7 +4131,9 @@ window.dadosRecentesCPF = null;
                         : instName;
 
                     var nucSel = document.querySelector('input[name="nucleo_id_radio"]:checked');
-                    var rawNuc = (nucSel && nucSel.parentNode ? nucSel.parentNode.innerText : '') || getV('nucleo_nome') || 'Núcleo Central';
+                    var elBairro = document.getElementById('bairro_id');
+                    var textBairro = elBairro && elBairro.selectedIndex >= 0 ? elBairro.options[elBairro.selectedIndex].text : '';
+                    var rawNuc = (nucSel && nucSel.parentNode ? nucSel.parentNode.innerText : '') || getV('nucleo_nome') || textBairro || 'Núcleo Central';
                     var nuc = cleanText(rawNuc) || 'Núcleo Central';
 
                     var turSel = document.querySelector('input[name="turno_escolhido_radio"]:checked');

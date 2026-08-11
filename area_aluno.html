@@ -1689,6 +1689,7 @@
 
     // Gerador Oficial da Ficha de Matrícula (2 Páginas Exatas do matricula.html)
     function gerarFichaPDFOficial2Paginas(d, winTarget) {
+      const inst = String(sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || 'GASCTPNA').toUpperCase();
       const win = winTarget || window.open('', '_blank');
       if (!win) {
         alert('Por favor, permita pop-ups no seu navegador para visualizar a Ficha de Matrícula PDF.');

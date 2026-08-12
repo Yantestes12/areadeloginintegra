@@ -4175,6 +4175,12 @@ window.dadosRecentesCPF = null;
                     var urlAutenticador = 'https://plataformaintegra.com.br/autenticador?inst=' + instSlug + '&id=' + numMatricula;
                     var qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
+                    var timestampExato = new Date().toLocaleString('pt-BR');
+                    var dCoord = new Date();
+                    dCoord.setDate(dCoord.getDate() + 1);
+                    var timestampCoordenador = dCoord.toLocaleDateString('pt-BR') + ' (Via Integra Central)';
+                    var tokenProtocolo = 'INT-' + Date.now().toString().slice(-6) + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+
                     var win = window.open('', '_blank');
                     if (!win) {
                         mostrarMensagem('erro', 'Bloqueador de pop-ups ativado. Permita pop-ups para visualizar a Ficha.');

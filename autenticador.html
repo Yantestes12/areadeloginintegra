@@ -214,7 +214,7 @@
 
   <div class="header-logo">
     <img src="logo_integra.png" alt="Plataforma Integra">
-    <span style="color:#94a3b8;font-weight:bold;">×</span>
+    <span style="color:#94a3b8;font-weight:bold;font-size:24px;margin: 0 4px;">/</span>
     <img id="inst-logo" src="logo_gasctpna.jpg" alt="Instituto">
   </div>
 
@@ -237,28 +237,20 @@
 
     <div class="info-grid">
       <div class="info-item">
+        <span class="info-label">Data e Hora do Registro</span>
+        <span class="info-value" id="res-data">---</span>
+      </div>
+      <div class="info-item">
         <span class="info-label">Nome do Aluno(a)</span>
         <span class="info-value" id="res-nome">---</span>
       </div>
       <div class="info-item">
-        <span class="info-label">CPF</span>
-        <span class="info-value" id="res-cpf">---</span>
+        <span class="info-label">Idade</span>
+        <span class="info-value" id="res-idade">---</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Instituição / Projeto</span>
-        <span class="info-value" id="res-projeto">---</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Núcleo / Polo</span>
-        <span class="info-value" id="res-nucleo">---</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Modalidade</span>
-        <span class="info-value" id="res-modalidade">---</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Data de Registro</span>
-        <span class="info-value" id="res-data">---</span>
+        <span class="info-label">Nome do Responsável</span>
+        <span class="info-value" id="res-resp">---</span>
       </div>
     </div>
 
@@ -287,15 +279,6 @@
       return urlParams.get(name) || '';
     }
 
-    function maskCPF(cpf) {
-      if (!cpf) return 'Não informado';
-      const clean = cpf.replace(/\D/g, '');
-      if (clean.length === 11) {
-        return `***.${clean.slice(3,6)}.${clean.slice(6,9)}-**`;
-      }
-      return '***.***.***-**';
-    }
-    
     function formatDateTime(isoString) {
       if (!isoString) return '---';
       try {
@@ -354,19 +337,15 @@
         }
 
         // Populating data
+        const created = getF(m, ['hora do aceite aluno', 'hora_do_aceite_aluno', 'hora_aceite_aluno', 'aceite_aluno_em']) || getF(m, ['created_at', 'data_cadastro']);
         const nAluno = m.aluno_nome || m.nome_aluno || m.nome || 'Não informado';
-        const cAluno = m.aluno_cpf || m.cpf || '';
-        const pNome = getF(m, ['projeto_nome', 'nome_projeto', 'projeto']) || instParam;
-        const nNome = getF(m, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro_nome', 'nome_bairro', 'bairro']) || 'Núcleo Central';
-        const mNome = getF(m, ['modalidade_nome', 'nome_modalidade', 'modalidade']) || 'Futebol/Esportes';
-        const created = getF(m, ['created_at', 'data_cadastro', 'hora_do_aceite_aluno']);
+        const idadeCalc = m.idade ? (m.idade + ' anos') : 'Não informada';
+        const nResp = m.resp_nome || m.nome_responsavel || 'Não informado';
 
-        document.getElementById('res-nome').textContent = nAluno;
-        document.getElementById('res-cpf').textContent = maskCPF(cAluno);
-        document.getElementById('res-projeto').textContent = instParam + ' — ' + pNome;
-        document.getElementById('res-nucleo').textContent = nNome;
-        document.getElementById('res-modalidade').textContent = mNome;
         document.getElementById('res-data').textContent = formatDateTime(created);
+        document.getElementById('res-nome').textContent = nAluno;
+        document.getElementById('res-idade').textContent = idadeCalc;
+        document.getElementById('res-resp').textContent = nResp;
 
         showSuccess();
 

@@ -1707,7 +1707,7 @@
       const numMatricula = String(getF(d, ['matricula', 'n_inscricao', 'id']) || '000000');
       const projRaw = getF(d, ['projeto_nome', 'nome_projeto', 'projeto']) || inst;
       const proj = projRaw.replace(new RegExp(inst + '\\s*[\\/\\-]\\s*' + inst, 'gi'), inst).trim() || inst;
-      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo']) || 'Núcleo Central';
+      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro_nome', 'nome_bairro', 'bairro']) || 'Núcleo Central';
       const modalidade = getF(d, ['modalidade_nome', 'nome_modalidade', 'modalidade']) || 'Futebol / Esportes';
       const tur = getF(d, ['turno']) || 'Manhã';
 
@@ -1771,7 +1771,7 @@
 
       const instSlug = inst.toLowerCase();
       const projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || instSlug;
-      const urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
+      const urlAutenticador = 'https://plataformaintegra.com.br/' + instSlug + '/autenticador/' + numMatricula;
       const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
       win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +

@@ -320,7 +320,7 @@
       }
 
       try {
-        const url = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}`;
+        const url = `https://w.ibrase.com.br/webhook/autenticador?n_inscricao=${encodeURIComponent(matId)}&instituto=${encodeURIComponent(instParam)}`;
         const resp = await fetch(url);
         if (!resp.ok) throw new Error('Network error');
         

@@ -1771,7 +1771,7 @@
 
       const instSlug = inst.toLowerCase();
       const projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || instSlug;
-      const urlAutenticador = 'https://plataformaintegra.com.br/' + instSlug + '/autenticador/' + numMatricula;
+      const urlAutenticador = 'https://plataformaintegra.com.br/autenticador?inst=' + instSlug + '&id=' + numMatricula;
       const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
       win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +

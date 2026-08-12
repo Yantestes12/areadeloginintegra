@@ -1,9 +1,6 @@
 RewriteEngine On
 RewriteBase /
 
-# Autenticador Digital via QR Code
-RewriteRule ^([^/]+)/autenticador/([^/]+)/?$ autenticador.html?inst=$1&id=$2 [L,QSA]
-
 # Tenta abrir o arquivo com a extensão .html
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.html -f

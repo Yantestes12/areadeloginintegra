@@ -1344,11 +1344,13 @@
         <div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border);">
             <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em;">📍 Endereço</div>
             <div class="field-row" style="display:flex;gap:10px;margin-bottom:10px;">
-                <div class="field-group" style="flex:0 0 130px;">
+                <div class="field-group" style="flex:1;">
                     <label style="margin-bottom:4px;">CEP <span class="req">*</span></label>
                     <input type="text" name="cep" id="cep" maxlength="9" placeholder="00000-000"
                            inputmode="numeric" onblur="buscarCEP(this.value);" required>
                 </div>
+            </div>
+            <div class="field-row" style="display:flex;gap:10px;margin-bottom:10px;">
                 <div class="field-group" style="flex:1;">
                     <label style="margin-bottom:4px;">Logradouro (Rua / Av.) <span class="req">*</span></label>
                     <input type="text" name="endereco" id="endereco" required placeholder="Preenchido via CEP">
@@ -2160,6 +2162,22 @@ window.dadosRecentesCPF = null;
             } else {
                 if (elCid) elCid.classList.remove('invalid');
                 if (elBai) elBai.classList.remove('invalid');
+            }
+        }
+
+        // Validar explicitamente o Passo 5 (Modalidade & Núcleo)
+        if (step === 5) {
+            var nId = document.getElementById('nucleo_id');
+            if (!nId || !nId.value) {
+                mostrarMensagem('erro', 'Selecione a Modalidade e o Polo/Núcleo antes de avançar.');
+                isValid = false;
+            } else {
+                var blocoTurno = document.getElementById('bloco-turno-escolha');
+                var hidTurno = document.getElementById('turno_escolhido');
+                if (blocoTurno && blocoTurno.style.display !== 'none' && (!hidTurno || !hidTurno.value)) {
+                    mostrarMensagem('erro', 'Selecione o turno desejado.');
+                    isValid = false;
+                }
             }
         }
 

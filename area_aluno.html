@@ -1181,16 +1181,15 @@
         }
       }
 
-      // Garante que o localStorage antigo nunca restaure matrículas deletadas do banco
-      try {
-        localStorage.removeItem('usuario_dados');
-        localStorage.removeItem('usuario_dados_completos');
-      } catch(e){}
-
-      // Fallback de leitura apenas no sessionStorage da sessão atual caso o offline ocorra
-      if (!items || items.length === 0) {
+      if (items && items.length > 0) {
         try {
-          const rawDados = sessionStorage.getItem('usuario_dados');
+          // Atualiza o cache com os dados recentes do banco
+          localStorage.setItem('usuario_dados', JSON.stringify(items));
+        } catch(e){}
+      } else {
+        // Fallback de leitura usando sessionStorage e localStorage caso o offline ocorra
+        try {
+          const rawDados = sessionStorage.getItem('usuario_dados_completos') || sessionStorage.getItem('usuario_dados') || localStorage.getItem('usuario_dados_completos') || localStorage.getItem('usuario_dados');
           if (rawDados) {
             let p = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
             items = extrairTodasMatriculas(p);

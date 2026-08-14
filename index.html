@@ -625,7 +625,7 @@
 
         <div class="login-footer">
             Está sem acesso? 
-            <a href="https://gasctpna.plataformaintegra.com.br/">Criar acesso</a>
+            <a href="https://gasctpna.plataformaintegra.com.br/" id="linkCriarAcesso">Criar acesso</a>
         </div>
     </div>
 
@@ -773,6 +773,11 @@
                             }
                         } catch(err){}
 
+                        // Proteção total contra sem_email, template vazio ou JSON retornado erroneamente
+                        if (!uEmail || uEmail === 'sem_email' || uEmail.includes('{{') || (typeof uEmail === 'string' && uEmail.startsWith('{'))) {
+                            uEmail = username.trim().toLowerCase();
+                        }
+
                         const isRemember = document.getElementById('rememberMe').checked;
                         if (isRemember) {
                             localStorage.setItem('usuario_email', username);
@@ -793,6 +798,25 @@
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
+
+                        try {
+                            if (uDados) {
+                                let p = JSON.parse(uDados);
+                                if (Array.isArray(p)) p = p[0] || {};
+                                
+                                // SALVA OS INSTITUTOS PERMITIDOS
+                                if (p.institutos_permitidos) {
+                                    sessionStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
+                                    localStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
+                                }
+
+                                // SALVA O INSTITUTO ATIVO
+                                const instOrigem = typeof getInstOrigem === 'function' ? getInstOrigem() : 'GASCTPNA';
+                                const instAtivoFinal = p.instituto_ativo ? p.instituto_ativo : (instOrigem ? instOrigem.toUpperCase() : 'GASCTPNA');
+                                sessionStorage.setItem('instituto_ativo', instAtivoFinal);
+                                localStorage.setItem('instituto_ativo', instAtivoFinal);
+                            }
+                        } catch(e) {}
 
                         setTimeout(() => {
                             window.location.href = 'area_aluno.html';

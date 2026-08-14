@@ -108,7 +108,7 @@
             pointer-events: none;
         }
         .blob-1 {
-            background: radial-gradient(circle, #10b981 0%, transparent 70%);
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
             top: -150px;
             left: -150px;
         }
@@ -120,15 +120,22 @@
 
         .login-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 520px;
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
+            border: 2px solid rgba(226, 232, 240, 0.9);
+            border-radius: 24px;
             padding: 32px 26px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0,0,0,0.04);
+            box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.03), inset 0 2px 0 rgba(255, 255, 255, 0.8);
             animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                padding: 24px 18px !important;
+            }
         }
 
         @keyframes fadeUp {
@@ -167,7 +174,7 @@
         .section-tarja {
             display: inline-block;
             background: #ecfdf5;
-            color: #059669;
+            color: var(--primary);
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
@@ -196,7 +203,7 @@
             margin-bottom: 4px;
             text-align: center;
             letter-spacing: -0.02em;
-            background: linear-gradient(120deg, #059669 0%, #10b981 50%, #0d9488 100%);
+            background: linear-gradient(120deg, var(--primary-hover) 0%, var(--primary) 50%, var(--primary-glow) 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -452,7 +459,7 @@
         }
         .btn-next, .btn-submit {
             flex: 2;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%) !important;
             border: none !important;
             color: #ffffff !important;
             border-radius: 10px;
@@ -572,7 +579,7 @@
             color: #1e293b !important;
         }
         .modalidade-card.active .projeto-name, .nucleo-card.active div {
-            color: #059669 !important;
+            color: var(--primary) !important;
         }
 
         .wizard-greeting-wrap {
@@ -591,7 +598,7 @@
         }
             font-size: 20px;
             font-weight: 800;
-            color: #059669;
+            color: var(--primary);
             margin-bottom: 4px;
         }
         .wizard-greeting-subtitle {
@@ -658,7 +665,7 @@
         }
         #msg-cpf-status.ok {
             background: #ecfdf5;
-            color: #059669;
+            color: var(--primary);
             border: 1px solid #a7f3d0;
         }
         #msg-cpf-status.erro {
@@ -718,7 +725,7 @@
         .pergunta-opcoes label:has(input:checked) {
             border-color: var(--primary);
             background: #ecfdf5;
-            color: #059669;
+            color: var(--primary);
         }
         .pergunta-opcoes input[type="radio"] {
             accent-color: var(--primary);
@@ -958,6 +965,42 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+    (function() {
+        try {
+            var urlParams = new URLSearchParams(window.location.search);
+            var inst = urlParams.get('instituto') || urlParams.get('instituicao') || urlParams.get('inst');
+            if (!inst) {
+                inst = sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || sessionStorage.getItem('instituto') || localStorage.getItem('instituto');
+            }
+            if (inst) inst = inst.trim().toUpperCase();
+            var root = document.documentElement;
+            if (inst === 'IBRASE') {
+                root.style.setProperty('--primary', '#ea580c');
+                root.style.setProperty('--primary-hover', '#c2410c');
+                root.style.setProperty('--primary-glow', 'rgba(234, 88, 12, 0.25)');
+                root.style.setProperty('--bg-primary', '#fff7ed');
+            } else if (inst === 'AUNI') {
+                root.style.setProperty('--primary', '#2563eb');
+                root.style.setProperty('--primary-hover', '#1d4ed8');
+                root.style.setProperty('--primary-glow', 'rgba(37, 99, 235, 0.25)');
+                root.style.setProperty('--bg-primary', '#eff6ff');
+            } else if (inst === 'IVEM') {
+                root.style.setProperty('--primary', '#dc2626');
+                root.style.setProperty('--primary-hover', '#b91c1c');
+                root.style.setProperty('--primary-glow', 'rgba(220, 38, 38, 0.25)');
+                root.style.setProperty('--bg-primary', '#fef2f2');
+            } else if (inst === 'GASCTPNA') {
+                root.style.setProperty('--primary', '#059669');
+                root.style.setProperty('--primary-hover', '#047857');
+                root.style.setProperty('--primary-glow', 'rgba(5, 150, 105, 0.25)');
+                root.style.setProperty('--bg-primary', '#f0fdf4');
+            }
+        } catch(e) {}
+    })();
+    </script>
+
 </head>
 <body>
     <div id="toast-container" style="position:fixed;top:16px;right:16px;z-index:99998;"></div>
@@ -1356,7 +1399,7 @@
             <div class="field-row" style="display:flex;gap:10px;margin-bottom:10px;">
                 <div class="field-group" style="flex:0 0 90px;">
                     <label style="margin-bottom:4px;">Número <span class="req">*</span></label>
-                    <input type="text" name="numero" id="numero" required placeholder="Nº">
+                    <input type="text" name="numero" id="numero" inputmode="numeric" required placeholder="Nº">
                 </div>
                 <div class="field-group" style="flex:1;">
                     <label style="margin-bottom:4px;">Complemento</label>
@@ -1411,7 +1454,7 @@
             <div class="field-row">
                 <div class="field-group">
                     <label>Número de Contato <span class="req">*</span></label>
-                    <input type="text" name="whatsapp" id="whatsapp" placeholder="(00) 00000-0000">
+                    <input type="text" name="whatsapp" id="whatsapp" inputmode="tel" placeholder="(00) 00000-0000">
                     <div class="hint">Número pelo qual podemos entrar em contato diretamente com você.</div>
                 </div>
                 <div class="field-group">
@@ -1538,7 +1581,7 @@
                     </div>
                     <div class="field-group">
                         <label>WhatsApp do Responsável <span class="req">*</span></label>
-                        <input type="text" name="resp_whatsapp" id="resp_whatsapp" placeholder="(00) 00000-0000" required>
+                        <input type="text" name="resp_whatsapp" id="resp_whatsapp" inputmode="tel" placeholder="(00) 00000-0000" required>
                     </div>
                 </div>
 
@@ -1854,17 +1897,42 @@
     }
     function atualizarLogosFormulario() {
         var info = getInstitutoLogoInfo();
+        var inst = (info && info.alt) ? info.alt.toUpperCase() : 'GASCTPNA';
         var imgHeader = document.getElementById('logo-header-instituto');
         if (imgHeader) {
             imgHeader.src = info.src;
             imgHeader.alt = info.alt;
-            if (info.alt === 'AUNI') {
-                imgHeader.style.background = '#2e1065';
+            if (inst === 'AUNI') {
+                imgHeader.style.background = '#0369a1';
                 imgHeader.style.padding = '3px 6px';
             } else {
                 imgHeader.style.background = 'transparent';
                 imgHeader.style.padding = '0';
             }
+        }
+
+        // Aplica o esquema de cores correto para cada Instituição
+        var root = document.documentElement;
+        if (inst === 'IBRASE') {
+            root.style.setProperty('--primary', '#f97316');
+            root.style.setProperty('--primary-hover', '#ea580c');
+            root.style.setProperty('--primary-glow', 'rgba(249, 115, 22, 0.25)');
+            root.style.setProperty('--bg-primary', '#fff7ed');
+        } else if (inst === 'AUNI') {
+            root.style.setProperty('--primary', '#2563eb');
+            root.style.setProperty('--primary-hover', '#1d4ed8');
+            root.style.setProperty('--primary-glow', 'rgba(37, 99, 235, 0.25)');
+            root.style.setProperty('--bg-primary', '#eff6ff');
+        } else if (inst === 'IVEM') {
+            root.style.setProperty('--primary', '#ef4444');
+            root.style.setProperty('--primary-hover', '#dc2626');
+            root.style.setProperty('--primary-glow', 'rgba(239, 68, 68, 0.25)');
+            root.style.setProperty('--bg-primary', '#fef2f2');
+        } else { // GASCTPNA
+            root.style.setProperty('--primary', '#10b981');
+            root.style.setProperty('--primary-hover', '#059669');
+            root.style.setProperty('--primary-glow', 'rgba(16, 185, 129, 0.25)');
+            root.style.setProperty('--bg-primary', '#f0f4f3');
         }
     }
     function getGetOptions() {
@@ -2437,8 +2505,16 @@ window.dadosRecentesCPF = null;
                     }
                     var ok = data.status === true || data.status === 'sucesso' || data.ok === true || data.success === true;
                     var d = data.result || data.dados || data;
-                    if (data && data.projetos_inscritos_ids && Array.isArray(data.projetos_inscritos_ids)) {
-                        window.projetosInscritosCPF = data.projetos_inscritos_ids;
+                    if (data && data.matriculas_por_instituto) {
+                        var instName = (getInst() || '').toLowerCase();
+                        var listaInst = data.matriculas_por_instituto[instName];
+                        if (listaInst && Array.isArray(listaInst)) {
+                            window.projetosInscritosCPF = listaInst.map(function(m) { return m.projeto_id; });
+                        } else {
+                            window.projetosInscritosCPF = [];
+                        }
+                    } else if (data && data.projetos_inscritos_ids && Array.isArray(data.projetos_inscritos_ids)) {
+                        try { var cachedMapStr = localStorage.getItem('matriculas_por_instituto'); if (cachedMapStr) { var cachedMap = JSON.parse(cachedMapStr); var iName = (getInst() || '').toLowerCase(); if (cachedMap[iName] && Array.isArray(cachedMap[iName])) { window.projetosInscritosCPF = cachedMap[iName].map(function(m) { return m.projeto_id; }); } else { window.projetosInscritosCPF = []; } } else { window.projetosInscritosCPF = data.projetos_inscritos_ids; } } catch(e) { window.projetosInscritosCPF = data.projetos_inscritos_ids; }
                     }
                     if (data && data.dados_recentes) {
                         window.dadosRecentesCPF = data.dados_recentes;
@@ -4134,7 +4210,7 @@ window.dadosRecentesCPF = null;
                     var logoInfo = getInstitutoLogoInfo();
                     var instName = getInst();
                     var logoInstHtml = (logoInfo.alt === 'AUNI') 
-                        ? '<div style="background:#2e1065;padding:2px 6px;border-radius:4px;display:flex;"><img src="' + logoInfo.src + '" alt="' + logoInfo.alt + '"></div>'
+                        ? '<div style="background:#0369a1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding:2px 6px; border-radius:4px; display:flex;"><img src="' + logoInfo.src + '" alt="' + logoInfo.alt + '"></div>'
                         : '<img src="' + logoInfo.src + '" alt="' + logoInfo.alt + '">';
 
                     var projSel = document.querySelector('input[name="projeto_id"]:checked');
@@ -4181,7 +4257,20 @@ window.dadosRecentesCPF = null;
                     var timestampCoordenador = dCoord.toLocaleDateString('pt-BR') + ' (Via Integra Central)';
                     var tokenProtocolo = 'INT-' + Date.now().toString().slice(-6) + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
 
-                    var win = window.open('', '_blank');
+                    var isAuto = (typeof arguments[0] === 'boolean' && arguments[0]);
+                    var win = null;
+                    if (isAuto) {
+                        var iframe = document.getElementById('pdf-iframe');
+                        if (!iframe) {
+                            iframe = document.createElement('iframe');
+                            iframe.id = 'pdf-iframe';
+                            iframe.style.display = 'none';
+                            document.body.appendChild(iframe);
+                        }
+                        win = iframe.contentWindow;
+                    } else {
+                        win = window.open('', '_blank');
+                    }
                     if (!win) {
                         mostrarMensagem('erro', 'Bloqueador de pop-ups ativado. Permita pop-ups para visualizar a Ficha.');
                         return;
@@ -4220,9 +4309,9 @@ window.dadosRecentesCPF = null;
                         '<div class="field-item"><span class="field-label">Escolaridade:</span> <span class="field-value">' + escolaridadeVal + '</span></div></div></div>' +
 
                         '<div class="section-box" style="padding:8px 10px;"><div class="section-title">2. Uniformes e Medidas do Aluno</div><div class="grid-3" style="gap:6px 12px;align-items:center;">' +
-                        '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Camisa:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCamisa + '</span></div>' +
-                        '<div class="field-item"><span class="field-label" style="font-size:9pt;">Nº do Calçado:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalcado + '</span></div>' +
-                        '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Bermuda:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalca + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Tamanho da Camisa:</span> <span class="field-value" style="font-size:9.2pt;font-weight:700;color:#0369a1;background:#f0f9ff;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCamisa + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Nº do Calçado:</span> <span class="field-value" style="font-size:9.2pt;font-weight:700;color:#0369a1;background:#f0f9ff;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalcado + '</span></div>' +
+                        '<div class="field-item"><span class="field-label">Tamanho da Bermuda:</span> <span class="field-value" style="font-size:9.2pt;font-weight:700;color:#0369a1;background:#f0f9ff;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalca + '</span></div>' +
                         '<div class="field-item" style="margin-top:4px;"><span class="field-label">Altura:</span> <span class="field-value">' + alt + '</span></div>' +
                         '<div class="field-item" style="margin-top:4px;"><span class="field-label">Peso:</span> <span class="field-value">' + pes + '</span></div>' +
                         '<div class="field-item" style="margin-top:4px;"><span class="field-label">Raça / Etnia:</span> <span class="field-value">' + raca + '</span></div></div></div>' +
@@ -4249,13 +4338,13 @@ window.dadosRecentesCPF = null;
                         '<div class="field-item"><span class="field-label">Grau de Parentesco:</span> <span class="field-value">' + (parResp || 'Não informado') + '</span></div>' +
                         '<div class="field-item"><span class="field-label">Telefone de Contato:</span> <span class="field-value">' + (tResp || 'Não informado') + '</span></div></div></div>') : '') +
                         
+                        '<div class="section-box" style="background:#f8fafc;border-color:#cbd5e1;margin-top:6px;"><div class="section-title" style="color:#0f172a;border-color:#e2e8f0;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
+                        '<p style="font-size:8pt;color:#334155;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
+                        
                         '<div class="qr-banner" style="background:#f8fafc;border:1px solid #cbd5e1;"><img src="' + qrApi + '" alt="QR Code Autenticador"><div>' +
                         '<div style="font-weight:bold;font-size:9pt;color:#0f172a;">QR CODE DE AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>' +
                         '<div style="font-size:7.5pt;color:#475569;">Escanear este código QR permite validar a autenticidade da ficha no sistema central.</div>' +
                         '<div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">' + urlAutenticador + '</div></div></div>' +
-                        
-                        '<div class="section-box" style="background:#f8fafc;border-color:#cbd5e1;margin-top:6px;"><div class="section-title" style="color:#0f172a;border-color:#e2e8f0;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
-                        '<p style="font-size:8pt;color:#334155;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
                         
                         '<div class="page-break"></div>' +
                         
@@ -4300,9 +4389,12 @@ window.dadosRecentesCPF = null;
                         '• <strong>Aceite do Coordenador</strong>: ' + timestampCoordenador + '</div></div>' +
                         '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Coordenador</div></div></div>' +
                         
-                        '<div class="no-print" style="text-align:center;margin-top:15px;"><button onclick="window.print()" style="background:#10b981;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Salvar em PDF / Imprimir Ficha</button></div>' +
+                        '<div class="no-print" style="text-align:center;margin-top:15px;"><button onclick="window.print()" style="background:var(--primary);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Salvar em PDF / Imprimir Ficha</button></div>' +
                         '</body></html>');
                     win.document.close();
+                    if (isAuto) {
+                        setTimeout(function() { win.focus(); win.print(); }, 500);
+                    }
                 };
 
                 var loginCard = document.querySelector('.login-card');
@@ -4313,7 +4405,7 @@ window.dadosRecentesCPF = null;
                         '<h2 style="color:var(--primary,#10b981);font-size:24px;font-weight:800;margin-bottom:10px;">Matrícula Concluída com Sucesso!</h2>' +
                         '<p style="color:#64748b;font-size:14px;line-height:1.6;margin-bottom:24px;">Sua solicitação de matrícula foi registrada sob o Número de Matrícula <strong>' + numMatricula + '</strong>.</p>' +
                         '<div style="display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto;">' +
-                        '<button type="button" onclick="gerarComprovantePDF()" style="background:#10b981;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(16,185,129,0.35);">📄 Baixar Comprovante em PDF</button>' +
+                        '<button type="button" onclick="gerarComprovantePDF()" style="background:var(--primary);color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px var(--primary-glow);">📄 Baixar Comprovante em PDF</button>' +
                         '<a href="area_aluno.html" style="background:#2563eb;color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(37,99,235,0.35);">🏠 Voltar para a Área do Aluno</a>' +
                         '</div></div>';
                     loginCard.appendChild(successDiv);
@@ -4321,7 +4413,7 @@ window.dadosRecentesCPF = null;
 
                 // Dispara a visualização/impressão automática do comprovante em PDF
                 setTimeout(function(){
-                    gerarComprovantePDF();
+                    gerarComprovantePDF(true);
                 }, 800);
             })
             .catch(function(err) {

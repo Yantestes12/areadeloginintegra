@@ -712,6 +712,14 @@
             document.documentElement.style.setProperty('--primary-glow', 'rgba(5, 150, 105, 0.25)');
         }
 
+        // Ocultar badges que não pertencem ao instituto atual
+        document.querySelectorAll('.inst-logo-badge, .mobile-inst-tag').forEach(el => {
+            const isMatch = el.className.toLowerCase().includes(instOrigemTema.toLowerCase());
+            if (!isMatch) {
+                el.style.display = 'none';
+            }
+        });
+
         // Lógica do Modal de "Criar acesso"
         const linkCriarAcesso = document.getElementById('linkCriarAcesso') || document.querySelector('.login-footer a');
         const modalCriarAcesso = document.getElementById('modalCriarAcesso');
@@ -729,8 +737,6 @@
                 e.preventDefault();
                 modalInstName.textContent = instOrigemTema.toUpperCase();
                 modalCriarAcesso.style.display = 'flex';
-                selectOutroInstituto.value = '';
-                btnContinuarOutro.style.display = 'none';
             });
             
             btnFecharModal.addEventListener('click', (e) => {
@@ -753,21 +759,6 @@
 
             btnContinuarMatricula.addEventListener('click', () => {
                 window.location.href = getDestino(instOrigemTema);
-            });
-            
-            selectOutroInstituto.addEventListener('change', (e) => {
-                if (e.target.value) {
-                    btnContinuarOutro.style.display = 'block';
-                } else {
-                    btnContinuarOutro.style.display = 'none';
-                }
-            });
-            
-            btnContinuarOutro.addEventListener('click', () => {
-                const escolhido = selectOutroInstituto.value;
-                if (escolhido) {
-                    window.location.href = getDestino(escolhido);
-                }
             });
         }
 
@@ -971,18 +962,6 @@
          <p style="text-align:center; color:var(--text-muted); font-size:14px; margin-bottom:20px;">Você está acessando a plataforma do instituto <strong id="modalInstName" style="color:var(--primary);"></strong>.</p>
          
          <button id="btnContinuarMatricula" class="btn" style="margin-bottom:15px; width:100%; display:flex; justify-content:center; padding:12px; background:var(--primary); color:#fff; font-weight:600; border:none; border-radius:12px; cursor:pointer;">Continuar Matrícula neste Instituto</button>
-         
-         <div style="text-align:center; margin-top:20px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.1);">
-            <span style="color:var(--text-muted); font-size:13px;">Deseja acessar outro instituto?</span><br>
-            <select id="selectOutroInstituto" class="form-control" style="margin-top:10px; margin-bottom:15px; background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.1); color:var(--text-color); text-align-last:center;">
-               <option value="">Escolha um instituto...</option>
-               <option value="AUNI">AUNI</option>
-               <option value="IBRASE">IBRASE</option>
-               <option value="IVEM">IVEM</option>
-               <option value="GASCTPNA">GASCTPNA</option>
-            </select>
-            <button id="btnContinuarOutro" class="btn" style="display:none; background:transparent; border:1px solid var(--primary); color:var(--text-color); width:100%; justify-content:center; padding:12px; font-weight:600; border-radius:12px; cursor:pointer;">Ir para Outro Instituto</button>
-         </div>
          
          <div style="text-align:center; margin-top:20px;">
             <a href="#" id="btnFecharModal" style="color:var(--text-muted); text-decoration:none; font-size:14px; font-weight:600;">Voltar ao Login</a>

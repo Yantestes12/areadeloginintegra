@@ -4309,7 +4309,7 @@ window.dadosRecentesCPF = null;
 
                 var cleanCpf = cpfAluno.replace(/\D/g, '');
                 if (cleanCpf) {
-                    localStorage.setItem('instituto_ativo', (window.location.hostname.split('.')[0] || 'INTEGRA').toUpperCase());
+                    localStorage.setItem('instituto_ativo', getInst());
                 }
 
                 // Dispara a visualização/impressão automática do comprovante em PDF

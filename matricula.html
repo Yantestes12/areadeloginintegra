@@ -4307,7 +4307,7 @@ window.dadosRecentesCPF = null;
                     loginCard.appendChild(successDiv);
                 }
 
-                var cleanCpf = cpfAluno.replace(/\\D/g, '');
+                var cleanCpf = cpfAluno.replace(/\D/g, '');
                 if (cleanCpf) {
                     localStorage.setItem('usuario_email', cleanCpf);
                     localStorage.setItem('usuario_senha', cleanCpf);

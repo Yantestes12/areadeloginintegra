@@ -553,13 +553,6 @@
                 <span>Acesse sua conta para se matricular nas atividades.</span>
             </p>
 
-            <!-- As 4 Instituições (IBRASE, IVEM, GASCTPNA, AUNI) -->
-            <div class="institutions-bar">
-                <div class="inst-logo-badge badge-ibrase">IBRASE</div>
-                <div class="inst-logo-badge badge-ivem">INSTITUTO IVEM</div>
-                <div class="inst-logo-badge badge-gasctpna">GASCTPNA</div>
-                <div class="inst-logo-badge badge-auni">AUNI</div>
-            </div>
         </div>
     </div>
 
@@ -574,13 +567,6 @@
             <p class="brand-welcome-subtitle">Área do Aluno</p>
         </div>
 
-        <!-- Barrinha Mobile das 4 Instituições (Exibida apenas em Celulares) -->
-        <div class="mobile-institutions-bar">
-            <span class="mobile-inst-tag tag-ibrase">IBRASE</span>
-            <span class="mobile-inst-tag tag-ivem">IVEM</span>
-            <span class="mobile-inst-tag tag-gasctpna">GASCTPNA</span>
-            <span class="mobile-inst-tag tag-auni">AUNI</span>
-        </div>
 
         <!-- Banner de Erro -->
         <div id="login-error-msg" class="error-banner">
@@ -625,7 +611,7 @@
 
         <div class="login-footer">
             Está sem acesso? 
-            <a href="https://gasctpna.plataformaintegra.com.br/" id="linkCriarAcesso">Criar acesso</a>
+            <a href="https://gasctpna.plataformaintegra.com.br/">Criar acesso</a>
         </div>
     </div>
 
@@ -773,11 +759,6 @@
                             }
                         } catch(err){}
 
-                        // Proteção total contra sem_email, template vazio ou JSON retornado erroneamente
-                        if (!uEmail || uEmail === 'sem_email' || uEmail.includes('{{') || (typeof uEmail === 'string' && uEmail.startsWith('{'))) {
-                            uEmail = username.trim().toLowerCase();
-                        }
-
                         const isRemember = document.getElementById('rememberMe').checked;
                         if (isRemember) {
                             localStorage.setItem('usuario_email', username);
@@ -798,25 +779,6 @@
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
-
-                        try {
-                            if (uDados) {
-                                let p = JSON.parse(uDados);
-                                if (Array.isArray(p)) p = p[0] || {};
-                                
-                                // SALVA OS INSTITUTOS PERMITIDOS
-                                if (p.institutos_permitidos) {
-                                    sessionStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
-                                    localStorage.setItem('institutos_permitidos', JSON.stringify(p.institutos_permitidos));
-                                }
-
-                                // SALVA O INSTITUTO ATIVO
-                                const instOrigem = typeof getInstOrigem === 'function' ? getInstOrigem() : 'GASCTPNA';
-                                const instAtivoFinal = p.instituto_ativo ? p.instituto_ativo : (instOrigem ? instOrigem.toUpperCase() : 'GASCTPNA');
-                                sessionStorage.setItem('instituto_ativo', instAtivoFinal);
-                                localStorage.setItem('instituto_ativo', instAtivoFinal);
-                            }
-                        } catch(e) {}
 
                         setTimeout(() => {
                             window.location.href = 'area_aluno.html';

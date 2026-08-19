@@ -4309,8 +4309,6 @@ window.dadosRecentesCPF = null;
 
                 var cleanCpf = cpfAluno.replace(/\D/g, '');
                 if (cleanCpf) {
-                    localStorage.setItem('usuario_email', cleanCpf);
-                    localStorage.setItem('usuario_senha', cleanCpf);
                     localStorage.setItem('instituto_ativo', (window.location.hostname.split('.')[0] || 'INTEGRA').toUpperCase());
                 }
 

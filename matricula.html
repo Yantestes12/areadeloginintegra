@@ -3221,7 +3221,7 @@ window.dadosRecentesCPF = null;
                     var matchCidade = (String(nCid).trim().toLowerCase() === String(cNome).trim().toLowerCase());
                     if (matchCidade && n.espaco_id && !espacosUnicos[n.espaco_id]) {
                         espacosUnicos[n.espaco_id] = true;
-                        var nomeExibicao = (esp && esp.nome) || (esp && esp.bairro) || n.bairro || n.nome || ('Polo ' + n.espaco_id);
+                        var nomeExibicao = n.nome || n.bairro || (esp && esp.nome) || (esp && esp.bairro) || ('Polo ' + n.espaco_id);
                         filtrados.push({ id: n.espaco_id, nome: nomeExibicao });
                     }
                 });

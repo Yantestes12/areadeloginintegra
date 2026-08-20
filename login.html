@@ -553,13 +553,7 @@
                 <span>Acesse sua conta para se matricular nas atividades.</span>
             </p>
 
-            <!-- As 4 Instituições (IBRASE, IVEM, GASCTPNA, AUNI) -->
-            <div class="institutions-bar">
-                <div class="inst-logo-badge badge-ibrase">IBRASE</div>
-                <div class="inst-logo-badge badge-ivem">INSTITUTO IVEM</div>
-                <div class="inst-logo-badge badge-gasctpna">GASCTPNA</div>
-                <div class="inst-logo-badge badge-auni">AUNI</div>
-            </div>
+
         </div>
     </div>
 
@@ -574,13 +568,7 @@
             <p class="brand-welcome-subtitle">Área do Aluno</p>
         </div>
 
-        <!-- Barrinha Mobile das 4 Instituições (Exibida apenas em Celulares) -->
-        <div class="mobile-institutions-bar">
-            <span class="mobile-inst-tag tag-ibrase">IBRASE</span>
-            <span class="mobile-inst-tag tag-ivem">IVEM</span>
-            <span class="mobile-inst-tag tag-gasctpna">GASCTPNA</span>
-            <span class="mobile-inst-tag tag-auni">AUNI</span>
-        </div>
+
 
         <!-- Banner de Erro -->
         <div id="login-error-msg" class="error-banner">
@@ -712,13 +700,7 @@
             document.documentElement.style.setProperty('--primary-glow', 'rgba(5, 150, 105, 0.25)');
         }
 
-        // Ocultar badges que não pertencem ao instituto atual
-        document.querySelectorAll('.inst-logo-badge, .mobile-inst-tag').forEach(el => {
-            const isMatch = el.className.toLowerCase().includes(instOrigemTema.toLowerCase());
-            if (!isMatch) {
-                el.style.display = 'none';
-            }
-        });
+
 
         // Lógica do Modal de "Criar acesso"
         const linkCriarAcesso = document.getElementById('linkCriarAcesso') || document.querySelector('.login-footer a');

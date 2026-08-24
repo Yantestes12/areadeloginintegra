@@ -2,6 +2,8 @@
 <html lang="pt-br" class="light">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
+  <meta name="google" content="notranslate">
   <title>Área do Participante — INTEGRA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Favicon & Ícone da Aba -->
@@ -9,7 +11,6 @@
   <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=3">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=3">
   <link rel="apple-touch-icon" href="favicon-192.png?v=3">
-
   <!-- PWA & Mobile Web App Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -182,19 +183,15 @@
       align-items: center;
       justify-content: space-between;
       box-shadow: 0 10px 24px rgba(0, 63, 163, 0.22);
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
       cursor: pointer;
       border: none;
       text-align: left;
       width: 100%;
     }
     .card-action-primary:hover {
-      transform: translateY(-4px) scale(1.01);
-      box-shadow: 0 16px 36px rgba(0, 63, 163, 0.35);
-    }
-    .card-action-primary:active {
-      transform: translateY(1px) scale(0.98);
-      box-shadow: 0 6px 16px rgba(0, 63, 163, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 14px 32px rgba(0, 63, 163, 0.32);
     }
     .card-icon-box-white {
       width: 54px;
@@ -437,7 +434,7 @@
 
     <!-- Action Card Fazer Matrícula -->
     <section>
-      <button class="card-action-primary" onclick="var inst = (sessionStorage.getItem('instituto_ativo')||localStorage.getItem('instituto_ativo')||'AUNI'); window.location.href='matricula.html?instituto=' + encodeURIComponent(inst)">
+      <button class="card-action-primary" onclick="var host = window.location.hostname.toLowerCase(); var def = 'GASCTPNA'; var parts = window.location.pathname.toLowerCase().split('/').filter(Boolean); if (parts.length > 0 && ['gasctpna','ibrase','auni','ivem'].includes(parts[0])) { def = parts[0].toUpperCase(); } else if(host.includes('ibrase')) def='IBRASE'; else if(host.includes('ivem')) def='IVEM'; else if(host.includes('auni')) def='AUNI'; var inst = (sessionStorage.getItem('instituto_ativo')||localStorage.getItem('instituto_ativo')||def); window.location.href='/' + inst.toLowerCase() + '/matricula'">
         <div style="display:flex;align-items:center;gap:16px;">
           <div class="card-icon-box-white">
             <span class="material-symbols-outlined" style="font-size:32px;font-variation-settings:'FILL' 1;">rocket_launch</span>
@@ -671,10 +668,11 @@
             <label style="color:#0284c7;font-weight:bold;">Tamanho da Bermuda / Calça</label>
             <select id="edit_tamanho_calca" name="tamanho_calca" style="border:1.5px solid #0284c7;background:#f0f9ff;">
               <option value="">Selecione o tamanho</option>
-              <option value="PP 32 - 36">PP 32 - 36</option>
-              <option value="M 38 - 42">M 38 - 42</option>
-              <option value="G 44 - 48">G 44 - 48</option>
-              <option value="XG 50 - 52">XG 50 - 52</option>
+              <option value="6">6</option><option value="8">8</option><option value="10">10</option>
+              <option value="12">12</option><option value="14">14</option><option value="16">16</option>
+              <option value="34">34</option><option value="36">36</option><option value="38">38</option>
+              <option value="40">40</option><option value="42">42</option><option value="44">44</option>
+              <option value="46">46</option><option value="48">48</option><option value="50">50</option>
             </select>
           </div>
           <div class="form-group-item">
@@ -815,9 +813,12 @@
 
   <script>
     function logout() {
+      var parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
+      var def = 'gasctpna';
+      if (parts.length > 0 && ['gasctpna','ibrase','auni','ivem'].includes(parts[0])) def = parts[0];
       sessionStorage.clear();
       localStorage.clear();
-      window.location.href = 'login.html';
+      window.location.href = '/' + def + '/login';
     }
 
     
@@ -893,7 +894,11 @@
     function getDadosInstitutos() {
       let defaultSiteInst = 'GASCTPNA';
       const host = window.location.hostname.toLowerCase();
-      if (host.includes('ivem')) defaultSiteInst = 'IVEM';
+      const parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
+      
+      if (parts.length > 0 && ['gasctpna','ibrase','auni','ivem'].includes(parts[0])) {
+          defaultSiteInst = parts[0].toUpperCase();
+      } else if (host.includes('ivem')) defaultSiteInst = 'IVEM';
       else if (host.includes('auni')) defaultSiteInst = 'AUNI';
       else if (host.includes('ibrase')) defaultSiteInst = 'IBRASE';
       else if (host.includes('gasctpna')) defaultSiteInst = 'GASCTPNA';
@@ -942,16 +947,16 @@
         logoSrc = 'logo_auni.png';
         corBorda = '#3b82f6';
         glowColor = 'rgba(59, 130, 246, 0.28)';
-        root.style.setProperty('--primary', '#0284c7');
+        root.style.setProperty('--primary', '#2563eb');
         root.style.setProperty('--primary-container', '#3b82f6');
-        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #0369a1 0%, #3b82f6 100%)');
+        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)');
       } else if (inst === 'IVEM') {
         logoSrc = 'logo_ivem.png';
         corBorda = '#ef4444';
         glowColor = 'rgba(239, 68, 68, 0.28)';
         root.style.setProperty('--primary', '#dc2626');
         root.style.setProperty('--primary-container', '#ef4444');
-        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #991b1b 0%, #ef4444 100%)');
+        root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)');
       } else {
         logoSrc = 'logo_gasctpna.jpg';
         corBorda = '#10b981';
@@ -964,7 +969,7 @@
       if (elLogo) {
         elLogo.src = logoSrc;
         if (inst === 'AUNI') {
-          elLogo.style.background = '#0369a1';
+          elLogo.style.background = '#2e1065';
           elLogo.style.padding = '4px 6px';
           elLogo.style.borderRadius = '6px';
         } else {
@@ -986,10 +991,18 @@
       const elLista = document.getElementById('lista-institutos-dropdown');
       const elBtn = document.getElementById('btn-switch-institutos');
 
-      if (elArrow) elArrow.style.display = 'inline-block';
-      if (elBtn) {
-        elBtn.style.cursor = 'pointer';
-        elBtn.title = 'Clique para alternar entre os institutos ou trocar de conta';
+      if (permitidos.length <= 1) {
+        if (elArrow) elArrow.style.display = 'none';
+        if (elBtn) {
+          elBtn.style.cursor = 'default';
+          elBtn.title = 'Instituto Ativo';
+        }
+      } else {
+        if (elArrow) elArrow.style.display = 'inline-block';
+        if (elBtn) {
+          elBtn.style.cursor = 'pointer';
+          elBtn.title = 'Clique para alternar entre os institutos ou trocar de conta';
+        }
       }
 
       if (elLista) {
@@ -998,8 +1011,8 @@
           const card = document.createElement('div');
           const isSelected = (instName === instAtivo);
           let logoSrc = instName === 'IBRASE' ? 'logo_ibrase.png' : instName === 'AUNI' ? 'logo_auni.png' : instName === 'IVEM' ? 'logo_ivem.png' : 'logo_gasctpna.jpg';
-          let borderHighlight = instName === 'IBRASE' ? '#f97316' : instName === 'AUNI' ? '#3b82f6' : instName === 'IVEM' ? '#ef4444' : '#10b981';
-          let logoBgStyle = instName === 'AUNI' ? 'background:#0369a1;padding:3px 6px;border-radius:6px;' : '';
+          let borderHighlight = instName === 'IBRASE' ? '#f97316' : instName === 'AUNI' ? '#8b5cf6' : instName === 'IVEM' ? '#3b82f6' : '#10b981';
+          let logoBgStyle = instName === 'AUNI' ? 'background:#2e1065;padding:3px 6px;border-radius:6px;' : '';
 
           card.style.cssText = `display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;border:1.5px solid ${isSelected ? borderHighlight : 'var(--outline-variant)'};background:${isSelected ? '#f8fafc' : '#ffffff'};cursor:pointer;transition:all 0.2s ease;margin-bottom:4px;`;
           card.innerHTML = `
@@ -1029,6 +1042,8 @@
     }
 
     function toggleDropdownInstitutos() {
+      const { permitidos } = getDadosInstitutos();
+      if (permitidos.length <= 1) return; // Se houver apenas 1 instituto, não abre dropdown
       const elDrop = document.getElementById('dropdown-switch-institutos');
       if (elDrop) {
         elDrop.style.display = (elDrop.style.display === 'none' || elDrop.style.display === '') ? 'block' : 'none';
@@ -1038,10 +1053,8 @@
     function selecionarInstituto(novoInst) {
       sessionStorage.setItem('instituto_ativo', novoInst);
       localStorage.setItem('instituto_ativo', novoInst);
-      const elDrop = document.getElementById('dropdown-switch-institutos');
-      if (elDrop) elDrop.style.display = 'none';
-      renderizarSeletorInstitutos();
-      carregarPainel();
+      // Redireciona com segurança para a URL limpa do novo instituto
+      window.location.href = '/' + novoInst.toLowerCase() + '/area_aluno';
     }
 
     document.addEventListener('click', function(e) {
@@ -1097,14 +1110,7 @@
       let items = [];
 
       // BUSCA EM TEMPO REAL NO BANCO DE DADOS VIA WEBHOOK (Sem depender de cache de localStorage)
-      const uEmailRaw = getStoredVal('usuario_email') || getStoredVal('email_conta') || sessionStorage.getItem('usuario_email') || localStorage.getItem('usuario_email');
-      let uEmail = uEmailRaw;
-      if (typeof uEmail === 'string' && uEmail.startsWith('{')) {
-          try {
-              let p = JSON.parse(uEmail);
-              if (p.email) uEmail = p.email;
-          } catch(e) {}
-      }
+      const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta') || sessionStorage.getItem('usuario_email') || localStorage.getItem('usuario_email');
       const uCpf = getStoredVal('usuario_cpf') || sessionStorage.getItem('usuario_cpf') || localStorage.getItem('usuario_cpf');
       const uId = getStoredVal('usuario_id') || sessionStorage.getItem('usuario_id') || localStorage.getItem('usuario_id');
 
@@ -1112,17 +1118,7 @@
         let result = [];
         if (!data) return result;
         let arr = Array.isArray(data) ? data : [data];
-        const instAtivo = (getDadosInstitutos().instAtivo || '').toLowerCase();
         arr.forEach(item => {
-          if (item && item.matriculas_por_instituto) {
-             if (item.matriculas_por_instituto[instAtivo] && Array.isArray(item.matriculas_por_instituto[instAtivo])) {
-                 item.matriculas_por_instituto[instAtivo].forEach(m => {
-                     if (m) m.instituto = instAtivo;
-                     result.push(m);
-                 });
-             }
-             return;
-          }
           if (!item) return;
           if (Array.isArray(item.matriculas)) {
             result.push(...item.matriculas);
@@ -1201,15 +1197,16 @@
         }
       }
 
-      if (items && items.length > 0) {
+      // Garante que o localStorage antigo nunca restaure matrículas deletadas do banco
+      try {
+        localStorage.removeItem('usuario_dados');
+        localStorage.removeItem('usuario_dados_completos');
+      } catch(e){}
+
+      // Fallback de leitura apenas no sessionStorage da sessão atual caso o offline ocorra
+      if (!items || items.length === 0) {
         try {
-          // Atualiza o cache com os dados recentes do banco
-          localStorage.setItem('usuario_dados', JSON.stringify(items));
-        } catch(e){}
-      } else {
-        // Fallback de leitura usando sessionStorage e localStorage caso o offline ocorra
-        try {
-          const rawDados = sessionStorage.getItem('usuario_dados_completos') || sessionStorage.getItem('usuario_dados') || localStorage.getItem('usuario_dados_completos') || localStorage.getItem('usuario_dados');
+          const rawDados = sessionStorage.getItem('usuario_dados');
           if (rawDados) {
             let p = typeof rawDados === 'string' ? JSON.parse(rawDados) : rawDados;
             items = extrairTodasMatriculas(p);
@@ -1708,12 +1705,6 @@
 
     // Gerador Oficial da Ficha de Matrícula (2 Páginas Exatas do matricula.html)
     function gerarFichaPDFOficial2Paginas(d, winTarget) {
-      const inst = String(sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || 'GASCTPNA').toUpperCase();
-      let logoSrc = 'logo_gasctpna.jpg';
-      if (inst === 'IBRASE') logoSrc = 'logo_ibrase.png';
-      else if (inst === 'AUNI') logoSrc = 'logo_auni.png';
-      else if (inst === 'IVEM') logoSrc = 'logo_ivem.png';
-
       const win = winTarget || window.open('', '_blank');
       if (!win) {
         alert('Por favor, permita pop-ups no seu navegador para visualizar a Ficha de Matrícula PDF.');
@@ -1726,7 +1717,7 @@
       const numMatricula = String(getF(d, ['matricula', 'n_inscricao', 'id']) || '000000');
       const projRaw = getF(d, ['projeto_nome', 'nome_projeto', 'projeto']) || inst;
       const proj = projRaw.replace(new RegExp(inst + '\\s*[\\/\\-]\\s*' + inst, 'gi'), inst).trim() || inst;
-      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo', 'bairro_nome', 'nome_bairro', 'bairro']) || 'Núcleo Central';
+      const nuc = getF(d, ['nucleo_nome', 'nome_nucleo', 'nucleo']) || 'Núcleo Central';
       const modalidade = getF(d, ['modalidade_nome', 'nome_modalidade', 'modalidade']) || 'Futebol / Esportes';
       const tur = getF(d, ['turno']) || 'Manhã';
 
@@ -1790,12 +1781,12 @@
 
       const instSlug = inst.toLowerCase();
       const projSlug = (proj || 'projeto').toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || instSlug;
-      const urlAutenticador = 'https://plataformaintegra.com.br/autenticador?inst=' + instSlug + '&id=' + numMatricula;
+      const urlAutenticador = 'https://plataformaintegra.com.br/autenticador/' + numMatricula + '/' + instSlug + '/' + projSlug;
       const qrApi = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(urlAutenticador);
 
-      win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
-          '<style>@page{size:A4 portrait;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
-          'body{font-family:sans-serif;font-size:9pt;color:#0f172a;line-height:1.3;background:#fff;padding:0;}' +
+      win.document.write('<!DOCTYPE html><html lang="pt-BR" translate="no" class="notranslate"><head><meta charset="UTF-8"><title>Ficha de Matrícula - ' + numMatricula + '</title>' +
+          '<style>@page{size:A4;margin:8mm 10mm;}*{box-sizing:border-box;margin:0;padding:0;}' +
+          'body{font-family:sans-serif;font-size:9pt;color:#0f172a;line-height:1.3;background:#fff;padding:8px;}' +
           '.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #10b981;padding-bottom:6px;margin-bottom:8px;}' +
           '.logo-box{display:flex;align-items:center;gap:8px;}.logo-box img{max-height:36px;border-radius:4px;}.logo-sep{font-size:16px;color:#94a3b8;font-weight:bold;}' +
           '.header-titles{text-align:right;}.main-title{font-size:12.5pt;font-weight:800;color:#065f46;margin:0;}.sub-title{font-size:8.5pt;color:#64748b;font-weight:600;}' +
@@ -1811,8 +1802,8 @@
           
           '<div class="no-print" style="text-align:right;padding:6px;margin-bottom:8px;"><button onclick="window.print()" style="background:#003fa3;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ Imprimir / Salvar em PDF</button></div>' +
 
-          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + (inst === 'AUNI' ? '<div style="background:#0369a1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding:2px 6px; border-radius:4px; display:flex;"><img src="'+logoSrc+'" alt="'+inst+'"></div>' : '<img src="'+logoSrc+'" alt="'+inst+'">') + '</div>' +
-          '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div></div></div>' +
+          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + (inst === 'AUNI' ? '<div style="background:#2e1065;padding:2px 6px;border-radius:4px;display:flex;"><img src="'+logoSrc+'" alt="'+inst+'"></div>' : '<img src="'+logoSrc+'" alt="'+inst+'">') + '</div>' +
+          '<div class="header-titles"><div class="main-title">FICHA OFICIAL DE MATRÍCULA</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
           
           '<div class="section-box" style="background:#e0f2fe;border-color:#bae6fd;"><div class="grid-3">' +
           '<div class="field-item"><span class="field-label">Nº de Matrícula:</span> <span class="field-value" style="font-weight:bold;font-size:10pt;color:#0369a1;">' + numMatricula + '</span></div>' +
@@ -1830,9 +1821,9 @@
           '<div class="field-item"><span class="field-label">Escolaridade:</span> <span class="field-value">' + escolaridadeVal + '</span></div></div></div>' +
 
           '<div class="section-box" style="padding:8px 10px;"><div class="section-title">2. Uniformes e Medidas do Aluno</div><div class="grid-3" style="gap:6px 12px;align-items:center;">' +
-          '<div class="field-item"><span class="field-label">Tamanho da Camisa:</span> <span class="field-value" style="font-size:9.2pt;font-weight:700;color:#0369a1;background:#f0f9ff;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCamisa + '</span></div>' +
-          '<div class="field-item"><span class="field-label">Nº do Calçado:</span> <span class="field-value" style="font-size:9.2pt;font-weight:700;color:#0369a1;background:#f0f9ff;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalcado + '</span></div>' +
-          '<div class="field-item"><span class="field-label">Tamanho da Bermuda:</span> <span class="field-value" style="font-size:9.2pt;font-weight:700;color:#0369a1;background:#f0f9ff;padding:1px 6px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalca + '</span></div>' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Camisa:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCamisa + '</span></div>' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Nº do Calçado:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalcado + '</span></div>' +
+          '<div class="field-item"><span class="field-label" style="font-size:9pt;">Tamanho da Bermuda:</span> <span class="field-value" style="font-size:10.5pt;font-weight:800;color:#0369a1;background:#f0f9ff;padding:2px 8px;border-radius:4px;border:1px solid #bae6fd;display:inline-block;">' + tCalca + '</span></div>' +
           '<div class="field-item" style="margin-top:4px;"><span class="field-label">Altura:</span> <span class="field-value">' + alt + '</span></div>' +
           '<div class="field-item" style="margin-top:4px;"><span class="field-label">Peso:</span> <span class="field-value">' + pes + '</span></div>' +
           '<div class="field-item" style="margin-top:4px;"><span class="field-label">Raça / Etnia:</span> <span class="field-value">' + raca + '</span></div></div></div>' +
@@ -1859,18 +1850,18 @@
           '<div class="field-item"><span class="field-label">Grau de Parentesco:</span> <span class="field-value">' + (parResp || 'Não informado') + '</span></div>' +
           '<div class="field-item"><span class="field-label">Telefone de Contato:</span> <span class="field-value">' + (tResp || 'Não informado') + '</span></div></div></div>') : '') +
           
-          '<div class="section-box" style="background:#f8fafc;border-color:#cbd5e1;margin-top:6px;"><div class="section-title" style="color:#0f172a;border-color:#e2e8f0;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
-          '<p style="font-size:8pt;color:#334155;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
-          
           '<div class="qr-banner" style="background:#f8fafc;border:1px solid #cbd5e1;"><img src="' + qrApi + '" alt="QR Code Autenticador"><div>' +
           '<div style="font-weight:bold;font-size:9pt;color:#0f172a;">QR CODE DE AUTENTICAÇÃO DIGITAL DA MATRÍCULA</div>' +
           '<div style="font-size:7.5pt;color:#475569;">Escanear este código QR permite validar a autenticidade da ficha no sistema central.</div>' +
           '<div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">' + urlAutenticador + '</div></div></div>' +
           
+          '<div class="section-box" style="background:#f8fafc;border-color:#cbd5e1;margin-top:6px;"><div class="section-title" style="color:#0f172a;border-color:#e2e8f0;">DOCUMENTAÇÕES QUE PODEM SER EXIGIDAS</div>' +
+          '<p style="font-size:8pt;color:#334155;line-height:1.3;">Documento de identificação do aluno e do responsável (xerox do RG com CPF incluso); Xerox do comprovante de residência atualizado e em nome do responsável legal imediato; Atestado médico autorizando prática esportiva e laudo médico se o participante tiver necessidade especiais; Declaração escolar (quando exigido pelo projeto).</p></div>' +
+          
           '<div class="page-break"></div>' +
           
-          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + (inst === 'AUNI' ? '<div style="background:#0369a1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding:2px 6px; border-radius:4px; display:flex;"><img src="'+logoSrc+'" alt="'+inst+'"></div>' : '<img src="'+logoSrc+'" alt="'+inst+'">') + '</div>' +
-          '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div></div></div>' +
+          '<div class="header"><div class="logo-box"><img src="logo_integra.png" alt="INTEGRA"><span class="logo-sep">×</span>' + (inst === 'AUNI' ? '<div style="background:#2e1065;padding:2px 6px;border-radius:4px;display:flex;"><img src="'+logoSrc+'" alt="'+inst+'"></div>' : '<img src="'+logoSrc+'" alt="'+inst+'">') + '</div>' +
+          '<div class="header-titles"><div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE</div><div class="sub-title">' + subTitleHeader + '</div></div></div>' +
           
           '<div class="section-box"><div class="section-title">DECLARAÇÃO DE RESPONSABILIDADE</div>' +
           '<p style="font-size:7.5pt;color:#334155;line-height:1.25;margin-bottom:6px;">A presente Declaração estabelece os direitos e deveres aplicáveis à participação nas atividades gratuitas promovidas pelo ' + nomeInstFull + ', aplicando-se aos alunos maiores de idade e, quando menores, aos seus respectivos responsáveis legais, que assumem as obrigações aqui previstas durante todo o período de participação nas atividades institucionais.</p>' +

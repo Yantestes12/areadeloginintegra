@@ -2561,7 +2561,7 @@ window.dadosRecentesCPF = null;
                         if (nome || nasc) {
                             buscando = false;
                             var txtEl = document.getElementById('cpf-loading-text');
-                            if (txtEl) txtEl.innerHTML = '<span style="color:#16a34a;font-weight:800;">✅ CPF localizado!</span>';
+                            if (txtEl) txtEl.innerHTML = '<span style="color:var(--primary);font-weight:800;">✅ CPF localizado!</span>';
                             opts.onSucesso(nome, nasc, data.message || data.mensagem);
                             setTimeout(function() {
                                 mostrarLoadingCPF(false);
@@ -2726,11 +2726,11 @@ window.dadosRecentesCPF = null;
                 if (!promptWrap) {
                     promptWrap = document.createElement('div');
                     promptWrap.id = 'cpf-autopreencher-prompt';
-                    promptWrap.style.cssText = 'background:#f0fdf4;border:1.5px solid #86efac;padding:16px;border-radius:12px;margin-top:14px;margin-bottom:14px;text-align:left;box-shadow:0 2px 8px rgba(16,185,129,0.08);';
+                    promptWrap.style.cssText = 'background:var(--primary-glow);border:1.5px solid #86efac;padding:16px;border-radius:12px;margin-top:14px;margin-bottom:14px;text-align:left;box-shadow:0 2px 8px rgba(16,185,129,0.08);';
                     promptWrap.innerHTML = '<div style="font-size:14px;font-weight:800;color:#166534;margin-bottom:6px;">📋 Cadastro Encontrado!</div>'
                         + '<div style="font-size:13px;color:#15803d;margin-bottom:12px;line-height:1.4;">Identificamos dados cadastrados para este CPF. Deseja utilizar esses dados para preencher o formulário automaticamente?</div>'
                         + '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
-                        + '<button type="button" id="btn-sim-preencher" style="background:#16a34a;color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Sim, preencher meus dados</button>'
+                        + '<button type="button" id="btn-sim-preencher" style="background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Sim, preencher meus dados</button>'
                         + '<button type="button" id="btn-nao-preencher" style="background:#e2e8f0;color:#475569;border:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Não, preencher do zero</button>'
                         + '</div>';
                     var parentNode = document.getElementById('cpf-dados-wrap') || document.getElementById('wizard-greeting-block');
@@ -4402,7 +4402,7 @@ window.dadosRecentesCPF = null;
                         '<div class="signatures-row" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
                         
                         '<div class="sig-block" style="text-align:left;">' +
-                        '<div style="border:1.5px solid #16a34a;background:#f0fdf4;border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
+                        '<div style="border:1.5px solid var(--primary);background:var(--primary-glow);border-radius:6px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">' +
                         '<div style="font-size:7.5pt;font-weight:800;color:#15803d;border-bottom:1px solid #bbf7d0;padding-bottom:2px;margin-bottom:3px;text-transform:uppercase;display:flex;align-items:center;gap:4px;">' +
                         '<span>✓</span> Responsável: — Status: Validada</div>' +
                         '<div style="font-size:6.8pt;font-family:monospace;color:#14532d;line-height:1.3;">' +

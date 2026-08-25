@@ -4139,7 +4139,7 @@ window.dadosRecentesCPF = null;
                         '<div class="sig-line"></div><div class="sig-label" style="text-align:center;">Coordenador</div></div></div>' +
                         
                         '<div class="no-print" style="text-align:center;margin-top:15px;"><button onclick="window.print()" style="background:#10b981;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🖨️ Salvar em PDF / Imprimir Ficha</button></div>' +
-                        '</body></html>');
+                        '<script>Promise.all(Array.from(document.images).map(i => { if(i.complete) return Promise.resolve(); return new Promise(r => { i.onload = r; i.onerror = r; }); })).then(() => { setTimeout(() => window.print(), 500); });<\/script></body></html>');
                     win.document.close();
                 };
 

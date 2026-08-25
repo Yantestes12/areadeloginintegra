@@ -16,7 +16,7 @@
             var q = urlParams.get('instituto') || urlParams.get('instituicao');
             if (q) def = q.toUpperCase();
         }
-        var prefix = def + '_';
+        window.integraPrefix = def + '_';
         var keysToPrefix = ['usuario_logado', 'usuario_email', 'usuario_senha', 'email_conta', 'usuario_nome', 'usuario_primeiro_nome', 'usuario_telefone', 'telefone_conta', 'usuario_cpf', 'usuario_id', 'usuario_dados', 'usuario_dados_completos', 'instituto', 'instituicao'];
         
         var origSet = Storage.prototype.setItem;
@@ -24,15 +24,15 @@
         var origRem = Storage.prototype.removeItem;
         
         Storage.prototype.setItem = function(key, value) {
-            if (keysToPrefix.includes(key)) key = prefix + key;
+            if (keysToPrefix.includes(key)) key = window.integraPrefix + key;
             origSet.call(this, key, value);
         };
         Storage.prototype.getItem = function(key) {
-            if (keysToPrefix.includes(key)) key = prefix + key;
+            if (keysToPrefix.includes(key)) key = window.integraPrefix + key;
             return origGet.call(this, key);
         };
         Storage.prototype.removeItem = function(key) {
-            if (keysToPrefix.includes(key)) key = prefix + key;
+            if (keysToPrefix.includes(key)) key = window.integraPrefix + key;
             origRem.call(this, key);
         };
       } catch(e) {}
@@ -934,7 +934,7 @@
                                 finalInst = p.institutos_permitidos[0].toLowerCase();
                             }
                         }
-                        prefix = finalInst.toUpperCase() + '_';
+                        window.integraPrefix = finalInst.toUpperCase() + '_';
                         sessionStorage.setItem('usuario_logado', 'true');
                         sessionStorage.setItem('usuario_email', uEmail);
                         sessionStorage.setItem('usuario_nome', uNome);

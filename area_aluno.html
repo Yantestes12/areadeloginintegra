@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br" class="light">
 <head>
   <meta charset="UTF-8">
@@ -1210,17 +1210,17 @@
         // 2. Se a busca por e-mail estiver vazia ou indisponível, tenta o webhook loginaluno (POST)
         if (!items || items.length === 0) {
           try {
-            const respMat = await fetch('https://w.ibrase.com.br/webhook/loginaluno?t=' + Date.now(), {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache'
-              },
-              cache: 'no-store',
-              body: JSON.stringify({ 
-                username: uEmail || uCpf || uId || '',
-                email: uEmail || '', 
+            const urlMat = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(uEmail)}&email=${encodeURIComponent(uEmail)}&cpf=${encodeURIComponent(uCpf || '')}&id=${encodeURIComponent(uId || '')}&t=${Date.now()}`;
+            const respMat = await fetch(urlMat);
+            const freshData = await respMat.json();
+
+
+
+
+
+
+
+
                 cpf: uCpf || '', 
                 id: uId || '' 
               })
@@ -1982,3 +1982,4 @@
   </script>
 </body>
 </html>
+

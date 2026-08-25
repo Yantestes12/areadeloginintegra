@@ -3124,9 +3124,18 @@ window.dadosRecentesCPF = null;
         }
         container.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:20px 0;">Carregando projetos do Supabase…</div>';
         
-        fetch(API.buscarProjetos, getReqOptions())
-            .then(function(r){ return r.json(); })
-            .then(function(data){
+                var pProjetos = fetch(API.buscarProjetos, getReqOptions()).then(function(r){ return r.json(); });
+        var pNucleos = window._cacheNucleos ? Promise.resolve(window._cacheNucleos) : fetch(API.buscarNucleos, getGetOptions()).then(function(r){ return r.json(); });
+
+        Promise.all([pProjetos, pNucleos])
+            .then(function(results){
+                var data = results[0];
+                var rawNucleos = results[1];
+
+                if (!window._cacheNucleos) {
+                    window._cacheNucleos = _parseN8N(rawNucleos, 'nucleos');
+                }
+
                 if (Array.isArray(data)) {
                     data = data[0] || {};
                 }
@@ -3134,7 +3143,7 @@ window.dadosRecentesCPF = null;
                 if (window._cacheNucleos && window._cacheNucleos.length > 0) {
                     projetos = projetos.filter(function(p) {
                         return window._cacheNucleos.some(function(n) {
-                            return parseInt(n.projeto_id) === parseInt(p.id) && (n.ativo === true || n.ativo === 1 || n.ativo === 'true');
+                            return parseInt(n.projeto_id) === parseInt(p.id) && (n.ativo === true || n.ativo === 1 || String(n.ativo).toLowerCase() === 'true');
                         });
                     });
                 }

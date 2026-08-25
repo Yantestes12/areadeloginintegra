@@ -1152,16 +1152,16 @@
 
       let items = [];
 
+      // BUSCA EM TEMPO REAL NO BANCO DE DADOS VIA WEBHOOK (Sem depender de cache de localStorage)
+      const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta') || sessionStorage.getItem('usuario_email') || localStorage.getItem('usuario_email');
+      const uCpf = getStoredVal('usuario_cpf') || sessionStorage.getItem('usuario_cpf') || localStorage.getItem('usuario_cpf');
+      const uId = getStoredVal('usuario_id') || sessionStorage.getItem('usuario_id') || localStorage.getItem('usuario_id');
+
       if (!uEmail && !uCpf && !uId) {
         // Sessão expirou (sessionStorage foi limpo pelo navegador e não marcou 'Lembrar acesso')
         logout();
         return;
       }
-
-      // BUSCA EM TEMPO REAL NO BANCO DE DADOS VIA WEBHOOK (Sem depender de cache de localStorage)
-      const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta') || sessionStorage.getItem('usuario_email') || localStorage.getItem('usuario_email');
-      const uCpf = getStoredVal('usuario_cpf') || sessionStorage.getItem('usuario_cpf') || localStorage.getItem('usuario_cpf');
-      const uId = getStoredVal('usuario_id') || sessionStorage.getItem('usuario_id') || localStorage.getItem('usuario_id');
 
       function extrairTodasMatriculas(data) {
         let result = [];

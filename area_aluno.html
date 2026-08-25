@@ -1154,7 +1154,7 @@
 
       if (!uEmail && !uCpf && !uId) {
         // Sessão expirou (sessionStorage foi limpo pelo navegador e não marcou 'Lembrar acesso')
-        window.location.href = '/' + getInstPath().toLowerCase() + '/login';
+        logout();
         return;
       }
 

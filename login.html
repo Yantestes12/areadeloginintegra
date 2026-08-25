@@ -928,6 +928,13 @@
                         localStorage.removeItem('usuario_dados');
                         localStorage.removeItem('usuario_dados_completos');
 
+                        let finalInst = getInstPath().toLowerCase();
+                        if (p.institutos_permitidos && Array.isArray(p.institutos_permitidos) && p.institutos_permitidos.length > 0) {
+                            if (!p.institutos_permitidos.includes(finalInst.toUpperCase())) {
+                                finalInst = p.institutos_permitidos[0].toLowerCase();
+                            }
+                        }
+                        prefix = finalInst.toUpperCase() + '_';
                         sessionStorage.setItem('usuario_logado', 'true');
                         sessionStorage.setItem('usuario_email', uEmail);
                         sessionStorage.setItem('usuario_nome', uNome);
@@ -935,7 +942,6 @@
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
-                        const finalInst = getInstPath().toLowerCase();
                         setTimeout(() => {
                             window.location.href = '/' + finalInst + '/area_aluno';
                         }, 500);

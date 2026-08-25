@@ -104,7 +104,9 @@ applyThemeColors();
         try {
             var finalInst = getInst();
             if (finalInst) {
-                var isLogged = sessionStorage.getItem('usuario_id') || localStorage.getItem('usuario_id');
+                var uEm = sessionStorage.getItem('usuario_email') || localStorage.getItem('usuario_email') || sessionStorage.getItem('email_conta') || localStorage.getItem('email_conta');
+                var uCpf = sessionStorage.getItem('usuario_cpf') || localStorage.getItem('usuario_cpf');
+                var isLogged = uEm || uCpf;
                 if (!isLogged) {
                     var targetLogin = '/' + finalInst.toLowerCase() + '/login';
                     window.location.replace(targetLogin);

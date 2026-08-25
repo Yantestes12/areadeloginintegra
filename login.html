@@ -799,7 +799,7 @@
         const passParam = urlParams.get('password') || urlParams.get('senha') || urlParams.get('pass');
 
         const savedEmail = emailParam || localStorage.getItem('usuario_email') || getCookie('usuario_email');
-        const savedSenha = passParam || localStorage.getItem('usuario_senha') || getCookie('usuario_senha');
+        const savedSenha = passParam || getCookie('usuario_senha');
 
         if (savedEmail && usernameInput) usernameInput.value = savedEmail;
         if (savedSenha && passwordInput) passwordInput.value = savedSenha;
@@ -918,7 +918,7 @@
                         const isRemember = document.getElementById('rememberMe').checked;
                         if (isRemember) {
                             localStorage.setItem('usuario_email', username);
-                            localStorage.setItem('usuario_senha', password);
+                            // Segurança: senha não é salva
                         } else {
                             localStorage.removeItem('usuario_email');
                             localStorage.removeItem('usuario_senha');

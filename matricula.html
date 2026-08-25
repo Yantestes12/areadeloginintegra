@@ -4435,7 +4435,8 @@ window.dadosRecentesCPF = null;
 
                 var loginCard = document.querySelector('.login-card');
                 if(loginCard) {
-                    var targetUrl = window.location.origin + '/area_aluno.html';
+                    var instStr = (typeof getInst === 'function' ? getInst() : 'gasctpna').toLowerCase();
+                    var targetUrl = window.location.origin + '/' + instStr + '/area_aluno';
                     var successDiv = document.createElement('div');
                     successDiv.innerHTML = '<div style="text-align:center;padding:40px 20px;max-width:540px;margin:0 auto;">' +
                         '<div style="font-size:56px;margin-bottom:16px;">🎉</div>' +

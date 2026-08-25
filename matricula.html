@@ -2,6 +2,18 @@
 <html lang="pt-BR" translate="no" class="notranslate">
 <head>
 <script>
+(function(){
+  var parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
+  var institutos = ['gasctpna','ibrase','auni','ivem'];
+  var urlParams = new URLSearchParams(window.location.search);
+  var q = urlParams.get('instituto') || urlParams.get('instituicao');
+  if (!institutos.includes(parts[0]) && !q && window.location.pathname !== '/') {
+      window.location.replace('/');
+  }
+})();
+</script>
+
+<script>
 function applyThemeColors() {
     var inst = (sessionStorage.getItem('instituto_ativo') || localStorage.getItem('instituto_ativo') || '').toUpperCase();
     var root = document.documentElement;

@@ -1,6 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="pt-br" class="light">
 <head>
+<script>
+(function(){
+  var parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
+  var institutos = ['gasctpna','ibrase','auni','ivem'];
+  var urlParams = new URLSearchParams(window.location.search);
+  var q = urlParams.get('instituto') || urlParams.get('instituicao');
+  if (!institutos.includes(parts[0]) && !q && window.location.pathname !== '/') {
+      window.location.replace('/');
+  }
+})();
+</script>
+
   <meta charset="UTF-8">
 
   <!-- ISOLAMENTO DE ARMAZENAMENTO POR INSTITUTO (INJECTED) -->

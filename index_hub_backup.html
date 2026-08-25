@@ -1,60 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR" translate="no" class="notranslate">
 <head>
-<script>
-(function(){
-  var parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
-  var institutos = ['gasctpna','ibrase','auni','ivem'];
-  var urlParams = new URLSearchParams(window.location.search);
-  var q = urlParams.get('instituto') || urlParams.get('instituicao');
-  if (!institutos.includes(parts[0]) && !q && window.location.pathname !== '/') {
-      window.location.replace('/');
-  }
-})();
-</script>
-
     <meta charset="UTF-8">
-
-  <!-- ISOLAMENTO DE ARMAZENAMENTO POR INSTITUTO (INJECTED) -->
-  <script>
-    (function(){
-      try {
-        var parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
-        var def = 'GASCTPNA';
-        if (parts.length > 0 && ['gasctpna','ibrase','auni','ivem'].includes(parts[0])) {
-            def = parts[0].toUpperCase();
-        } else {
-            var urlParams = new URLSearchParams(window.location.search);
-            var q = urlParams.get('instituto') || urlParams.get('instituicao');
-            if (q) def = q.toUpperCase();
-        }
-        window.integraPrefix = def + '_';
-        var keysToPrefix = ['usuario_logado', 'usuario_email', 'usuario_senha', 'email_conta', 'usuario_nome', 'usuario_primeiro_nome', 'usuario_telefone', 'telefone_conta', 'usuario_cpf', 'usuario_id', 'usuario_dados', 'usuario_dados_completos', 'instituto', 'instituicao'];
-        
-        var origSet = Storage.prototype.setItem;
-        var origGet = Storage.prototype.getItem;
-        var origRem = Storage.prototype.removeItem;
-        
-        Storage.prototype.setItem = function(key, value) {
-            if (keysToPrefix.includes(key)) key = window.integraPrefix + key;
-            origSet.call(this, key, value);
-        };
-        Storage.prototype.getItem = function(key) {
-            if (keysToPrefix.includes(key)) key = window.integraPrefix + key;
-            return origGet.call(this, key);
-        };
-        Storage.prototype.removeItem = function(key) {
-            if (keysToPrefix.includes(key)) key = window.integraPrefix + key;
-            origRem.call(this, key);
-        };
-      } catch(e) {}
-    })();
-  </script>
-
-
-  
-
-    <base href="/">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INTEGRA — Central Unificada de Acesso</title>
@@ -63,6 +10,8 @@
     <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=3">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?v=3">
     <link rel="apple-touch-icon" href="favicon-192.png?v=3">
+
+    <!-- Meta Tags -->
     <meta name="description" content="INTEGRA - Central unificada dos projetos sociais, esportivos e educacionais do IBRASE, IVEM, GASCTPNA e AUNI.">
     <meta property="og:title" content="INTEGRA - Central Unificada de Acesso">
     <meta property="og:description" content="Acesse sua conta para se matricular nas atividades.">
@@ -580,7 +529,6 @@
     </style>
 </head>
 <body>
-<style>#global-startup-loader{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#ffffff;z-index:9999999;display:flex;justify-content:center;align-items:center;transition:opacity 0.4s ease;}.gs-spinner{width:48px;height:48px;border:5px solid #f1f5f9;border-top-color:#94a3b8;border-radius:50%;animation:gs-spin 1s linear infinite;}@keyframes gs-spin{to{transform:rotate(360deg);}}</style><div id="global-startup-loader"><div class="gs-spinner"></div></div><script>document.addEventListener("DOMContentLoaded", function(){ setTimeout(function(){var l=document.getElementById("global-startup-loader");if(l){l.style.opacity="0";setTimeout(function(){l.remove();},400);}}, 150); });</script>
 
     <!-- ==========================================================================
          LADO ESQUERDO: FOTO REAL & MENSAGEM INSTITUCIONAL DA PLATAFORMA
@@ -606,13 +554,6 @@
                 <span>Acesse sua conta para se matricular nas atividades.</span>
             </p>
 
-            <!-- As 4 Instituições (IBRASE, IVEM, GASCTPNA, AUNI) -->
-            <div class="institutions-bar">
-                <div class="inst-logo-badge badge-ibrase">IBRASE</div>
-                <div class="inst-logo-badge badge-ivem">INSTITUTO IVEM</div>
-                <div class="inst-logo-badge badge-gasctpna">GASCTPNA</div>
-                <div class="inst-logo-badge badge-auni">AUNI</div>
-            </div>
         </div>
     </div>
 
@@ -627,13 +568,6 @@
             <p class="brand-welcome-subtitle">Área do Aluno</p>
         </div>
 
-        <!-- Barrinha Mobile das 4 Instituições (Exibida apenas em Celulares) -->
-        <div class="mobile-institutions-bar">
-            <span class="mobile-inst-tag tag-ibrase">IBRASE</span>
-            <span class="mobile-inst-tag tag-ivem">IVEM</span>
-            <span class="mobile-inst-tag tag-gasctpna">GASCTPNA</span>
-            <span class="mobile-inst-tag tag-auni">AUNI</span>
-        </div>
 
         <!-- Banner de Erro -->
         <div id="login-error-msg" class="error-banner">
@@ -678,7 +612,7 @@
 
         <div class="login-footer">
             Está sem acesso? 
-            <a href="https://gasctpna.plataformaintegra.com.br/" id="linkCriarAcesso">Criar acesso</a>
+            <a href="https://gasctpna.plataformaintegra.com.br/">Criar acesso</a>
         </div>
     </div>
 
@@ -736,82 +670,12 @@
             return '';
         }
 
-        function getInstPath() {
-            var parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
-            var institutos = ['gasctpna', 'ibrase', 'auni', 'ivem'];
-            if (parts.length > 0 && institutos.includes(parts[0])) {
-                return parts[0].toUpperCase();
-            }
-            var urlParams = new URLSearchParams(window.location.search);
-            var q = urlParams.get('instituto') || urlParams.get('instituicao');
-            if (q) return q.toUpperCase();
-            return 'GASCTPNA';
-        }
-
-        // --- DESTAQUE DE UI DO INSTITUTO ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const instAtual = getInstPath();
-            
-            // Cores por instituto
-            let instColor = '#10b981'; // GASCTPNA default
-            if (instAtual === 'IBRASE') instColor = '#ea580c';
-            else if (instAtual === 'AUNI') instColor = '#2563eb';
-            else if (instAtual === 'IVEM') instColor = '#dc2626';
-
-            // Subtítulo
-            const subtitle = document.querySelector('.brand-welcome-subtitle');
-            if (subtitle && instAtual) {
-                subtitle.innerHTML = 'Área do Aluno &mdash; <strong style="color:' + instColor + ';">' + instAtual + '</strong>';
-            }
-
-            // Botão de Login e Link de Acesso
-            const btnLogin = document.getElementById('btnSubmitLogin');
-            if (btnLogin) {
-                btnLogin.style.background = instColor;
-                btnLogin.style.borderColor = instColor;
-                btnLogin.style.boxShadow = '0 6px 20px ' + instColor + '66';
-            }
-
-            const linkCriarAcesso = document.getElementById('linkCriarAcesso');
-            if (linkCriarAcesso && instAtual) {
-                linkCriarAcesso.href = 'https://' + instAtual.toLowerCase() + '.plataformaintegra.com.br/';
-                linkCriarAcesso.style.color = instColor;
-            }
-            
-            // Badges Desktop
-            const badges = document.querySelectorAll('.inst-logo-badge');
-            badges.forEach(b => {
-                if (b.textContent.trim().toUpperCase().includes(instAtual)) {
-                    b.style.boxShadow = '0 0 0 3px ' + instColor;
-                    b.style.opacity = '1';
-                    b.style.transform = 'scale(1.05)';
-                    b.style.display = 'inline-flex';
-                } else {
-                    b.style.display = 'none';
-                }
-            });
-
-            // Badges Mobile
-            const mobileBadges = document.querySelectorAll('.mobile-inst-tag');
-            mobileBadges.forEach(b => {
-                if (b.textContent.trim().toUpperCase().includes(instAtual)) {
-                    b.style.background = instColor;
-                    b.style.color = '#fff';
-                    b.style.borderColor = instColor;
-                    b.style.display = 'inline-block';
-                } else {
-                    b.style.display = 'none';
-                }
-            });
-        });
-        // -----------------------------------
-
         const urlParams = new URLSearchParams(window.location.search);
         const emailParam = urlParams.get('email') || urlParams.get('username') || urlParams.get('user');
         const passParam = urlParams.get('password') || urlParams.get('senha') || urlParams.get('pass');
 
         const savedEmail = emailParam || localStorage.getItem('usuario_email') || getCookie('usuario_email');
-        const savedSenha = passParam || getCookie('usuario_senha');
+        const savedSenha = passParam || localStorage.getItem('usuario_senha') || getCookie('usuario_senha');
 
         if (savedEmail && usernameInput) usernameInput.value = savedEmail;
         if (savedSenha && passwordInput) passwordInput.value = savedSenha;
@@ -841,8 +705,7 @@
                 btnSubmit.textContent = 'Autenticando...';
 
                 try {
-                    const instContext = getInstPath();
-                    const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&instituicao=${encodeURIComponent(instContext)}&instituto=${encodeURIComponent(instContext)}`;
+                    const url = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&instituicao=GASCTPNA&instituto=GASCTPNA`;
                     const res = await fetch(url);
                     const text = await res.text();
                     const respText = text.trim().toLowerCase();
@@ -852,85 +715,55 @@
                         btnSubmit.textContent = 'Sucesso! Entrando...';
                         btnSubmit.style.background = '#10b981';
 
-                        let uNome = '', uTelefone = '', uEmail = username.trim().toLowerCase(), uId = '', uDados = '';
+                        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+                        let uNome = '', uTelefone = '', uEmail = username.toLowerCase(), uId = '', uDados = '';
 
-                        // ── PARSER UNIVERSAL PARA O N8N (JSON PURO OU TEXTO + JSON) ─────────
                         function limpaTemplate(str) {
                             if (!str) return '';
                             if (str.includes('{{') || str.includes('}}') || str.includes('$json') || str.includes('item.json')) return '';
                             return str.trim();
                         }
 
-                        let p = null;
-                        try {
-                            const trimmed = text.trim();
-                            if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
-                                p = JSON.parse(trimmed);
-                                if (Array.isArray(p)) p = p[0];
-                            } else {
-                                const jStart = Math.min(
-                                    text.indexOf('[') !== -1 ? text.indexOf('[') : Infinity,
-                                    text.indexOf('{') !== -1 ? text.indexOf('{') : Infinity
-                                );
-                                if (isFinite(jStart)) {
-                                    p = JSON.parse(text.substring(jStart).trim());
-                                    if (Array.isArray(p)) p = p[0];
-                                }
-                            }
-                        } catch(e) { p = null; }
-
-                        if (p && typeof p === 'object') {
-                            // Extrai os campos da CONTA do usuário do objeto raiz JSON
-                            const nomeVal = p.nome || p.nome_completo || p.name || '';
-                            if (nomeVal && !nomeVal.includes('{{')) uNome = limpaTemplate(nomeVal);
-
-                            if (p.telefone && !p.telefone.toString().includes('{{')) uTelefone = limpaTemplate(String(p.telefone));
-                            if (p.email && !p.email.includes('{{') && p.email.toLowerCase() !== 'sem_email') uEmail = limpaTemplate(p.email).toLowerCase();
-                            if (p.id) uId = limpaTemplate(String(p.id));
-
-                            // Extrai e achata a lista de matrículas para uDados
-                            let flatMat = [];
-                            let rawMat = p.matriculas || p.projetos_inscritos || p;
-                            if (Array.isArray(rawMat)) {
-                                rawMat.forEach(group => {
-                                    if (group && Array.isArray(group.matriculas)) {
-                                        flatMat.push(...group.matriculas);
-                                    } else if (group && typeof group === 'object') {
-                                        flatMat.push(group);
-                                    }
-                                });
-                            } else if (rawMat && typeof rawMat === 'object') {
-                                flatMat = [rawMat];
-                            }
-                            uDados = JSON.stringify(flatMat);
+                        let emailIdx = lines.findIndex(l => l.includes('@') && !l.includes('{{'));
+                        if (emailIdx !== -1) {
+                            uEmail = limpaTemplate(lines[emailIdx]).toLowerCase();
+                            if (emailIdx >= 2) { uNome = limpaTemplate(lines[emailIdx - 2]); uTelefone = limpaTemplate(lines[emailIdx - 1]); }
+                            else if (emailIdx === 1) { uNome = limpaTemplate(lines[0]); }
+                            if (lines[emailIdx + 1]) uId = limpaTemplate(lines[emailIdx + 1]);
                         } else {
-                            // Fallback texto puro linha por linha
-                            const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
                             if (lines.length >= 2) uNome = limpaTemplate(lines[1]);
                             if (lines.length >= 3) uTelefone = limpaTemplate(lines[2]);
-                            if (lines.length >= 4 && lines[3].includes('@') && !lines[3].includes('{{')) {
-                                uEmail = limpaTemplate(lines[3]).toLowerCase();
-                            }
-                            if (lines.length >= 5 && /^\d+$/.test(lines[4])) {
-                                uId = limpaTemplate(lines[4]);
-                            }
-
-                            const jStart2 = Math.min(
-                                text.indexOf('[') !== -1 ? text.indexOf('[') : Infinity,
-                                text.indexOf('{') !== -1 ? text.indexOf('{') : Infinity
-                            );
-                            if (isFinite(jStart2)) uDados = text.substring(jStart2).trim();
+                            if (lines.length >= 4) uEmail = limpaTemplate(lines[3]).toLowerCase() || username.toLowerCase();
+                            if (lines.length >= 5) uId = limpaTemplate(lines[4]);
                         }
 
-                        // Proteção total contra sem_email ou template vazio no email da conta
-                        if (!uEmail || uEmail === 'sem_email' || uEmail.includes('{{')) {
-                            uEmail = username.trim().toLowerCase();
-                        }
+                        const startBracket = text.indexOf('[');
+                        const startBrace = text.indexOf('{');
+                        let jsonStart = -1;
+                        if (startBracket !== -1 && startBrace !== -1) jsonStart = Math.min(startBracket, startBrace);
+                        else if (startBracket !== -1) jsonStart = startBracket;
+                        else if (startBrace !== -1) jsonStart = startBrace;
+
+                        if (jsonStart !== -1) uDados = text.substring(jsonStart).trim();
+                        else if (lines.length > 5) uDados = lines.slice(5).join('\n');
+
+                        try {
+                            if (uDados) {
+                                let p = JSON.parse(uDados);
+                                if (Array.isArray(p)) p = p[0] || {};
+                                if (p.email && (!uEmail || uEmail.includes('{{'))) uEmail = p.email;
+                                if (Array.isArray(p.matriculas) && p.matriculas.length > 0) {
+                                    const m0 = p.matriculas[0];
+                                    const nomeReal = m0.aluno_nome || m0.nome_aluno || m0.nome || m0.name;
+                                    if (nomeReal && (!uNome || uNome.includes('{{'))) uNome = nomeReal;
+                                }
+                            }
+                        } catch(err){}
 
                         const isRemember = document.getElementById('rememberMe').checked;
                         if (isRemember) {
                             localStorage.setItem('usuario_email', username);
-                            // Segurança: senha não é salva
+                            localStorage.setItem('usuario_senha', password);
                         } else {
                             localStorage.removeItem('usuario_email');
                             localStorage.removeItem('usuario_senha');
@@ -940,13 +773,6 @@
                         localStorage.removeItem('usuario_dados');
                         localStorage.removeItem('usuario_dados_completos');
 
-                        let finalInst = getInstPath().toLowerCase();
-                        if (p.institutos_permitidos && Array.isArray(p.institutos_permitidos) && p.institutos_permitidos.length > 0) {
-                            if (!p.institutos_permitidos.includes(finalInst.toUpperCase())) {
-                                finalInst = p.institutos_permitidos[0].toLowerCase();
-                            }
-                        }
-                        window.integraPrefix = finalInst.toUpperCase() + '_';
                         sessionStorage.setItem('usuario_logado', 'true');
                         sessionStorage.setItem('usuario_email', uEmail);
                         sessionStorage.setItem('usuario_nome', uNome);
@@ -954,9 +780,10 @@
                         sessionStorage.setItem('usuario_id', uId);
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
+
                         setTimeout(() => {
-                            window.location.href = '/' + finalInst + '/area_aluno';
-                        }, 500);
+                            window.location.href = 'area_aluno.html';
+                        }, 1000);
 
                     } else {
                         btnSubmit.disabled = false;
@@ -973,4 +800,3 @@
     </script>
 </body>
 </html>
-

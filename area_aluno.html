@@ -1213,19 +1213,6 @@
             const urlMat = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(uEmail)}&email=${encodeURIComponent(uEmail)}&cpf=${encodeURIComponent(uCpf || '')}&id=${encodeURIComponent(uId || '')}&t=${Date.now()}`;
             const respMat = await fetch(urlMat);
             const freshData = await respMat.json();
-
-
-
-
-
-
-
-
-                cpf: uCpf || '', 
-                id: uId || '' 
-              })
-            });
-            const freshData = await respMat.json();
             if (freshData) {
               sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
               items = extrairTodasMatriculas(freshData);

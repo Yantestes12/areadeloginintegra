@@ -3130,6 +3130,13 @@ window.dadosRecentesCPF = null;
                     data = data[0] || {};
                 }
                 var projetos = data.projetos || [];
+                if (window._cacheNucleos && window._cacheNucleos.length > 0) {
+                    projetos = projetos.filter(function(p) {
+                        return window._cacheNucleos.some(function(n) {
+                            return parseInt(n.projeto_id) === parseInt(p.id) && (n.ativo === true || n.ativo === 1 || n.ativo === 'true');
+                        });
+                    });
+                }
                 if(!projetos.length){
                     container.innerHTML='<div style="color:var(--error);font-size:13.5px;font-weight:700;">Nenhum projeto cadastrado no Supabase no momento.</div>';
                     return;

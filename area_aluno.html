@@ -1152,6 +1152,12 @@
 
       let items = [];
 
+      if (!uEmail && !uCpf && !uId) {
+        // Sessão expirou (sessionStorage foi limpo pelo navegador e não marcou 'Lembrar acesso')
+        window.location.href = '/' + getInstPath().toLowerCase() + '/login';
+        return;
+      }
+
       // BUSCA EM TEMPO REAL NO BANCO DE DADOS VIA WEBHOOK (Sem depender de cache de localStorage)
       const uEmail = getStoredVal('usuario_email') || getStoredVal('email_conta') || sessionStorage.getItem('usuario_email') || localStorage.getItem('usuario_email');
       const uCpf = getStoredVal('usuario_cpf') || sessionStorage.getItem('usuario_cpf') || localStorage.getItem('usuario_cpf');

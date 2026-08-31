@@ -1210,7 +1210,7 @@
               cache: 'no-store'
             });
             const dataBM = await respBM.json();
-            if (dataBM && Array.isArray(dataBM) && dataBM.length > 0) {
+            if (dataBM && Array.isArray(dataBM) && dataBM.length > 0 && Object.keys(dataBM[0]||{}).length > 0) { let tmp = extrairTodasMatriculas(dataBM); if(tmp.length > 0) { items = tmp; sessionStorage.setItem('usuario_dados', JSON.stringify(dataBM)); } } if(false){
               sessionStorage.setItem('usuario_dados', JSON.stringify(dataBM));
               items = extrairTodasMatriculas(dataBM);
             }
@@ -1225,7 +1225,7 @@
             const urlMat = `https://w.ibrase.com.br/webhook/loginaluno?username=${encodeURIComponent(uEmail)}&email=${encodeURIComponent(uEmail)}&cpf=${encodeURIComponent(uCpf || '')}&id=${encodeURIComponent(uId || '')}&t=${Date.now()}`;
             const respMat = await fetch(urlMat);
             const freshData = await respMat.json();
-            if (freshData) {
+            if (freshData && freshData !== 'senha incorreta' && !freshData.erro) { let tmp = extrairTodasMatriculas(freshData); if(tmp.length > 0) { items = tmp; sessionStorage.setItem('usuario_dados', JSON.stringify(freshData)); } } if(false){
               sessionStorage.setItem('usuario_dados', JSON.stringify(freshData));
               items = extrairTodasMatriculas(freshData);
 
@@ -1981,6 +1981,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 

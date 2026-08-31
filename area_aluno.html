@@ -942,7 +942,7 @@
     // 🎨 SISTEMA INTELIGENTE DE TEMAS E MULTI-INSTITUTOS ("PADRÃO NETFLIX")
     // =========================================================================
     function getDadosInstitutos() {
-      let defaultSiteInst = 'GASCTPNA';
+      let defaultSiteInst = new URLSearchParams(window.location.search).get('instituto') || 'GASCTPNA';
       const host = window.location.hostname.toLowerCase();
       const parts = window.location.pathname.toLowerCase().split('/').filter(Boolean);
       
@@ -1181,7 +1181,7 @@
         let arr = Array.isArray(data) ? data : [data];
         arr.forEach(item => {
           if (!item) return;
-          if (Array.isArray(item.matriculas)) {
+          if (Array.isArray(item.matriculas)) { result.push(...item.matriculas); } if (item.matriculas_por_instituto && typeof item.matriculas_por_instituto === 'object') { Object.values(item.matriculas_por_instituto).forEach(arr => { if (Array.isArray(arr)) result.push(...arr); }); } if (false) {
             result.push(...item.matriculas);
           } else if (Array.isArray(item.projetos_inscritos)) {
             result.push(...item.projetos_inscritos);
@@ -1981,4 +1981,7 @@
   </script>
 </body>
 </html>
+
+
+
 

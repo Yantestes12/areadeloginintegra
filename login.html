@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" translate="no" class="notranslate">
 <head>
 <script>
@@ -946,7 +946,7 @@
                                 finalInst = p.institutos_permitidos[0].toLowerCase();
                             }
                         }
-                        window.integraPrefix = finalInst.toUpperCase() + '_';
+                        window.integraPrefix = finalInst.toUpperCase() + '_'; localStorage.setItem('instituto_ativo', finalInst.toUpperCase()); sessionStorage.setItem('instituto_ativo', finalInst.toUpperCase());
                         sessionStorage.setItem('usuario_logado', 'true');
                         sessionStorage.setItem('usuario_email', uEmail);
                         sessionStorage.setItem('usuario_nome', uNome);
@@ -955,7 +955,7 @@
                         sessionStorage.setItem('usuario_dados_completos', uDados);
                         localStorage.setItem('usuario_dados', uDados);
                         setTimeout(() => {
-                            window.location.href = '/' + finalInst + '/area_aluno';
+                            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') { window.location.href = '/area_aluno.html?instituto=' + finalInst; } else { window.location.href = '/' + finalInst + '/area_aluno'; }
                         }, 500);
 
                     } else {
@@ -973,4 +973,6 @@
     </script>
 </body>
 </html>
+
+
 

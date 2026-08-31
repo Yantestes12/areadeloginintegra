@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR" translate="no" class="notranslate">
 <head>
 <script>
@@ -3941,8 +3941,7 @@ window.dadosRecentesCPF = null;
     /* ════════════════════════════════════════════════════════════════
        SUBMIT — fetch + LGPD
     ════════════════════════════════════════════════════════════════ */
-    document.getElementById('form-matricula').addEventListener('submit', function(e){
-        e.preventDefault();
+    document.getElementById('form-matricula').addEventListener('submit', function(e){ e.preventDefault(); if (window.projetosInscritosCPF && window.projetosInscritosCPF.length > 0) { showMensagemGeral('Este CPF já possui matrícula no sistema. Não é possível realizar um novo cadastro.', 'erro'); return; }
         var aceite = document.getElementById('lgpd_aceite');
         if (aceite) aceite.value = '1';
 
@@ -4551,6 +4550,7 @@ window.dadosRecentesCPF = null;
 </script>
 </body>
 </html>
+
 
 
 

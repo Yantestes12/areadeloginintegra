@@ -4237,8 +4237,17 @@ window.dadosRecentesCPF = null;
                         }
                     };
 
-                    var nAluno = getV('nome_aluno') || getV('nome') || getV('TextAreaNome') || getV('TextNumCPF') || 'Aluno';
-                    var cAluno = getV('cpf_aluno') || getV('cpf') || getV('TextNumCPF');
+                    
+  let p = {};
+  if (sessionStorage.getItem('evento_matricula_data')) {
+    try { p = JSON.parse(sessionStorage.getItem('evento_matricula_data')); } catch(e){}
+  }
+  if (p && Array.isArray(p.value)) { p = p.value[0]; }
+  else if (Array.isArray(p)) { p = p[0]; }
+  
+  var nAluno = p?.aluno_nome || p?.nome || window.dadosRecentesCPF?.nome || getV('nome_aluno') || getV('nome') || getV('TextAreaNome') || getV('TextNumCPF') || 'Aluno';
+  var cAluno = p?.aluno_cpf || p?.cpf || window.dadosRecentesCPF?.cpf || getV('cpf_aluno') || getV('cpf') || getV('TextNumCPF');
+  
                     var dNasc = getV('data_nascimento') || getV('TextDataNasc');
                     var idadeCalc = calcularIdade(dNasc);
                     

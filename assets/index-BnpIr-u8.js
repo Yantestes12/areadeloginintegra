@@ -11317,7 +11317,7 @@ function ve() {
                       className: `p-5 grid grid-cols-1 gap-4`,
                       children: [
                         (0, T.jsx)(ge, { label: `Evento`, value: l?.nome || `Evento Exemplo`, highlight: !0 }),
-                        (0, T.jsx)(ge, { label: `Local`, value: d?.nome || `Núcleo Exemplo` }),
+                        (0, T.jsx)(ge, { label: `Local`, value: (d?.nome || `Núcleo Exemplo`) + (d?.data_evento ? ` (` + d.data_evento + `)` : ``) }),
                         (0, T.jsx)(ge, { label: `Endereço`, value: d?.enderecoCompleto || `Endereço Exemplo` }),
                         (t?.tamanho_camisa || p.tamanho_camisa) &&
                           (0, T.jsx)(ge, { label: `Tamanho Camisa`, value: t?.tamanho_camisa || p.tamanho_camisa }),
@@ -11777,6 +11777,13 @@ function ve() {
                                         className: `w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0 text-gray-500`,
                                       }),
                                       (0, T.jsx)(`span`, { children: e.enderecoCompleto }),
+                                    ],
+                                  }),
+                                e.data_evento &&
+                                  (0, T.jsxs)(`div`, {
+                                    className: `flex items-start text-emerald-400 text-xs md:text-sm mt-1 font-bold`,
+                                    children: [
+                                      (0, T.jsx)(`span`, { children: `📅 ` + e.data_evento }),
                                     ],
                                   }),
                               ],

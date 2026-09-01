@@ -11370,6 +11370,9 @@ function ve() {
             <div style="font-size:7pt;">(Se menor de idade)</div>
           </div>
         </div>
+        <div style="margin-top:20px; font-size:9pt; text-align:justify; color:#333;">
+          Declaro que li e aceito os Termos de Privacidade e de Proteção de Dados (LGPD), autorizando o uso e tratamento dos meus dados conforme descrito em <a href="https://institutoivem.com.br/termos_de_privacidade.html" target="_blank" style="color:#d32f2f;text-decoration:underline;">institutoivem.com.br/termos_de_privacidade.html</a>.
+        </div>
       </div>`
   }
 }),

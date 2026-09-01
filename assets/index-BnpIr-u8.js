@@ -11191,7 +11191,7 @@ function ve() {
         n.append(`local_evento_id`, d?.id || ``),
         `cpf.nome.data_nascimento.sexo.altura.peso.escolaridade.cep.endereco.numero.complemento.bairro.cidade.uf.faixa_salarial.whatsapp.profissao.email.instagram.tamanho_camisa.resp_cpf.resp_nome.grau_parentesco.resp_data_nasc.resp_sexo.resp_email.resp_whatsapp.deseja_laudo`
           .split(`.`)
-          .forEach((e) => n.append(e, p[e])),
+          .forEach((e) => n.append(e, (e === 'cpf' || e === 'resp_cpf') ? String(p[e] || '').replace(/\D/g, '') : p[e])),
         [
           `uso_medicacao`,
           `possui_alergias`,

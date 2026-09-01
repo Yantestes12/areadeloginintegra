@@ -12556,36 +12556,7 @@ function ve() {
                                           e,
                                         );
                                       }),
-                                      (0, T.jsxs)(`div`, {
-                                        children: [
-                                          (0, T.jsx)(O, { children: `Deseja emitir laudo?` }),
-                                          (0, T.jsxs)(`div`, {
-                                            className: `radio-group flex space-x-6`,
-                                            children: [
-                                              (0, T.jsxs)(`label`, {
-                                                children: [
-                                                  (0, T.jsx)(`input`, {
-                                                    type: `radio`,
-                                                    checked: p.deseja_laudo === `Sim`,
-                                                    onChange: () => A(`deseja_laudo`, `Sim`),
-                                                  }),
-                                                  ` Sim`,
-                                                ],
-                                              }),
-                                              (0, T.jsxs)(`label`, {
-                                                children: [
-                                                  (0, T.jsx)(`input`, {
-                                                    type: `radio`,
-                                                    checked: p.deseja_laudo === `Nao`,
-                                                    onChange: () => A(`deseja_laudo`, `Nao`),
-                                                  }),
-                                                  ` Não`,
-                                                ],
-                                              }),
-                                            ],
-                                          }),
-                                        ],
-                                      }),
+
                                     ],
                                   }),
                                 ],

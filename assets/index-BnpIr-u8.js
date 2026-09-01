@@ -11347,11 +11347,11 @@ function ve() {
   className: 'hidden print:block w-full text-black mt-8',
   dangerouslySetInnerHTML: {
     __html: `<div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid #cbd5e1;padding:6px 8px;margin-bottom:10px;border-radius:6px;">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent('https://plataformaintegra.com.br/autenticador.html?id=' + n + '&inst=' + (e||'').toLowerCase() + '&proj=' + (l?.id||''))}" style="width:56px;height:56px;border-radius:4px;" alt="QR Code">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent('https://plataformaintegra.com.br/autenticador-eventos.html?id=' + n + '&inst=' + (e||'').toLowerCase() + '&proj=' + (l?.id||''))}" style="width:56px;height:56px;border-radius:4px;" alt="QR Code">
         <div>
           <div style="font-weight:bold;font-size:9pt;color:#0f172a;">QR CODE DE AUTENTICAÇÃO DIGITAL</div>
           <div style="font-size:7.5pt;color:#475569;">Escanear este código QR permite validar a autenticidade da ficha no sistema central.</div>
-          <div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">https://plataformaintegra.com.br/autenticador.html?id=` + n + `&inst=` + (e||'').toLowerCase() + `&proj=` + (l?.id||'') + `</div>
+          <div style="font-size:7.5pt;font-family:monospace;color:#334155;margin-top:2px;">https://plataformaintegra.com.br/autenticador-eventos.html?id=` + n + `&inst=` + (e||'').toLowerCase() + `&proj=` + (l?.id||'') + `</div>
         </div>
       </div>
       <div style="background:#f8fafc;border:1px solid #cbd5e1;padding:10px;border-radius:6px;margin-top:6px;">

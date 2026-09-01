@@ -11316,7 +11316,7 @@ function ve() {
                     (0, T.jsxs)(`div`, {
                       className: `p-5 grid grid-cols-1 gap-4`,
                       children: [
-                        (0, T.jsx)(ge, { label: `Evento`, value: (l?.nome || `Evento Exemplo`) + (l?.periodos_json && l.periodos_json.length > 0 ? ` (` + new Date((l.periodos_json.find(p=>p.tipo==='avaliacao'||p.rotulo==='EXECUÇÃO') || l.periodos_json[l.periodos_json.length-1]).inicio + 'T12:00:00').toLocaleDateString('pt-BR') + `)` : ``), highlight: !0 }),
+                        (0, T.jsx)(ge, { label: `Evento`, value: l?.nome || `Evento Exemplo`, highlight: !0 }),
                         (0, T.jsx)(ge, { label: `Local`, value: d?.nome || `Núcleo Exemplo` }),
                         (0, T.jsx)(ge, { label: `Endereço`, value: d?.enderecoCompleto || `Endereço Exemplo` }),
                         (t?.tamanho_camisa || p.tamanho_camisa) &&
@@ -11696,11 +11696,6 @@ function ve() {
                                       className: `text-gray-400 text-xs md:text-sm leading-relaxed line-clamp-2`,
                                       children: e.descricao || `Clique para escolher o local e preencher seus dados.`,
                                     }),
-                                    e.periodos_json && Array.isArray(e.periodos_json) && e.periodos_json.length > 0 &&
-                                    (0, T.jsx)(`div`, {
-                                      className: `mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-emerald-400 text-xs font-medium`,
-                                      children: `📅 ` + new Date((e.periodos_json.find(p=>p.tipo==='avaliacao'||p.rotulo==='EXECUÇÃO') || e.periodos_json[e.periodos_json.length-1]).inicio + 'T12:00:00').toLocaleDateString('pt-BR')
-                                    }),
                                   ],
                                 }),
                                 (0, T.jsx)(`div`, {
@@ -11750,11 +11745,6 @@ function ve() {
                             (0, T.jsx)(`strong`, { className: `text-[#ffb3ac]`, children: l?.nome }),
                             `?`,
                           ],
-                        }),
-                        l?.periodos_json && Array.isArray(l.periodos_json) && l.periodos_json.length > 0 &&
-                        (0, T.jsx)(`p`, {
-                          className: `mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-emerald-300 text-sm font-bold`,
-                          children: `📅 Data: ` + new Date((l.periodos_json.find(p=>p.tipo==='avaliacao'||p.rotulo==='EXECUÇÃO') || l.periodos_json[l.periodos_json.length-1]).inicio + 'T12:00:00').toLocaleDateString('pt-BR')
                         }),
                       ],
                     }),

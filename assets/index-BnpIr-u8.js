@@ -10986,7 +10986,7 @@ void main() {
 function ve() {
   let e =
       new URLSearchParams(window.location.search).get(`instituto`) || window.location.pathname.split(`/`)[1] || `ivem`,
-    [t, n] = (0, _.useState)([]),
+    [t, n] = (0, _.useState)(null),
     [r, i] = (0, _.useState)([]),
     [a, o] = (0, _.useState)(null),
     [s, c] = (0, _.useState)(0),
@@ -11646,7 +11646,7 @@ function ve() {
                 (0, T.jsx)(`div`, {
                   className: `w-full space-y-4`,
                   children:
-                    t.length === 0
+                    (!t) ? (0, T.jsxs)('div', { className: 'glass-layer-1 rounded-2xl p-10 text-center border border-white/10', children: [(0, T.jsx)('h3', { className: 'text-lg font-bold text-white mb-1 animate-pulse', children: 'Buscando Eventos...' }), (0, T.jsx)('p', { className: 'text-gray-400 text-sm', children: 'Aguarde um instante' })] }) : t.length === 0
                       ? (0, T.jsxs)(`div`, {
                           className: `glass-layer-1 rounded-2xl p-10 text-center border border-white/10`,
                           children: [

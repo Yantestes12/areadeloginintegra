@@ -3764,8 +3764,9 @@
                 return;
             }
 
-            // Filtra perguntas: gerais OU específicas da modalidade selecionada
+            // Filtra perguntas: gerais OU específicas da modalidade selecionada (ignora ocultas)
             const aplicaveis = perguntas.filter(q => {
+                if (q.oculto === true || q.ativo === false) return false;
                 if (!q.modalidade_id || q.modalidade_id === 'todas') return true;
                 if (modId && String(q.modalidade_id) === String(modId)) return true;
                 if (modNome && q.modalidade_nome && String(q.modalidade_nome).trim().toLowerCase() === String(modNome).trim().toLowerCase()) return true;

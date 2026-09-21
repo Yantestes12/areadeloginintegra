@@ -314,6 +314,7 @@
         elInstLogo.style.borderRadius = '6px';
       }
       else if (instParam === 'IVEM') elInstLogo.src = 'logo_ivem.png';
+      else if (instParam === 'GASCTPNA') elInstLogo.src = 'logo_gasctpna.jpg';
 
       if (!matId) {
         showError();
@@ -321,18 +322,45 @@
       }
 
       try {
-        const url = `https://w.ibrase.com.br/webhook/autenticador?n_inscricao=${encodeURIComponent(matId)}&instituto=${encodeURIComponent(instParam)}`;
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error('Network error');
-        
-        const data = await resp.json();
+        let data = null;
+
+        // 1. Tenta buscar prioritariamente via buscarmatricula?id= (ativo e indexado pela PK id)
+        try {
+          const urlBusca = `https://w.ibrase.com.br/webhook/buscarmatricula?id=${encodeURIComponent(matId)}&instituto=${encodeURIComponent(instParam)}`;
+          const respBusca = await fetch(urlBusca);
+          if (respBusca.ok) {
+            const txt = await respBusca.text();
+            if (txt && txt.trim() && txt.trim() !== '[]' && txt.trim() !== '[{}]') {
+              data = JSON.parse(txt);
+            }
+          }
+        } catch (eBusca) {
+          console.warn('Busca via buscarmatricula falhou:', eBusca);
+        }
+
+        // 2. Fallback para webhook autenticador caso buscarmatricula não retorne
+        if (!data || (Array.isArray(data) && data.length === 0)) {
+          const urlAuth = `https://w.ibrase.com.br/webhook/autenticador?n_inscricao=${encodeURIComponent(matId)}&id=${encodeURIComponent(matId)}&instituto=${encodeURIComponent(instParam)}`;
+          const respAuth = await fetch(urlAuth);
+          if (respAuth.ok) {
+            const txtAuth = await respAuth.text();
+            if (txtAuth && txtAuth.trim() && txtAuth.trim() !== '[]' && txtAuth.trim() !== '[{}]') {
+              data = JSON.parse(txtAuth);
+            }
+          }
+        }
+
+        if (!data) {
+          showError();
+          return;
+        }
         
         let m;
         if (Array.isArray(data)) m = data[0];
         else if (data.dados && typeof data.dados === 'object' && !Array.isArray(data.dados)) m = data.dados;
         else m = data;
 
-        if (!m || (!m.id && !m.n_inscricao)) {
+        if (!m || (!m.id && !m.n_inscricao && !m.aluno_nome && !m.nome)) {
           showError();
           return;
         }
@@ -341,7 +369,7 @@
         const created = getF(m, ['hora do aceite aluno', 'hora_do_aceite_aluno', 'hora_aceite_aluno', 'aceite_aluno_em']) || getF(m, ['created_at', 'data_cadastro']);
         const nAluno = m.aluno_nome || m.nome_aluno || m.nome || 'Não informado';
         const idadeCalc = m.idade ? (m.idade + ' anos') : 'Não informada';
-        const nResp = m.resp_nome || m.nome_responsavel || 'Não informado';
+        const nResp = m.resp_nome || m.nome_responsavel || (m.idade >= 18 ? 'Próprio Participante (Maior de idade)' : 'Não informado');
 
         document.getElementById('res-data').textContent = formatDateTime(created);
         document.getElementById('res-nome').textContent = nAluno;

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR" translate="no" class="notranslate">
 <head>
 <script>
@@ -2944,6 +2944,9 @@ window.dadosRecentesCPF = null;
                     if(cidade) cidade.value = info.localidade || info.cidade || '';
                     if(uf)     uf.value     = info.uf || info.estado || '';
                     
+                    var comp = document.getElementById('complemento') || document.querySelector('input[name="complemento"]');
+                    if(comp && info.complemento && !comp.value) comp.value = info.complemento;
+
                     // Trava automaticamente os campos trazidos pela API de CEP
                     travarCamposEndereco();
 

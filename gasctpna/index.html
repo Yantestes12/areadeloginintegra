@@ -1,0 +1,3503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GASCTPNA — Portal Oficial de Matrícula</title>
+    
+    <!-- Tipografia Editorial Minimalista -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* ==========================================================================
+           SISTEMA DE DESIGN: MINIMALISTA EDITORIAL ("PINTADO A LÁPIS" E PAPEL NOBRE)
+           Paleta Oficial GASCTPNA (Ordem de Predominância Rigorosa)
+           ========================================================================== */
+        :root {
+            --c-verde: #319244;          /* 1. Verde Principal */
+            --c-verde-escuro: #24640a;   /* 2. Verde-escuro Nobre */
+            --c-marrom-cinza: #5f4514;   /* 3. Marrom Acinzentado */
+            --c-marrom-claro: #8c5e06;   /* 4. Marrom-claro */
+            --c-marrom-verm: #893906;    /* 5. Marrom Avermelhado */
+            --c-bege: #cbac69;           /* 6. Bege Suave */
+            --c-verde-pastel: #7df19a;   /* 7. Verde Pastel */
+            --c-branco: #ffffff;         /* 8. Branco Puro */
+            --c-preto: #181818;          /* 9. Preto Suave (Leitura Nobre) */
+            --c-turquesa: #297f6a;       /* 10. Turquesa Institucional */
+
+            /* Tons de Superfície Orgânica e Bordas Estilo Lápis */
+            --bg-body: #faf8f5;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --border-pencil: #e5ded3;
+            --border-pencil-dark: #cfc5b4;
+            --text-heading: #24640a;
+            --text-body: #1c1c1c;
+            --text-muted: #6b6255;
+            --text-light: #948876;
+            
+            --radius-input: 8px;
+            --radius-card: 14px;
+            --radius-pill: 9999px;
+            --shadow-card: 0 1px 3px rgba(36, 100, 10, 0.03), 0 4px 12px rgba(95, 69, 20, 0.04);
+            --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-body);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── TOPO INSTITUCIONAL MINIMALISTA ── */
+        .topbar-minimal {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-pencil);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-simbolo-gif {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        .topbar-brand-title {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-logo-gasctpna {
+            height: 36px;
+            width: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-pencil);
+        }
+
+        .topbar-inst-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+            display: none;
+        }
+        @media(min-width: 480px) {
+            .topbar-inst-name { display: block; }
+        }
+
+        /* ── CONTAINER PRINCIPAL FLUIDO (MOBILE FIRST) ── */
+        .portal-wrapper {
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 24px 16px 60px 16px;
+            flex: 1;
+        }
+
+        /* ── CARTÃO ESTILO CADERNO / PAPEL NOBRE ── */
+        .minimal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-pencil);
+            border-radius: var(--radius-card);
+            padding: 24px 20px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        @media(min-width: 600px) {
+            .minimal-card { padding: 32px 28px; }
+        }
+
+        /* ── CABEÇALHOS E TEXTOS ── */
+        .card-header-clean {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .tag-pill-subtle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(49, 146, 68, 0.08);
+            color: var(--c-verde-escuro);
+            border-radius: var(--radius-pill);
+            font-size: 11.5px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.02em;
+        }
+
+        .title-hero {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            margin-bottom: 8px;
+        }
+        @media(min-width: 600px) {
+            .title-hero { font-size: 26px; }
+        }
+
+        .desc-clean {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ── ENTRADA DE CPF ESTILIZADA ── */
+        .cpf-box-clean {
+            margin-top: 18px;
+        }
+
+        .cpf-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .cpf-input-icon {
+            position: absolute;
+            left: 14px;
+            width: 18px;
+            height: 18px;
+            color: var(--c-marrom-claro);
+            pointer-events: none;
+        }
+
+        .cpf-field-native {
+            width: 100%;
+            height: 52px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            padding: 0 42px 0 44px;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-body);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.04em;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .cpf-field-native:focus {
+            border-color: var(--c-verde);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(49, 146, 68, 0.12);
+        }
+
+        .cpf-btn-clear {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            width: 28px;
+            height: 28px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .cpf-btn-clear:hover {
+            color: var(--text-body);
+            background: var(--bg-body);
+        }
+
+        /* ── BOTÕES DE AÇÃO COM IDENTIDADE GASCTPNA ── */
+        .btn-primary-clean {
+            width: 100%;
+            height: 50px;
+            background: var(--c-verde);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-input);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(49, 146, 68, 0.15);
+        }
+
+        .btn-primary-clean:hover:not(:disabled) {
+            background: var(--c-verde-escuro);
+            box-shadow: 0 4px 10px rgba(36, 100, 10, 0.2);
+        }
+
+        .btn-primary-clean:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary-clean {
+            height: 46px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-secondary-clean:hover {
+            background: var(--bg-body);
+            color: var(--text-body);
+            border-color: var(--border-pencil-dark);
+        }
+
+        /* ── MENSAGEM DE STATUS / FEEDBACK ── */
+        .feedback-banner {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: var(--radius-input);
+            font-size: 13.5px;
+            font-weight: 500;
+            margin-top: 14px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .feedback-loading {
+            background: rgba(49, 146, 68, 0.08);
+            border: 1px solid rgba(49, 146, 68, 0.2);
+            color: var(--c-verde-escuro);
+        }
+
+        .feedback-error {
+            background: rgba(137, 57, 6, 0.08);
+            border: 1px solid rgba(137, 57, 6, 0.2);
+            color: var(--c-marrom-verm);
+        }
+
+        .feedback-success {
+            background: rgba(49, 146, 68, 0.1);
+            border: 1px solid var(--c-verde);
+            color: var(--c-verde-escuro);
+            font-weight: 600;
+        }
+
+        /* ── CARTÃO DE BOAS-VINDAS DO PARTICIPANTE ── */
+        .student-header-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border-pencil);
+        }
+
+        .student-meta h3 {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+        }
+
+        .student-meta p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .btn-switch-cpf {
+            font-size: 12.5px;
+            color: var(--c-marrom-claro);
+            font-weight: 700;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 4px;
+        }
+        .btn-switch-cpf:hover { color: var(--c-verde-escuro); }
+
+        /* ── BLOCO CONDICIONAL: INSCRIÇÕES ATIVAS DO ALUNO ── */
+        .section-history {
+            display: none; /* Só visível se houver inscrições */
+            margin-bottom: 24px;
+        }
+
+        .history-card-item {
+            background: #ffffff;
+            border: 1px solid var(--border-pencil);
+            border-left: 4px solid var(--c-verde);
+            border-radius: var(--radius-input);
+            padding: 16px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .history-card-item:hover {
+            border-color: var(--c-verde);
+            box-shadow: var(--shadow-card);
+        }
+
+        .history-item-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .history-proj-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+        }
+
+        .history-badge-active {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(49, 146, 68, 0.1);
+            color: var(--c-verde-escuro);
+            border-radius: var(--radius-pill);
+            white-space: nowrap;
+        }
+
+        .history-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 12px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        .history-details-grid span strong {
+            color: var(--text-body);
+        }
+
+        .btn-pdf-print-clean {
+            background: #ffffff;
+            border: 1.5px solid var(--c-verde);
+            color: var(--c-verde-escuro);
+            border-radius: var(--radius-input);
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-pdf-print-clean:hover {
+            background: var(--c-verde);
+            color: #ffffff;
+        }
+
+        /* ── LISTA DE PROJETOS DISPONÍVEIS ── */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 12px;
+        }
+        @media(min-width: 580px) {
+            .projects-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .project-tile {
+            background: #ffffff;
+            border: 1.5px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            padding: 18px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+            transition: var(--transition);
+        }
+
+        .project-tile:hover:not(.disabled) {
+            border-color: var(--c-verde);
+            box-shadow: 0 4px 12px rgba(49, 146, 68, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .project-tile.disabled {
+            opacity: 0.65;
+            background: #fdfdfd;
+            border-color: #eee9e0;
+        }
+
+        .project-tile-top {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .project-badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .badge-age-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            background: var(--bg-body);
+            border: 1px solid var(--border-pencil);
+            color: var(--c-marrom-cinza);
+            border-radius: var(--radius-pill);
+        }
+
+        .badge-already-enrolled {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(49, 146, 68, 0.12);
+            color: var(--c-verde-escuro);
+            border-radius: var(--radius-pill);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .project-name-clean {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+        }
+
+        .project-desc-clean {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-top: 2px;
+        }
+
+        .btn-choose-project {
+            width: 100%;
+            height: 42px;
+            background: var(--bg-body);
+            border: 1.5px solid var(--c-verde);
+            color: var(--c-verde-escuro);
+            border-radius: var(--radius-input);
+            font-size: 13.5px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-choose-project:hover:not(:disabled) {
+            background: var(--c-verde);
+            color: #ffffff;
+        }
+
+        .btn-choose-project:disabled {
+            border-color: var(--border-pencil);
+            color: var(--text-light);
+            background: transparent;
+            cursor: not-allowed;
+        }
+
+        /* ── FORMULÁRIO MULTI-ETAPAS MINIMALISTA ── */
+        #formEnrollmentWrapper {
+            display: none; /* Aparece ao selecionar o projeto */
+        }
+
+        /* Barra de Progresso Fina e Elegante */
+        .progress-indicator-clean {
+            margin-bottom: 22px;
+        }
+
+        .progress-labels-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+        }
+
+        .progress-step-text {
+            color: var(--c-verde-escuro);
+        }
+
+        .progress-proj-name {
+            color: var(--c-marrom-claro);
+            font-weight: 600;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background: var(--border-pencil);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 25%;
+            background: var(--c-verde);
+            border-radius: var(--radius-pill);
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Etapas do Formulário */
+        .form-pane {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .form-pane.active {
+            display: block;
+        }
+
+        .pane-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+            margin-bottom: 4px;
+        }
+
+        .pane-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Campos de Entrada Padrão */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-body);
+            margin-bottom: 5px;
+        }
+
+        .field-label .req {
+            color: var(--c-marrom-verm);
+            margin-left: 2px;
+        }
+
+        .field-input, .field-select, .field-textarea {
+            width: 100%;
+            height: 48px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            padding: 0 14px;
+            font-size: 15px;
+            color: var(--text-body);
+            outline: none;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .field-textarea {
+            height: auto;
+            padding: 10px 14px;
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        .field-input:focus, .field-select:focus, .field-textarea:focus {
+            border-color: var(--c-verde);
+            box-shadow: 0 0 0 3px rgba(49, 146, 68, 0.1);
+        }
+
+        .field-input:read-only {
+            background: #fbf9f6;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .fields-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media(min-width: 480px) {
+            .fields-grid-2 { grid-template-columns: 1fr 1fr; }
+        }
+
+        .fields-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media(min-width: 540px) {
+            .fields-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+        }
+
+        /* ── QUADRADINHOS DE NÚCLEO (BAIRRO + MODALIDADE INTEGRADA) ── */
+        .nucleos-tiles-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        @media(min-width: 500px) {
+            .nucleos-tiles-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .nucleo-square-tile {
+            background: #ffffff;
+            border: 1.5px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            padding: 14px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .nucleo-square-tile:hover {
+            border-color: var(--c-verde);
+            background: #fafdfa;
+        }
+
+        .nucleo-square-tile.selected {
+            border-color: var(--c-verde);
+            background: rgba(49, 146, 68, 0.05);
+            box-shadow: 0 0 0 2px rgba(49, 146, 68, 0.2);
+        }
+
+        .tile-check-pill {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border-pencil);
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: transparent;
+            transition: var(--transition);
+        }
+
+        .nucleo-square-tile.selected .tile-check-pill {
+            background: var(--c-verde);
+            border-color: var(--c-verde);
+            color: #ffffff;
+        }
+
+        .tile-mod-badge {
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(49, 146, 68, 0.1);
+            color: var(--c-verde-escuro);
+            border-radius: var(--radius-pill);
+        }
+
+        .tile-bairro-title {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: var(--text-body);
+            padding-right: 24px;
+        }
+
+        .tile-ref-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ── QUESTIONÁRIO DE SAÚDE (PÍLULAS SIM/NÃO) ── */
+        .health-question-box {
+            background: var(--bg-body);
+            border: 1px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .health-q-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .health-q-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-body);
+            flex: 1;
+        }
+
+        .pills-toggle-wrap {
+            display: inline-flex;
+            background: #ffffff;
+            border: 1px solid var(--border-pencil);
+            border-radius: var(--radius-pill);
+            padding: 2px;
+            gap: 2px;
+        }
+
+        .pill-btn-yn {
+            border: none;
+            background: none;
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pill-btn-yn.active-nao {
+            background: #eef1ed;
+            color: var(--text-body);
+        }
+
+        .pill-btn-yn.active-sim {
+            background: var(--c-marrom-verm);
+            color: #ffffff;
+        }
+
+        .health-details-input {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .file-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            color: #1b5e20;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            max-width: 100%;
+        }
+        .file-chip span {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .file-chip button {
+            background: none;
+            border: none;
+            color: #c62828;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 2px;
+        }
+
+        /* ── CAIXA DE DECLARAÇÃO E LGPD ── */
+        .legal-terms-box {
+            background: #fbf9f5;
+            border: 1.5px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+
+        .legal-terms-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 12px;
+        }
+
+        .legal-check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .legal-check-native {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--c-verde);
+            cursor: pointer;
+            margin-top: 2px;
+        }
+
+        .legal-check-label {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--c-verde-escuro);
+            line-height: 1.4;
+        }
+
+        /* ── NAVEGAÇÃO ENTRE ETAPAS DO FORMULÁRIO ── */
+        .form-nav-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-pencil);
+        }
+
+        /* ── TELA DE SUCESSO FINAL ── */
+        .success-box-clean {
+            text-align: center;
+            padding: 30px 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-icon-wrap {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: rgba(49, 146, 68, 0.1);
+            color: var(--c-verde);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+        }
+
+        .success-number-pill {
+            display: inline-block;
+            background: var(--bg-body);
+            border: 1px solid var(--border-pencil);
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+            margin: 12px 0 20px 0;
+        }
+
+        /* ── ANIMAÇÕES E UTILITÁRIOS ── */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── TOPO INSTITUCIONAL COM LOGOS ── -->
+    <header class="topbar-minimal">
+        <div class="topbar-left">
+            <img src="logo_integra_simbolo.gif" alt="Integra" class="topbar-simbolo-gif" onerror="this.src='../logo_integra_simbolo.gif'">
+            <span class="topbar-brand-title">Plataforma Integra</span>
+        </div>
+        <div class="topbar-right">
+            <span class="topbar-inst-name">GASCTPNA</span>
+            <img src="logo_gasctpna.jpg" alt="GASCTPNA" class="topbar-logo-gasctpna" onerror="this.src='../logo_gasctpna.jpg'">
+        </div>
+    </header>
+
+    <!-- ── ÁREA PRINCIPAL ── -->
+    <main class="portal-wrapper">
+
+        <!-- 1. TELA INICIAL: CONSULTA DIRETA DE CPF -->
+        <section class="minimal-card" id="cardConsultaCPF">
+            <div class="card-header-clean">
+                <span class="tag-pill-subtle">
+                    <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i>
+                    Portal Oficial de Matrícula
+                </span>
+                <h1 class="title-hero">Matrícula GASCTPNA</h1>
+                <p class="desc-clean">
+                    Digite seu CPF para consultar suas inscrições ativas ou matricular-se em novos projetos.
+                </p>
+            </div>
+
+            <div class="cpf-box-clean">
+                <label class="field-label" for="inputCPF">
+                    Informe o CPF do Aluno ou Participante: <span class="req">*</span>
+                </label>
+                <div class="cpf-input-wrapper">
+                    <i data-lucide="user" class="cpf-input-icon"></i>
+                    <input 
+                        type="tel" 
+                        id="inputCPF" 
+                        class="cpf-field-native" 
+                        placeholder="000.000.000-00" 
+                        maxlength="14" 
+                        autocomplete="off"
+                        inputmode="numeric"
+                    >
+                    <button type="button" id="btnClearCPF" class="cpf-btn-clear" title="Limpar">✕</button>
+                </div>
+
+                <button type="button" class="btn-primary-clean" id="btnConsultarCPF">
+                    <span>Consultar CPF</span>
+                    <i data-lucide="arrow-right" style="width: 17px; height: 17px;"></i>
+                </button>
+
+                <div id="cpfFeedbackBox" class="feedback-banner">
+                    <i id="feedbackIcon" data-lucide="loader-2" style="width: 18px; height: 18px;"></i>
+                    <span id="feedbackText"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. HUB DO ALUNO (APARECE APÓS A CONSULTA DO CPF) -->
+        <div id="participantHub" style="display: none; flex-direction: column;">
+            
+            <!-- Resumo do Aluno Identificado -->
+            <div class="minimal-card" style="padding: 18px 20px;">
+                <div class="student-header-box" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                    <div class="student-meta">
+                        <span style="font-size: 11.5px; font-weight: 700; color: var(--c-verde); text-transform: uppercase; letter-spacing: 0.05em;">Participante Identificado</span>
+                        <h3 id="studentDisplayName">---</h3>
+                        <p id="studentDisplayCPF">CPF: --- • Idade: ---</p>
+                    </div>
+                    <button type="button" class="btn-switch-cpf" id="btnTrocarCPF">
+                        Sair
+                    </button>
+                </div>
+            </div>
+
+            <!-- BLOCO: Projetos Oficiais Disponíveis para Inscrição -->
+            <section class="minimal-card" id="sectionProjetosAbertos" style="margin-bottom: 24px;">
+                <div class="card-header-clean" style="margin-bottom: 14px;">
+                    <span class="tag-pill-subtle">
+                        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
+                        Novas Vagas
+                    </span>
+                    <h2 style="font-size: 18px; font-weight: 800; color: var(--c-verde-escuro);">Projetos com Inscrições Abertas</h2>
+                    <p class="desc-clean" style="font-size: 13px;">
+                        Selecione um projeto para realizar sua matrícula oficial.
+                    </p>
+                </div>
+
+                <div class="projects-grid" id="projectsGridContainer"></div>
+            </section>
+
+            <!-- BLOCO CONDICIONAL: Histórico de Inscrições Ativas -->
+            <section class="minimal-card section-history" id="sectionHistorico">
+                <div class="card-header-clean" style="margin-bottom: 12px;">
+                    <span class="tag-pill-subtle" style="background: rgba(95, 69, 20, 0.08); color: var(--c-marrom-cinza);">
+                        <i data-lucide="folder-check" style="width: 14px; height: 14px;"></i>
+                        Inscrições Ativas
+                    </span>
+                    <h2 style="font-size: 18px; font-weight: 800; color: var(--c-verde-escuro);">Suas Matrículas no Sistema</h2>
+                    <p class="desc-clean" style="font-size: 13px;">
+                        Você já possui matrícula oficial ativa. Clique abaixo para emitir a Ficha Oficial em PDF.
+                    </p>
+                </div>
+
+                <div id="historyListContainer"></div>
+            </section>
+
+        </div>
+
+        <!-- 3. FORMULÁRIO DE MATRÍCULA MULTI-ETAPAS -->
+        <section class="minimal-card" id="formEnrollmentWrapper">
+            
+            <!-- Barra de Progresso Fina -->
+            <div class="progress-indicator-clean">
+                <div class="progress-labels-row">
+                    <span class="progress-step-text" id="formStepIndicatorLabel">Etapa 1 de 4</span>
+                    <span class="progress-proj-name" id="formCurrentProjBadge">Projeto</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="formProgressBar"></div>
+                </div>
+            </div>
+
+            <form id="formMatriculaGASCTPNA" novalidate>
+                <!-- Campos ocultos de controle -->
+                <input type="hidden" id="hidden_projeto_id" name="projeto_id">
+                <input type="hidden" id="hidden_projeto_nome" name="projeto_nome">
+                <input type="hidden" id="hidden_instituto" name="instituto" value="GASCTPNA">
+                <input type="hidden" id="hidden_nucleo_id" name="nucleo_id" required>
+                <input type="hidden" id="hidden_nucleo_nome" name="nucleo_nome">
+                <input type="hidden" id="hidden_modalidade_id" name="modalidade_id">
+                <input type="hidden" id="hidden_modalidade_nome" name="modalidade_nome">
+                <input type="hidden" id="hidden_bairro_escolhido" name="bairro_nucleo">
+
+                <!-- ETAPA 1: Identificação Pessoal -->
+                <div class="form-pane active" data-step="1">
+                    <h3 class="pane-title">1. Dados Pessoais do Participante</h3>
+                    <p class="pane-subtitle">Preencha com atenção as informações do aluno.</p>
+
+                    <div class="form-group">
+                        <label class="field-label" for="mat_nome">Nome Completo: <span class="req">*</span></label>
+                        <input type="text" id="mat_nome" name="nome" class="field-input" required placeholder="Digite o nome completo">
+                    </div>
+
+                    <div class="fields-grid-2">
+                        <div class="form-group">
+                            <label class="field-label" for="mat_cpf">CPF: <span class="req">*</span></label>
+                            <input type="text" id="mat_cpf" name="cpf" class="field-input" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_nasc">Data de Nascimento: <span class="req">*</span></label>
+                            <input type="date" id="mat_nasc" name="data_nascimento" class="field-input" required>
+                        </div>
+                    </div>
+
+                    <div class="fields-grid-2">
+                        <div class="form-group">
+                            <label class="field-label" for="mat_sexo">Sexo: <span class="req">*</span></label>
+                            <select id="mat_sexo" name="sexo" class="field-select" required>
+                                <option value="">Selecione…</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Feminino">Feminino</option>
+                                <option value="Outro">Outro / Prefiro não informar</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_whatsapp">Telefone / WhatsApp: <span class="req">*</span></label>
+                            <input type="tel" id="mat_whatsapp" name="whatsapp" class="field-input" required placeholder="(22) 99999-9999" maxlength="15">
+                        </div>
+                    </div>
+
+                    <div class="fields-grid-2">
+                        <div class="form-group">
+                            <label class="field-label" for="mat_email">E-mail para Contato: <span class="req">*</span></label>
+                            <input type="email" id="mat_email" name="email" class="field-input" required placeholder="seuemail@exemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_email_confirm">Confirmação do E-mail: <span class="req">*</span></label>
+                            <input type="email" id="mat_email_confirm" name="email_confirm" class="field-input" required placeholder="Repita seu e-mail">
+                        </div>
+                    </div>
+
+                    <!-- Bloco do Responsável Legal (Visível se menor de 18 anos) -->
+                    <div id="blocoResponsavel" style="display: none; background: var(--bg-body); border: 1.5px dashed var(--border-pencil-dark); border-radius: var(--radius-input); padding: 16px; margin-top: 14px; margin-bottom: 14px;">
+                        <span style="font-size: 11px; font-weight: 800; color: var(--c-marrom-verm); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">
+                            Participante Menor de Idade
+                        </span>
+                        <h4 style="font-size: 14.5px; font-weight: 800; color: var(--c-verde-escuro); margin-bottom: 12px;">
+                            Dados do Responsável Legal
+                        </h4>
+                        <div class="fields-grid-2">
+                            <div class="form-group">
+                                <label class="field-label" for="mat_resp_cpf">CPF do Responsável: <span class="req">*</span></label>
+                                <input type="tel" id="mat_resp_cpf" name="resp_cpf" class="field-input" placeholder="000.000.000-00" maxlength="14">
+                                <span id="respCpfStatus" style="font-size: 11.5px; font-weight: 600; display: none; margin-top: 4px;"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="field-label" for="mat_resp_nome">Nome do Responsável: <span class="req">*</span></label>
+                                <input type="text" id="mat_resp_nome" name="resp_nome" class="field-input" placeholder="Nome completo do responsável">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="field-label" for="mat_resp_parentesco">Grau de Parentesco:</label>
+                            <select id="mat_resp_parentesco" name="resp_parentesco" class="field-select">
+                                <option value="Mãe">Mãe</option>
+                                <option value="Pai">Pai</option>
+                                <option value="Avó/Avô">Avó / Avô</option>
+                                <option value="Tio/Tia">Tio / Tia</option>
+                                <option value="Tutor Legal">Tutor(a) Legal</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Endereço Residencial -->
+                    <div class="fields-grid-3" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label class="field-label" for="mat_cep">CEP: <span class="req">*</span></label>
+                            <input type="tel" id="mat_cep" name="cep" class="field-input" placeholder="00000-000" required>
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="field-label" for="mat_endereco">Rua / Logradouro: <span class="req">*</span></label>
+                            <input type="text" id="mat_endereco" name="endereco" class="field-input" placeholder="Ex: Av. Principal" required>
+                        </div>
+                    </div>
+
+                    <div class="fields-grid-3">
+                        <div class="form-group">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <label class="field-label" for="mat_numero" style="margin-bottom: 0;">Número: <span class="req">*</span></label>
+                                <label style="display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--text-muted); cursor: pointer; user-select: none; font-weight: 600;" title="Marque caso o endereço não possua número oficial">
+                                    <input type="checkbox" id="mat_sem_numero" style="accent-color: var(--c-verde); width: 14px; height: 14px; cursor: pointer;">
+                                    <span>Sem número</span>
+                                </label>
+                            </div>
+                            <input type="text" id="mat_numero" name="numero" class="field-input" placeholder="Ex: 123 ou S/N" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_complemento" id="label_mat_complemento">Complemento: <span id="hint_mat_complemento" style="font-size:11px;font-weight:normal;color:var(--text-muted);">(opcional)</span></label>
+                            <input type="text" id="mat_complemento" name="complemento" class="field-input" placeholder="Apto, Bloco, Casa...">
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_bairro">Bairro: <span class="req">*</span></label>
+                            <input type="text" id="mat_bairro" name="bairro" class="field-input" placeholder="Bairro" required>
+                        </div>
+                    </div>
+
+                    <div class="fields-grid-3">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label class="field-label" for="mat_cidade">Cidade: <span class="req">*</span></label>
+                            <input type="text" id="mat_cidade" name="cidade" class="field-input" placeholder="Cidade" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_uf">UF / Estado: <span class="req">*</span></label>
+                            <input type="text" id="mat_uf" name="uf" class="field-input" placeholder="RJ" maxlength="2" style="text-transform: uppercase;" value="RJ" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 2: Socioeconômico e Saúde -->
+                <div class="form-pane" data-step="2">
+                    <h3 class="pane-title">2. Questionário Socioeconômico & Saúde</h3>
+                    <p class="pane-subtitle">Informações para acompanhamento pedagógico e de saúde.</p>
+
+                    <div class="form-group">
+                        <label class="field-label" for="mat_escolaridade">Escolaridade: <span class="req">*</span></label>
+                        <select id="mat_escolaridade" name="escolaridade" class="field-select" required>
+                            <option value="">Selecione…</option>
+                            <option value="Ensino Fundamental Incompleto">Ensino Fundamental Incompleto</option>
+                            <option value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
+                            <option value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
+                            <option value="Ensino Médio Completo">Ensino Médio Completo</option>
+                            <option value="Ensino Superior">Ensino Superior</option>
+                        </select>
+                    </div>
+
+                    <h4 style="font-size: 14px; font-weight: 800; color: var(--c-verde-escuro); margin: 18px 0 10px 0;">
+                        Questionário de Aptidão e Saúde
+                    </h4>
+
+                    <!-- 1. Uso contínuo de medicação -->
+                    <div class="health-question-box" data-q="med">
+                        <div class="health-q-header">
+                            <span class="health-q-label">1. Faz uso contínuo de algum medicamento?</span>
+                            <div class="pills-toggle-wrap">
+                                <button type="button" class="pill-btn-yn active-nao" onclick="setHealthOption('med', 'Não')">Não</button>
+                                <button type="button" class="pill-btn-yn" onclick="setHealthOption('med', 'Sim')">Sim</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="health_uso_medicacao" name="uso_medicacao" value="Não">
+                        <div class="health-details-input" id="details_med">
+                            <input type="text" name="uso_medicacao_detalhes" class="field-input" placeholder="Qual medicamento?">
+                        </div>
+                    </div>
+
+                    <!-- 2. Alergias -->
+                    <div class="health-question-box" data-q="alerg">
+                        <div class="health-q-header">
+                            <span class="health-q-label">2. Possui alguma alergia diagnosticada?</span>
+                            <div class="pills-toggle-wrap">
+                                <button type="button" class="pill-btn-yn active-nao" onclick="setHealthOption('alerg', 'Não')">Não</button>
+                                <button type="button" class="pill-btn-yn" onclick="setHealthOption('alerg', 'Sim')">Sim</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="health_possui_alergias" name="possui_alergias" value="Não">
+                        <div class="health-details-input" id="details_alerg">
+                            <input type="text" name="possui_alergias_detalhes" class="field-input" placeholder="Quais alergias?">
+                        </div>
+                    </div>
+
+                    <!-- 3. Plano de saúde -->
+                    <div class="health-question-box" data-q="plano">
+                        <div class="health-q-header">
+                            <span class="health-q-label">3. Possui convênio ou plano de saúde?</span>
+                            <div class="pills-toggle-wrap">
+                                <button type="button" class="pill-btn-yn active-nao" onclick="setHealthOption('plano', 'Não')">Não</button>
+                                <button type="button" class="pill-btn-yn" onclick="setHealthOption('plano', 'Sim')">Sim</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="health_plano_saude" name="plano_saude" value="Não">
+                        <div class="health-details-input" id="details_plano">
+                            <input type="text" name="plano_saude_detalhes" class="field-input" placeholder="Qual o convênio?">
+                        </div>
+                    </div>
+
+                    <!-- 4. Tratamento médico -->
+                    <div class="health-question-box" data-q="trat">
+                        <div class="health-q-header">
+                            <span class="health-q-label">4. Está em acompanhamento / tratamento médico?</span>
+                            <div class="pills-toggle-wrap">
+                                <button type="button" class="pill-btn-yn active-nao" onclick="setHealthOption('trat', 'Não')">Não</button>
+                                <button type="button" class="pill-btn-yn" onclick="setHealthOption('trat', 'Sim')">Sim</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="health_acompan_medico" name="acompan_medico" value="Não">
+                        <div class="health-details-input" id="details_trat">
+                            <input type="text" name="acompan_medico_detalhes" class="field-input" placeholder="Motivo do tratamento?">
+                        </div>
+                    </div>
+
+                    <!-- 5. Restrição física -->
+                    <div class="health-question-box" data-q="rest">
+                        <div class="health-q-header">
+                            <span class="health-q-label">5. Possui restrição para atividades físicas?</span>
+                            <div class="pills-toggle-wrap">
+                                <button type="button" class="pill-btn-yn active-nao" onclick="setHealthOption('rest', 'Não')">Não</button>
+                                <button type="button" class="pill-btn-yn" onclick="setHealthOption('rest', 'Sim')">Sim</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="health_restricao_fisica" name="restricao_fisica" value="Não">
+                        <div class="health-details-input" id="details_rest">
+                            <input type="text" name="restricao_fisica_detalhes" class="field-input" placeholder="Qual a restrição?">
+                        </div>
+                    </div>
+
+                    <!-- 6. Necessidade especial -->
+                    <div class="health-question-box" data-q="esp">
+                        <div class="health-q-header">
+                            <span class="health-q-label">6. Possui alguma necessidade especial ou PCD?</span>
+                            <div class="pills-toggle-wrap">
+                                <button type="button" class="pill-btn-yn active-nao" onclick="setHealthOption('esp', 'Não')">Não</button>
+                                <button type="button" class="pill-btn-yn" onclick="setHealthOption('esp', 'Sim')">Sim</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="health_necessidade_especial" name="necessidade_especial" value="Não">
+                        <div class="health-details-input" id="details_esp">
+                            <input type="text" name="necessidade_especial_detalhes" class="field-input" placeholder="Especifique a necessidade:">
+                        </div>
+                    </div>
+
+                    <!-- 7. Envio Opcional de Laudo Médico -->
+                    <div class="health-question-box" data-q="docs">
+                        <div class="health-q-header">
+                            <div>
+                                <span class="health-q-label">7. Deseja enviar laudo médico agora? <span style="font-size:11px;font-weight:normal;color:var(--text-muted);">(opcional)</span></span>
+                                <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">Ex.: Laudo PcD, atestado médico ou comprovante de saúde.</div>
+                            </div>
+                            <div class="pills-toggle-wrap">
+                                <button type="button" class="pill-btn-yn active-nao" onclick="setHealthOption('docs', 'Não')">Não</button>
+                                <button type="button" class="pill-btn-yn" onclick="setHealthOption('docs', 'Sim')">Sim</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="health_deseja_documentos" name="deseja_laudo" value="Não">
+                        <input type="hidden" id="documentos_base64" name="documentos_base64" value="">
+
+                        <div class="health-details-input" id="details_docs" style="display:none; margin-top:12px;">
+                            <input type="file" id="doc_file_input" accept="image/*,.pdf" multiple style="display:none;">
+                            
+                            <div id="doc-dropzone" style="border: 2px dashed #319244; background: #fdfbf7; border-radius: 8px; padding: 18px 12px; text-align: center; cursor: pointer; transition: all 0.2s ease;">
+                                <div style="font-size: 26px; margin-bottom: 4px;">📄 🩺</div>
+                                <div style="font-weight: 700; color: #24640a; font-size: 13.5px;">Clique aqui para selecionar o laudo médico ou atestado</div>
+                                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">Fotos (JPG, PNG) ou PDF — até 6 arquivos</div>
+                            </div>
+
+                            <div id="dropzone-files-list" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;"></div>
+                            <div id="dropzone-count-msg" style="font-size: 11.5px; color: var(--text-muted); margin-top: 6px; display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 3: Cidade, Núcleo e Uniforme -->
+                <div class="form-pane" data-step="3">
+                    <h3 class="pane-title">3. Escolha da Cidade e Núcleo</h3>
+                    <p class="pane-subtitle">Selecione o local de treino e os tamanhos do uniforme oficial.</p>
+
+                    <!-- 1. Pergunta a Cidade Primeiro -->
+                    <div class="form-group">
+                        <label class="field-label" for="select_cidade_filtro">
+                            1. Primeiro, selecione a Cidade do treino: <span class="req">*</span>
+                        </label>
+                        <select id="select_cidade_filtro" class="field-select" required>
+                            <option value="">Carregando cidades disponíveis…</option>
+                        </select>
+                    </div>
+
+                    <!-- 2. Quadradinhos de Núcleos (Bairro + Modalidade) -->
+                    <div id="blocoQuadradinhosNucleos" style="margin-top: 14px;">
+                        <label class="field-label">
+                            2. Clique no <strong>Núcleo / Bairro com a Modalidade</strong> desejada: <span class="req">*</span>
+                        </label>
+                        <div class="nucleos-tiles-grid" id="nucleosCardsContainer">
+                            <div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">
+                                Selecione a cidade acima para visualizar os núcleos disponíveis.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Turno Pretendido (Opcional) -->
+                    <div class="form-group" style="margin-top: 18px;">
+                        <label class="field-label" for="mat_turno">Turno Pretendido: <span style="font-size: 11px; font-weight: normal; color: var(--c-grafite);">(opcional)</span></label>
+                        <select id="mat_turno" name="turno" class="field-select">
+                            <option value="">Selecione o turno (ou deixe a definir)…</option>
+                            <option value="Manhã">Manhã</option>
+                            <option value="Tarde">Tarde</option>
+                            <option value="Noite">Noite</option>
+                            <option value="A Definir">A Definir</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. Tamanhos de Fardamento Oficial -->
+                    <h4 style="font-size: 14px; font-weight: 800; color: var(--c-verde-escuro); margin: 20px 0 10px 0;">
+                        Tamanhos do Fardamento Oficial
+                    </h4>
+                    <div class="fields-grid-3">
+                        <div class="form-group">
+                            <label class="field-label" for="mat_camisa">Camisa: <span class="req">*</span></label>
+                            <select id="mat_camisa" name="tamanho_camisa" class="field-select" required>
+                                <option value="">Selecione…</option>
+                                <option value="10">10 (Infantil)</option>
+                                <option value="14">14 (Infantil)</option>
+                                <option value="M">M (Adulto)</option>
+                                <option value="GG">GG (Adulto)</option>
+                                <option value="G2">G2 (Adulto)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_bermuda">Bermuda/Short: <span class="req">*</span></label>
+                            <select id="mat_bermuda" name="tamanho_calca" class="field-select" required>
+                                <option value="">Selecione…</option>
+                                <option value="36">36</option>
+                                <option value="38">38</option>
+                                <option value="40">40</option>
+                                <option value="42">42</option>
+                                <option value="44">44</option>
+                                <option value="46">46</option>
+                                <option value="48">48</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="field-label" for="mat_calcado">Calçado: <span class="req">*</span></label>
+                            <select id="mat_calcado" name="tamanho_calcado" class="field-select" required>
+                                <option value="">Selecione…</option>
+                                <option value="34">34</option>
+                                <option value="36">36</option>
+                                <option value="38">38</option>
+                                <option value="40">40</option>
+                                <option value="42">42</option>
+                                <option value="44">44</option>
+                                <option value="46">46</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 5. Informações Complementares da Modalidade (Perguntas Extras Dinâmicas) -->
+                    <div id="containerPerguntasExtras" style="display: none; margin-top: 24px; padding-top: 18px; border-top: 1.5px dashed var(--border-pencil);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: rgba(49, 146, 68, 0.12); color: var(--c-verde-escuro); font-size: 13px; font-weight: 800;">★</span>
+                            <h4 style="font-size: 14px; font-weight: 800; color: var(--c-verde-escuro); margin: 0;">
+                                Informações Complementares da Modalidade
+                            </h4>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+                            Responda aos itens abaixo específicos para a sua categoria ou modalidade escolhida.
+                        </p>
+                        <div id="perguntasExtrasFields"></div>
+                    </div>
+                </div>
+
+                <!-- ETAPA 4: Declaração Institucional e Termo LGPD -->
+                <div class="form-pane" data-step="4">
+                    <h3 class="pane-title">4. Declaração Institucional & Termo LGPD</h3>
+                    <p class="pane-subtitle">Leia com atenção para finalizar sua matrícula oficial.</p>
+
+                    <div class="legal-terms-box" style="background: rgba(49,146,68,0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(49,146,68,0.2); font-size: 13.5px; color: var(--text-dark);">
+                        <p style="margin-bottom: 8px;">
+                            <strong>Declaração Institucional e Tratamento de Dados Pessoais</strong><br>
+                            Ao finalizar a matrícula, declaro que li, compreendi e estou ciente das condições deste termo e da Política de Privacidade, bem como das finalidades relacionadas ao tratamento dos dados pessoais e ao uso de imagem.
+                        </p>
+                        
+                        <details style="margin-top: 10px;">
+                            <summary style="cursor: pointer; color: #0284c7; font-weight: 600; font-size: 14px; text-decoration: underline; margin-bottom: 10px; list-style: none;">Ler mais sobre as Políticas de Privacidade e LGPD</summary>
+                            
+                            <div style="font-size: 13px; color: #475569; line-height: 1.5; margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                                <p>Declaro que as informações fornecidas neste cadastro são verdadeiras, completas e atualizadas, responsabilizando-me pela veracidade dos dados informados.</p>
+                                <p>Quando o participante for menor de idade, a presente declaração será realizada por seu responsável legal, que declara possuir legitimidade para realizar a matrícula e fornecer as informações necessárias.</p>
+                                <p>Declaro estar ciente de que os dados pessoais fornecidos serão tratados pela GASCTPNA – Grupo de Apoio Social aos Cultivadores da Terra e Prevenção da Natureza, nos termos da Lei nº 13.709/2018 – Lei Geral de Proteção de Dados Pessoais (LGPD) e da Política de Privacidade da instituição.</p>
+                                <p>O tratamento poderá ocorrer para finalidades relacionadas à realização e gestão da matrícula, identificação dos participantes, execução e acompanhamento das atividades, comunicação, gestão administrativa, elaboração de relatórios, prestação de contas, transparência, auditoria, fiscalização, comprovação da execução das atividades e cumprimento de obrigações legais, regulatórias ou decorrentes de instrumentos de parceria, observadas as bases legais aplicáveis.</p>
+                                <p>Declaro estar ciente de que o tratamento e, quando necessário, o compartilhamento dos dados pessoais observarão as condições, finalidades, direitos dos titulares e demais disposições estabelecidas na Política de Privacidade.</p>
+                                
+                                <p><strong style="color: var(--text-dark);">Participantes menores de idade</strong></p>
+                                <p>No caso de participante menor de idade, o responsável legal declara estar ciente do tratamento dos dados pessoais do menor e das condições estabelecidas neste termo e na Política de Privacidade, observando-se a legislação aplicável e o princípio do melhor interesse da criança e do adolescente.</p>
+                                
+                                <p><strong style="color: var(--text-dark);">Uso de Imagem</strong></p>
+                                <p>Autorizo, quando aplicável, o uso da imagem do participante, quando registrada durante atividades, eventos ou ações institucionais, para fins institucionais, divulgação das atividades realizadas, elaboração de relatórios, prestação de contas, transparência e comprovação da execução das atividades.</p>
+                                <p>No caso de participante menor de idade, a autorização será fornecida por seu responsável legal.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <label class="legal-check-row">
+                        <input type="checkbox" id="checkTermoLGPD" class="legal-check-native" required>
+                        <span class="legal-check-label">
+                            Declaro que li, concordo e aceito integralmente a Declaração Institucional e o Termo de Proteção de Dados (LGPD). <span class="req">*</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- BOTÕES DE NAVEGAÇÃO DO FORMULÁRIO -->
+                <div class="form-nav-buttons">
+                    <button type="button" class="btn-secondary-clean" id="btnPrevStep" style="visibility: hidden;">
+                        <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                        <span>Voltar</span>
+                    </button>
+                    <button type="button" class="btn-primary-clean" id="btnNextStep" style="width: auto; padding: 0 24px;">
+                        <span>Avançar</span>
+                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                    </button>
+                    <button type="submit" class="btn-primary-clean" id="btnSubmitEnroll" style="display: none; width: auto; padding: 0 24px;">
+                        <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
+                        <span>Concluir Matrícula</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 4. TELA DE SUCESSO FINAL -->
+        <div class="minimal-card success-box-clean" id="paneSucessoFinal" style="display: none;">
+            <div class="success-icon-wrap">
+                <i data-lucide="check" style="width: 30px; height: 30px;"></i>
+            </div>
+            <h2 style="font-size: 20px; font-weight: 800; color: var(--c-verde-escuro);">Matrícula Realizada com Sucesso!</h2>
+            <p class="desc-clean" style="margin-top: 4px;">
+                Sua inscrição oficial foi registrada com êxito no banco de dados da GASCTPNA.
+            </p>
+            <div>
+                <span class="success-number-pill" id="sucessoNumeroMatricula">Matrícula: #000000</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; max-width: 340px; margin: 0 auto;">
+                <button type="button" class="btn-primary-clean" id="btnBaixarPDFSucesso">
+                    <i data-lucide="printer" style="width: 17px; height: 17px;"></i>
+                    <span>Baixar Ficha Oficial (PDF)</span>
+                </button>
+                <button type="button" class="btn-secondary-clean" id="btnVoltarInicioSucesso">
+                    <span>Concluir e Voltar ao Início</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==========================================================================
+         JAVASCRIPT DE ALTA PERFORMANCE (N8N + SUPABASE + RESOLUÇÃO INFALÍVEL)
+         ========================================================================== -->
+    <script>
+        const API = {
+            consultarCPF: 'https://w.ibrase.com.br/webhook/consultarcpf',
+            buscarProjetos: 'https://w.ibrase.com.br/webhook/buscarprojetosaluno',
+            buscarEspacos: 'https://w.ibrase.com.br/webhook/espacos-get?instituto=GASCTPNA&t=' + Date.now(),
+            buscarNucleos: 'https://w.ibrase.com.br/webhook/nucleos-get?instituto=GASCTPNA&t=' + Date.now(),
+            buscarModalidades: 'https://w.ibrase.com.br/webhook/buscarmodalidade',
+            buscarMatriculas: 'https://w.ibrase.com.br/webhook/matriculas-get?instituto=GASCTPNA&t=' + Date.now(),
+            buscarMatriculaId: 'https://w.ibrase.com.br/webhook/buscarmatricula',
+            enviarMatricula: 'https://w.ibrase.com.br/webhook/matricula',
+            consultarCEP: 'https://viacep.com.br/ws/'
+        };
+
+        // ── CATÁLOGO OFICIAL DE NÚCLEOS E ESPAÇOS GASCTPNA (INFALÍVEL - ZERO DOWNTIME) ──
+        const NUCLEOS_CATALOGO_OFICIAL = [
+            { "id": 39, "projeto_id": 5, "nome": "Centro", "modalidade_id": 16, "espaco_id": 21, "bairro": "Centro", "cidade": "São João da Barra", "ponto_referencia": "Ginásio Arlindo Aquino", "ativo": true },
+            { "id": 41, "projeto_id": 5, "nome": "Chatuba", "modalidade_id": 16, "espaco_id": 28, "bairro": "Chatuba", "cidade": "São João da Barra", "ponto_referencia": "CT Espartanos", "ativo": true },
+            { "id": 42, "projeto_id": 5, "nome": "KM 14 (Travessão)", "modalidade_id": 9, "espaco_id": 27, "bairro": "KM 14 (Travessão)", "cidade": "Campos dos Goytacazes", "ponto_referencia": "Praça João Pedro", "ativo": true },
+            { "id": 38, "projeto_id": 5, "nome": "Vila Nova", "modalidade_id": 16, "espaco_id": 24, "bairro": "Vila Nova", "cidade": "Conceição de Macabu", "ponto_referencia": "Academia Superação", "ativo": true },
+            { "id": 40, "projeto_id": 5, "nome": "Batelão (Barra Seca)", "modalidade_id": 9, "espaco_id": 23, "bairro": "Batelão (Barra Seca)", "cidade": "São Francisco de Itabapoana", "ponto_referencia": "Tavares Futebol Society", "ativo": true },
+            { "id": 61, "projeto_id": 5, "nome": "Parque São Caetano", "modalidade_id": 5, "espaco_id": 36, "bairro": "Parque São Caetano", "cidade": "Campos dos Goytacazes", "ponto_referencia": "Rua Tenente Amaro Barreto", "ativo": true },
+            { "id": 44, "projeto_id": 5, "nome": "Conselheiro Josino", "modalidade_id": 9, "espaco_id": 22, "bairro": "Conselheiro Josino", "cidade": "Campos dos Goytacazes", "ponto_referencia": "Campo do Quilombo", "ativo": true },
+            { "id": 37, "projeto_id": 5, "nome": "Saturnino Braga", "modalidade_id": 9, "espaco_id": 25, "bairro": "Saturnino Braga", "cidade": "Campos dos Goytacazes", "ponto_referencia": "Rodovia Dep. Paulo Albernaz", "ativo": true },
+            { "id": 60, "projeto_id": 4, "nome": "Goitacazes", "modalidade_id": 5, "espaco_id": 37, "bairro": "Goitacazes", "cidade": "Campos dos Goytacazes", "ponto_referencia": "Núcleo Goitacazes", "ativo": true },
+            { "id": 62, "projeto_id": 4, "nome": "Magalhães Bastos", "modalidade_id": 5, "espaco_id": 38, "bairro": "Magalhães Bastos", "cidade": "Rio de Janeiro", "ponto_referencia": "Praça Bruno Lisboa / Lona Cultural", "ativo": true },
+            { "id": 63, "projeto_id": 4, "nome": "Moquetá", "modalidade_id": 5, "espaco_id": 39, "bairro": "Moquetá", "cidade": "Nova Iguaçu", "ponto_referencia": "UFRRJ Campus Nova Iguaçu", "ativo": true },
+            { "id": 65, "projeto_id": 4, "nome": "Jardim Palmares", "modalidade_id": 9, "espaco_id": 41, "bairro": "Jardim Palmares", "cidade": "Nova Iguaçu", "ponto_referencia": "Rua da Mangueira", "ativo": true },
+            { "id": 64, "projeto_id": 4, "nome": "Vargem Pequena", "modalidade_id": 5, "espaco_id": 40, "bairro": "Vargem Pequena", "cidade": "Rio de Janeiro", "ponto_referencia": "Rua da Clínica da Família", "ativo": true },
+            { "id": 45, "projeto_id": 5, "nome": "Santa Cruz", "modalidade_id": 9, "espaco_id": 34, "bairro": "Santa Cruz", "cidade": "Campos dos Goytacazes", "ponto_referencia": "Campo União de Santa Cruz", "ativo": true },
+            { "id": 43, "projeto_id": 5, "nome": "Jóquei", "modalidade_id": 9, "espaco_id": 33, "bairro": "Jóquei", "cidade": "Campos dos Goytacazes", "ponto_referencia": "Av. Presidente Kennedy, 85", "ativo": true }
+        ];
+
+        const ESPACOS_CATALOGO_OFICIAL = [
+            { "id": 21, "nome": "Centro", "bairro": "Centro", "cidade": "São João da Barra", "uf": "RJ", "rua": "Rua João Patrício Delfim, 413", "ponto_referencia": "Ginásio Arlindo Aquino", "modalidade_id": 16 },
+            { "id": 22, "nome": "Conselheiro Josino", "bairro": "Conselheiro Josino", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Estrada do Quilombo", "ponto_referencia": "No Campo do Quilombo", "modalidade_id": 9 },
+            { "id": 23, "nome": "Batelão (Barra Seca)", "bairro": "Batelão (Barra Seca)", "cidade": "São Francisco de Itabapoana", "uf": "RJ", "rua": "Avenida Gabriel Paiva, 360", "ponto_referencia": "Tavares Futebol Society", "modalidade_id": 9 },
+            { "id": 24, "nome": "Vila Nova", "bairro": "Vila Nova", "cidade": "Conceição de Macabu", "uf": "RJ", "rua": "Rua Plácido Freire, 17", "ponto_referencia": "Nos fundos da academia Superação", "modalidade_id": 16 },
+            { "id": 25, "nome": "Saturnino Braga", "bairro": "Saturnino Braga", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Rodovia Deputado Paulo Albernaz", "ponto_referencia": "Ao lado da Paulinha Fashion", "modalidade_id": 9 },
+            { "id": 26, "nome": "SANTA CRUZ", "bairro": "Santa Cruz", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Avenida São Fidélis, 55", "ponto_referencia": "No Campo União de Santa Cruz", "modalidade_id": 9 },
+            { "id": 27, "nome": "KM 14 (Travessão)", "bairro": "KM 14 (Travessão)", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Rua Montes Verdes, 27", "ponto_referencia": "Na Praça João Pedro", "modalidade_id": 9 },
+            { "id": 28, "nome": "Chatuba", "bairro": "Chatuba", "cidade": "São João da Barra", "uf": "RJ", "rua": "Avenida Rotary, 625", "ponto_referencia": "Nos altos do CT Espartanos", "modalidade_id": 16 },
+            { "id": 29, "nome": "JOQUEI", "bairro": "Loteamento Sonho Dourado", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Av. Presidente Kennedy", "ponto_referencia": "Sonho Dourado", "modalidade_id": 9 },
+            { "id": 33, "nome": "Jóquei", "bairro": "Jóquei", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Avenida Presidente Kennedy, 85", "ponto_referencia": "Na escola de artes marciais FIGHT", "modalidade_id": 5 },
+            { "id": 34, "nome": "Santa Cruz II", "bairro": "Santa Cruz", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Avenida São Fidélis, 55", "ponto_referencia": "No Campo União de Santa Cruz", "modalidade_id": 9 },
+            { "id": 36, "nome": "Parque São Caetano", "bairro": "Parque São Caetano", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Rua Tenente Amaro Barreto", "ponto_referencia": "Ao lado da casa número 326", "modalidade_id": 5 },
+            { "id": 37, "nome": "Goitacazes", "bairro": "Goitacazes", "cidade": "Campos dos Goytacazes", "uf": "RJ", "rua": "Acelia, 2", "ponto_referencia": "Goitacazes", "modalidade_id": 5 },
+            { "id": 38, "nome": "Magalhães Bastos", "bairro": "Magalhães Bastos", "cidade": "Rio de Janeiro", "uf": "RJ", "rua": "Rua Tenente Pereira", "ponto_referencia": "Praça Bruno Lisboa / Lona Cultural", "modalidade_id": 5 },
+            { "id": 39, "nome": "Moquetá", "bairro": "Moquetá", "cidade": "Nova Iguaçu", "uf": "RJ", "rua": "Avenida Governador Roberto Silveira", "ponto_referencia": "UFRRJ Campus Nova Iguaçu", "modalidade_id": 5 },
+            { "id": 40, "nome": "Vargem Pequena", "bairro": "Vargem Pequena", "cidade": "Rio de Janeiro", "uf": "RJ", "rua": "Via H, 1", "ponto_referencia": "Rua da Clínica da Família", "modalidade_id": 5 },
+            { "id": 41, "nome": "Jardim Palmares", "bairro": "Jardim Palmares", "cidade": "Nova Iguaçu", "uf": "RJ", "rua": "Rua da Mangueira", "ponto_referencia": "Próximo ao Nº 326", "modalidade_id": 9 }
+        ];
+
+        // Cache global de dados — inicializado previamente com o catálogo oficial
+        let _cacheEspacos = [...ESPACOS_CATALOGO_OFICIAL];
+        let _cacheNucleos = [...NUCLEOS_CATALOGO_OFICIAL];
+        let _cacheModalidades = [];
+        let _promiseCaches = null;
+
+        let currentStudentData = null;
+        let currentProjectsList = [];
+        let currentMatriculasList = [];
+        let currentSelectedProject = null;
+        let currentFormStep = 1;
+        const totalFormSteps = 4;
+
+        // Dicionário padrão de modalidades (fallback seguro)
+        const MODALIDADES_FALLBACK = {
+            1: "Atletismo", 2: "Balé", 3: "Ginástica Rítmica", 4: "Judô", 5: "Jiu-Jitsu",
+            6: "Taekwondo", 7: "Karatê", 8: "Capoeira", 9: "Futebol de Campo", 10: "Futebol Society",
+            11: "Futsal", 12: "Basquetebol", 13: "Voleibol", 14: "Vôlei de Praia", 15: "Handebol",
+            16: "Treinamento Funcional", 17: "Pilates", 18: "Hidroginástica", 19: "Natação", 20: "Xadrez"
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+            setupCPFInput();
+            setupPhoneMask();
+            setupFormNavigation();
+            setupCEPAutoLookup();
+            setupSemNumero();
+            setupDocDropzone();
+            setupNascimentoListener();
+            // Dispara o pré-carregamento imediato
+            garantirCachesCarregados();
+        });
+
+        // ── Pré-carregamento Confiável de Caches ──
+        function garantirCachesCarregados() {
+            if (_promiseCaches) return _promiseCaches;
+
+            _promiseCaches = (async () => {
+                try {
+                    const [respN, respE, respM] = await Promise.all([
+                        fetch(API.buscarNucleos).then(r => r.json()).catch(() => null),
+                        fetch(API.buscarEspacos).then(r => r.json()).catch(() => null),
+                        fetch(API.buscarModalidades, { 
+                            method: 'POST', 
+                            headers: {'Content-Type': 'application/json'}, 
+                            body: JSON.stringify({ instituto: 'GASCTPNA' }) 
+                        }).then(r => r.json()).catch(() => null)
+                    ]);
+
+                    const nList = parseN8N(respN, 'nucleos');
+                    if (nList && nList.length > 0) {
+                        _cacheNucleos = nList;
+                    }
+                    
+                    const eList = parseN8N(respE, 'espacos');
+                    if (eList && eList.length > 0) {
+                        _cacheEspacos = eList;
+                    }
+                    
+                    // Tratamento especial para buscarmodalidade que retorna { projetos: [...] }
+                    let mods = [];
+                    if (respM) {
+                        if (Array.isArray(respM) && respM[0]?.projetos) mods = respM[0].projetos;
+                        else if (respM.projetos) mods = respM.projetos;
+                        else mods = parseN8N(respM, 'modalidades');
+                    }
+                    if (mods && mods.length > 0) {
+                        _cacheModalidades = mods;
+                    }
+
+                } catch(e) {
+                    console.warn('Falha no pré-carregamento dinâmico, mantendo catálogo oficial:', e);
+                }
+            })();
+
+            return _promiseCaches;
+        }
+
+        function parseN8N(raw, key) {
+            if (!raw) return [];
+            if (Array.isArray(raw)) {
+                if (raw.length > 0 && typeof raw[0] === 'object') {
+                    if (Array.isArray(raw[0][key])) return raw[0][key];
+                    if (Array.isArray(raw[0]['value'])) return raw[0]['value'];
+                    if (Array.isArray(raw[0]['data'])) return raw[0]['data'];
+                }
+                return raw;
+            }
+            if (typeof raw === 'object') {
+                if (Array.isArray(raw[key])) return raw[key];
+                if (Array.isArray(raw['value'])) return raw['value'];
+                if (Array.isArray(raw['data'])) return raw['data'];
+            }
+            return [];
+        }
+
+        // ── Máscara e Entrada de CPF ──
+        function setupCPFInput() {
+            const input = document.getElementById('inputCPF');
+            const btnClear = document.getElementById('btnClearCPF');
+            const btnConsultar = document.getElementById('btnConsultarCPF');
+            const respCpf = document.getElementById('mat_resp_cpf');
+
+            if (input) {
+                input.addEventListener('input', (e) => {
+                    let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})$/, '$1.$2.$3-$4');
+                    else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{0,3})$/, '$1.$2.$3');
+                    else if (v.length > 3) v = v.replace(/^(\d{3})(\d{0,3})$/, '$1.$2');
+                    e.target.value = v;
+
+                    if (btnClear) btnClear.style.display = v.length > 0 ? 'flex' : 'none';
+
+                    const raw = v.replace(/\D/g, '');
+                    if (raw.length === 11) {
+                        clearTimeout(input._timer);
+                        input._timer = setTimeout(() => executarConsultaCPF(raw), 250);
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const raw = input.value.replace(/\D/g, '');
+                        if (raw.length === 11) executarConsultaCPF(raw);
+                    }
+                });
+            }
+
+            if (respCpf) {
+                respCpf.setAttribute('maxlength', '14');
+                respCpf.addEventListener('input', (e) => {
+                    let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{0,2})$/, '$1.$2.$3-$4');
+                    else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{0,3})$/, '$1.$2.$3');
+                    else if (v.length > 3) v = v.replace(/^(\d{3})(\d{0,3})$/, '$1.$2');
+                    e.target.value = v;
+
+                    const raw = v.replace(/\D/g, '');
+                    const statusEl = document.getElementById('respCpfStatus');
+                    if (raw.length === 11) {
+                        clearTimeout(respCpf._timer);
+                        respCpf._timer = setTimeout(() => consultarCPFResponsavel(raw), 300);
+                    } else if (statusEl) {
+                        statusEl.style.display = 'none';
+                        statusEl.textContent = '';
+                    }
+                });
+            }
+
+            if (btnClear) {
+                btnClear.addEventListener('click', () => {
+                    if (input) {
+                        input.value = '';
+                        input.focus();
+                    }
+                    btnClear.style.display = 'none';
+                    esconderFeedback();
+                });
+            }
+
+            if (btnConsultar) {
+                btnConsultar.addEventListener('click', () => {
+                    if (!input) return;
+                    const raw = input.value.replace(/\D/g, '');
+                    if (raw.length !== 11) {
+                        mostrarFeedback('error', 'Digite um CPF válido com 11 dígitos.');
+                        input.focus();
+                        return;
+                    }
+                    executarConsultaCPF(raw);
+                });
+            }
+
+            const btnTrocar = document.getElementById('btnTrocarCPF');
+            if (btnTrocar) btnTrocar.addEventListener('click', resetarParaConsulta);
+            const btnVoltar = document.getElementById('btnVoltarInicioSucesso');
+            if (btnVoltar) btnVoltar.addEventListener('click', resetarParaConsulta);
+        }
+
+        // ── Consulta Automática do CPF do Responsável Legal ──
+        async function consultarCPFResponsavel(cpfNum) {
+            const statusEl = document.getElementById('respCpfStatus');
+            const nomeInput = document.getElementById('mat_resp_nome');
+            if (statusEl) {
+                statusEl.style.display = 'block';
+                statusEl.style.color = 'var(--c-grafite)';
+                statusEl.textContent = 'Buscando cadastro do responsável...';
+            }
+
+            try {
+                const url = `${API.consultarCPF}?cpf=${encodeURIComponent(cpfNum)}&instituicao=GASCTPNA&instituto=GASCTPNA`;
+                const resp = await fetch(url);
+                const json = await resp.json();
+                const item = Array.isArray(json) ? json[0] : json;
+                const dados = item?.result || item?.dados || item;
+                const nomeEncontrado = dados?.nome_da_pf || dados?.nome || dados?.aluno_nome;
+
+                if (nomeEncontrado && nomeInput) {
+                    nomeInput.value = nomeEncontrado;
+                    if (statusEl) {
+                        statusEl.style.color = 'var(--c-verde-escuro)';
+                        statusEl.textContent = `✓ Responsável identificado: ${nomeEncontrado}`;
+                    }
+                } else if (statusEl) {
+                    statusEl.style.color = 'var(--c-marrom-verm)';
+                    statusEl.textContent = 'CPF não localizado previamente. Preencha o nome completo.';
+                    if (nomeInput && !nomeInput.value) nomeInput.focus();
+                }
+            } catch(e) {
+                console.warn('Erro ao consultar CPF do responsável:', e);
+                if (statusEl) {
+                    statusEl.style.color = 'var(--c-grafite)';
+                    statusEl.textContent = 'Consulta automática indisponível. Preencha o nome.';
+                }
+            }
+        }
+
+        // ── Máscara Dinâmica de Telefone / WhatsApp (Impede Números Infinitos) ──
+        function setupPhoneMask() {
+            const phoneInputs = document.querySelectorAll('#mat_whatsapp, input[name="whatsapp"], input[name="telefone"], input[name="resp_whatsapp"]');
+            phoneInputs.forEach(input => {
+                input.setAttribute('maxlength', '15');
+                input.addEventListener('input', (e) => {
+                    let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    if (v.length <= 2) {
+                        e.target.value = v.length > 0 ? `(${v}` : '';
+                    } else if (v.length <= 6) {
+                        e.target.value = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+                    } else if (v.length <= 10) {
+                        e.target.value = `(${v.slice(0, 2)}) ${v.slice(2, 6)}-${v.slice(6)}`;
+                    } else {
+                        e.target.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7, 11)}`;
+                    }
+                });
+            });
+        }
+
+        function mostrarFeedback(tipo, texto) {
+            const box = document.getElementById('cpfFeedbackBox');
+            const txt = document.getElementById('feedbackText');
+            const icon = document.getElementById('feedbackIcon');
+
+            box.className = 'feedback-banner feedback-' + tipo;
+            box.style.display = 'flex';
+            txt.textContent = texto;
+
+            if (tipo === 'loading') {
+                icon.setAttribute('data-lucide', 'loader-2');
+                icon.classList.add('spin');
+            } else if (tipo === 'success') {
+                icon.setAttribute('data-lucide', 'check-circle');
+                icon.classList.remove('spin');
+            } else {
+                icon.setAttribute('data-lucide', 'alert-circle');
+                icon.classList.remove('spin');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function esconderFeedback() {
+            document.getElementById('cpfFeedbackBox').style.display = 'none';
+        }
+
+        // ── Executar Consulta do CPF e Matrículas Ativas ──
+        async function executarConsultaCPF(cpfNum) {
+            mostrarFeedback('loading', 'Consultando CPF e matrículas ativas...');
+            document.getElementById('btnConsultarCPF').disabled = true;
+
+            try {
+                // 1. Busca cadastro de pessoa física / CPF
+                const url = `${API.consultarCPF}?cpf=${encodeURIComponent(cpfNum)}&instituicao=GASCTPNA&instituto=GASCTPNA`;
+                let dadosAluno = null;
+
+                try {
+                    const resp = await fetch(url);
+                    const json = await resp.json();
+                    const item = Array.isArray(json) ? json[0] : json;
+                    dadosAluno = item?.result || item?.dados || item;
+                    if (item?.projetos_inscritos_ids) dadosAluno.projetos_inscritos_ids = item.projetos_inscritos_ids;
+                    if (item?.dados_recentes) dadosAluno.dados_recentes = item.dados_recentes;
+                } catch(e) {
+                    console.warn('Consulta do aluno via webhook falhou:', e);
+                }
+
+                // 2. Busca todas as matrículas ativas no instituto GASCTPNA
+                let matriculasEncontradas = [];
+                try {
+                    const respM = await fetch(API.buscarMatriculas);
+                    const dataM = await respM.json();
+                    const lista = Array.isArray(dataM) ? dataM : (dataM?.data || []);
+                    matriculasEncontradas = lista.filter(m => {
+                        const mCpf = String(m.aluno_cpf || m.cpf || '').replace(/\D/g, '');
+                        return mCpf === cpfNum;
+                    });
+                } catch(e) {
+                    console.warn('Histórico de matrículas indisponível:', e);
+                }
+
+                currentMatriculasList = matriculasEncontradas;
+
+                const temNomeBanco = dadosAluno?.nome_da_pf || dadosAluno?.nome || dadosAluno?.aluno_nome || (matriculasEncontradas[0]?.aluno_nome);
+                const nomeAluno = temNomeBanco || 'Novo Participante';
+                const nascAluno = dadosAluno?.data_nascimento || dadosAluno?.nascimento || (matriculasEncontradas[0]?.data_nascimento) || '';
+                const idadeCalculada = nascAluno ? calcularIdade(nascAluno) : null;
+                const idadeAluno = (idadeCalculada !== null && idadeCalculada >= 0 && idadeCalculada <= 120) ? idadeCalculada : null;
+
+                currentStudentData = {
+                    cpf: cpfNum,
+                    nome: nomeAluno,
+                    data_nascimento: nascAluno,
+                    idade: idadeAluno,
+                    dados_recentes: dadosAluno?.dados_recentes || {},
+                    projetos_inscritos_ids: dadosAluno?.projetos_inscritos_ids || matriculasEncontradas.map(m => m.projeto_id).filter(Boolean)
+                };
+
+                if (temNomeBanco) {
+                    mostrarFeedback('success', `Identificado: ${nomeAluno}`);
+                } else {
+                    mostrarFeedback('success', 'CPF verificado! Escolha um projeto abaixo para iniciar a inscrição.');
+                }
+                setTimeout(() => apresentarPainelDoAluno(), 250);
+
+            } catch(err) {
+                console.error('Erro na consulta:', err);
+                mostrarFeedback('error', 'Falha ao consultar CPF. Tente novamente.');
+            } finally {
+                document.getElementById('btnConsultarCPF').disabled = false;
+            }
+        }
+
+        // ── Apresentar Painel do Aluno ──
+        async function apresentarPainelDoAluno() {
+            document.getElementById('cardConsultaCPF').style.display = 'none';
+            const hub = document.getElementById('participantHub');
+            hub.style.display = 'flex';
+
+            const nome = currentStudentData.nome;
+            document.getElementById('studentDisplayName').textContent = nome;
+            const txtIdade = (currentStudentData.idade !== null && currentStudentData.idade !== undefined)
+                ? `${currentStudentData.idade} anos`
+                : 'Novo Cadastro';
+            document.getElementById('studentDisplayCPF').textContent = `CPF: ${formatarCPF(currentStudentData.cpf)} • ${txtIdade}`;
+
+            // 1. Carrega projetos primeiro (preenche currentProjectsList para resolver nomes)
+            await carregarProjetosParaAluno(currentStudentData.idade);
+
+            // 2. Renderiza o histórico (agora com currentProjectsList já preenchido)
+            renderizarMatriculasExistentes();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ── Resolução Completa de Núcleo, Modalidade e Projeto (Elimina "A Confirmar") ──
+        function resolverDadosMatricula(item) {
+            if (!item) return { nucNome: 'Núcleo Central', modNome: 'Futebol de Campo', projNome: 'GASCTPNA', modId: 9 };
+            
+            const allNucleos = [...(_cacheNucleos || []), ...(NUCLEOS_CATALOGO_OFICIAL || [])];
+            
+            // 1. Procura núcleo correspondente por ID ou Nome/Bairro
+            const nucleoEncontrado = allNucleos.find(n => 
+                (item.nucleo_id && String(n.id) === String(item.nucleo_id)) ||
+                (item.nucleo && n.nome && n.nome.toLowerCase() === String(item.nucleo).toLowerCase()) ||
+                (item.nucleo_nome && n.nome && n.nome.toLowerCase() === String(item.nucleo_nome).toLowerCase()) ||
+                (item.bairro && n.bairro && n.bairro.toLowerCase() === String(item.bairro).toLowerCase())
+            );
+
+            const nucNome = item.nucleo_nome || item.nucleo || (nucleoEncontrado ? nucleoEncontrado.nome : null) || (item.bairro || 'Núcleo Central');
+
+            // 2. Determina modalidade_id e nome (com fallback inteligente)
+            const modId = item.modalidade_id || (nucleoEncontrado ? nucleoEncontrado.modalidade_id : null);
+            
+            let modNome = item.modalidade_nome || item.modalidade;
+            if ((!modNome || modNome.toLowerCase().includes('confirmar')) && modId) {
+                if (_cacheModalidades && _cacheModalidades.length > 0) {
+                    const mFound = _cacheModalidades.find(m => String(m.id) === String(modId));
+                    if (mFound) modNome = mFound.nome || mFound.title;
+                }
+                if (!modNome || modNome.toLowerCase().includes('confirmar')) {
+                    modNome = MODALIDADES_FALLBACK[modId] || MODALIDADES_FALLBACK[String(modId)];
+                }
+            }
+            if ((!modNome || modNome.toLowerCase().includes('confirmar')) && nucleoEncontrado && nucleoEncontrado.modalidade_id) {
+                modNome = MODALIDADES_FALLBACK[nucleoEncontrado.modalidade_id];
+            }
+            if (!modNome || modNome.toLowerCase().includes('confirmar')) {
+                modNome = 'Futebol de Campo';
+            }
+
+            // 3. Determina projeto
+            let projNome = item.projeto_nome || item.projeto;
+            if (!projNome) {
+                const pId = item.projeto_id || (nucleoEncontrado ? nucleoEncontrado.projeto_id : null);
+                if (pId && currentProjectsList && currentProjectsList.length > 0) {
+                    const pFound = currentProjectsList.find(p => String(p.id) === String(pId));
+                    if (pFound) projNome = pFound.nome || pFound.title;
+                }
+                if (!projNome && pId) {
+                    projNome = (pId === 5 ? 'IMPETO' : (pId === 4 ? 'GASCTPNA' : 'Projeto Oficial GASCTPNA'));
+                }
+            }
+            if (!projNome) projNome = 'GASCTPNA';
+
+            return { nucNome, modNome, projNome, modId };
+        }
+
+        function renderizarMatriculasExistentes() {
+            const section = document.getElementById('sectionHistorico');
+            const container = document.getElementById('historyListContainer');
+            if (!section || !container) return;
+
+            if (!currentMatriculasList || currentMatriculasList.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            container.innerHTML = '';
+
+            currentMatriculasList.forEach(item => {
+                const matId = item.id || item.matricula || '---';
+
+                const resolvido = resolverDadosMatricula(item);
+                const projNome = resolvido.projNome;
+                const nucNome = resolvido.nucNome;
+                const modNome = resolvido.modNome;
+
+                // Turno: NUNCA usar turma (A/B/C/D é faixa etária, não horário)
+                const turno = item.turno && !['A','B','C','D'].includes(item.turno)
+                    ? item.turno
+                    : 'A definir';
+
+                const card = document.createElement('div');
+                card.className = 'history-card-item';
+                card.innerHTML = `
+                    <div class="history-item-top">
+                        <div>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--c-marrom-claro); text-transform: uppercase;">Inscrição Ativa #${matId}</span>
+                            <div class="history-proj-title">${projNome}</div>
+                        </div>
+                        <span class="history-badge-active">Confirmada</span>
+                    </div>
+                    <div class="history-details-grid">
+                        <span><strong>Núcleo:</strong> ${nucNome}</span>
+                        <span><strong>Modalidade:</strong> ${modNome}</span>
+                        <span><strong>Turno:</strong> ${turno}</span>
+                        <span><strong>Instituto:</strong> GASCTPNA</span>
+                    </div>
+                    <button type="button" class="btn-pdf-print-clean" onclick="emitirFichaOficialPDF('${matId}')">
+                        <i data-lucide="printer" style="width: 15px; height: 15px;"></i>
+                        <span>Baixar Ficha Oficial (PDF)</span>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ── Carregar e Exibir Projetos Abertos ──
+        async function carregarProjetosParaAluno(idade) {
+            const container = document.getElementById('projectsGridContainer');
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 24px; color: var(--text-muted);">
+                    <i data-lucide="loader-2" class="spin" style="width: 24px; height: 24px; margin: 0 auto 8px; color: var(--c-verde);"></i>
+                    <p style="font-size: 13.5px;">Buscando projetos oficiais disponíveis...</p>
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+
+            try {
+                const resp = await fetch(API.buscarProjetos, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ instituto: 'GASCTPNA', instituicao: 'GASCTPNA' })
+                });
+                const data = await resp.json();
+                const projetos = Array.isArray(data) ? (data[0]?.projetos || data) : (data?.projetos || []);
+                currentProjectsList = projetos;
+
+                if (!projetos || projetos.length === 0) {
+                    container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--c-marrom-verm); font-weight: 700;">Nenhum projeto com inscrições abertas no momento.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                // IDs de projetos já inscritos (por matrícula ativa)
+                const idsInscritos = currentStudentData?.projetos_inscritos_ids || [];
+                // Também verifica diretamente na lista de matrículas carregadas
+                const projetosComMatricula = new Set(
+                    (currentMatriculasList || []).map(m => String(m.projeto_id)).filter(Boolean)
+                );
+
+                projetos.forEach(p => {
+                    if (p.ativo === false || p.ativo === 0) return;
+
+                    const min = p.idade_min !== null && p.idade_min !== undefined ? parseInt(p.idade_min) : 6;
+                    const max = p.idade_max !== null && p.idade_max !== undefined ? parseInt(p.idade_max) : 18;
+                    const naFaixa = (idade === null || idade === undefined) ? true : (idade >= min && idade <= max);
+                    const jaInscrito = idsInscritos.map(Number).includes(parseInt(p.id))
+                        || projetosComMatricula.has(String(p.id));
+
+                    const card = document.createElement('div');
+                    card.className = 'project-tile' + (!naFaixa || jaInscrito ? ' disabled' : '');
+
+                    let statusBadge = `<span class="badge-age-tag">Faixa: ${min} a ${max} anos</span>`;
+                    if (jaInscrito) {
+                        statusBadge = `<span class="badge-already-enrolled"><i data-lucide="check" style="width: 12px; height: 12px;"></i> Já Inscrito</span>`;
+                    } else if (!naFaixa) {
+                        statusBadge = `<span class="badge-age-tag" style="color: var(--c-marrom-verm); border-color: rgba(137,57,6,0.2);">Idade fora da faixa</span>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="project-tile-top">
+                            <div class="project-badge-row">
+                                ${statusBadge}
+                                <span style="font-size: 11px; font-weight: 800; color: var(--c-verde-escuro);">GASCTPNA</span>
+                            </div>
+                            <h4 class="project-name-clean">${p.nome}</h4>
+                            <p class="project-desc-clean">${p.descricao || 'Atividades esportivas, disciplina e desenvolvimento de cidadania.'}</p>
+                        </div>
+                        <button 
+                            type="button" 
+                            class="btn-choose-project" 
+                            ${!naFaixa || jaInscrito ? 'disabled' : ''}
+                            onclick="iniciarMatriculaNoProjeto('${p.id}', '${escapeQuotes(p.nome)}')"
+                        >
+                            <span>${jaInscrito ? 'Inscrição Já Realizada' : 'Inscrever-se neste Projeto'}</span>
+                            <i data-lucide="arrow-right" style="width: 15px; height: 15px;"></i>
+                        </button>
+                    `;
+                    container.appendChild(card);
+                });
+
+                if (window.lucide) lucide.createIcons();
+
+            } catch(e) {
+                console.error('Erro ao buscar projetos:', e);
+                container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--c-marrom-verm); font-weight: 700;">Erro ao consultar projetos. Tente novamente mais tarde.</div>';
+            }
+        }
+
+        // ── Iniciar Matrícula em Projeto Específico ──
+        async function iniciarMatriculaNoProjeto(projId, projNome) {
+            const projObj = (currentProjectsList || []).find(p => String(p.id) === String(projId));
+            currentSelectedProject = { 
+                id: projId, 
+                nome: projNome,
+                idade_min: (projObj && projObj.idade_min !== null && projObj.idade_min !== undefined) ? parseInt(projObj.idade_min) : 6,
+                idade_max: (projObj && projObj.idade_max !== null && projObj.idade_max !== undefined) ? parseInt(projObj.idade_max) : 18
+            };
+
+            // Oculta hub e exibe formulário
+            document.getElementById('participantHub').style.display = 'none';
+            const wrap = document.getElementById('formEnrollmentWrapper');
+            wrap.style.display = 'block';
+
+            document.getElementById('formCurrentProjBadge').textContent = projNome;
+            document.getElementById('hidden_projeto_id').value = projId;
+            document.getElementById('hidden_projeto_nome').value = projNome;
+
+            // Reseta perguntas complementares da modalidade
+            atualizarPerguntasExtrasDaModalidade(null, null);
+
+            // ══════════════════════════════════════════════════
+            // PRÉ-PREENCHIMENTO COMPLETO (dados do último cadastro)
+            // ══════════════════════════════════════════════════
+            const rec = currentStudentData.dados_recentes || {};
+            // Usa a matrícula mais recente como fonte principal
+            const ultimaMat = currentMatriculasList && currentMatriculasList.length > 0
+                ? currentMatriculasList[currentMatriculasList.length - 1]
+                : {};
+
+            // Função auxiliar de preenchimento seguro
+            function preencher(id, val) {
+                const el = document.getElementById(id);
+                if (el && val) el.value = val;
+            }
+            function preencherSelect(id, val) {
+                const el = document.getElementById(id);
+                if (el && val) {
+                    const opt = Array.from(el.options).find(o => o.value === val || o.textContent.trim() === val);
+                    if (opt) el.value = opt.value;
+                }
+            }
+
+            // === Dados básicos do aluno ===
+            preencher('mat_nome', currentStudentData.nome || rec.nome || ultimaMat.aluno_nome);
+            preencher('mat_cpf', formatarCPF(currentStudentData.cpf));
+            if (currentStudentData.data_nascimento || ultimaMat.data_nascimento) {
+                preencher('mat_nasc', formatarDataInput(currentStudentData.data_nascimento || ultimaMat.data_nascimento));
+            }
+            preencher('mat_nome_social', rec.nome_social || ultimaMat.nome_social);
+            preencherSelect('mat_sexo', rec.sexo || ultimaMat.sexo);
+            preencherSelect('mat_raca', rec.raca || ultimaMat.raca);
+            preencher('mat_naturalidade', rec.naturalidade || ultimaMat.naturalidade);
+
+            // === Contato ===
+            preencher('mat_whatsapp', formatarTelefoneValor(rec.whatsapp || ultimaMat.whatsapp));
+            const emailCarregado = rec.email || ultimaMat.email || '';
+            preencher('mat_email', emailCarregado);
+            preencher('mat_email_confirm', emailCarregado);
+
+            // === Endereço ===
+            preencher('mat_cep', rec.cep || ultimaMat.cep);
+            preencher('mat_endereco', rec.endereco || ultimaMat.endereco);
+            const numCarregado = rec.numero || ultimaMat.numero || '';
+            preencher('mat_numero', numCarregado);
+            atualizarEstadoSemNumero(numCarregado);
+            preencher('mat_complemento', rec.complemento || ultimaMat.complemento);
+            preencher('mat_bairro', rec.bairro || ultimaMat.bairro);
+            preencher('mat_cidade', rec.cidade || ultimaMat.cidade);
+            preencher('mat_uf', rec.uf || ultimaMat.uf);
+
+            // === Dados físicos ===
+            preencher('mat_altura', rec.altura || ultimaMat.altura);
+            preencher('mat_peso', rec.peso || ultimaMat.peso);
+
+            // === Socioeconômico ===
+            preencherSelect('mat_escolaridade', rec.escolaridade || ultimaMat.escolaridade);
+
+            // === Fardamento ===
+            preencherSelect('mat_camisa', ultimaMat.tamanho_camisa);
+            preencherSelect('mat_bermuda', ultimaMat.tamanho_calca);
+            preencherSelect('mat_calcado', ultimaMat.tamanho_calcado);
+
+            // === Saúde (pré-preenche só os detalhes; os toggles ficam default Não) ===
+            if (ultimaMat.uso_medicacao_detalhes) preencher('mat_uso_medicacao_detalhe', ultimaMat.uso_medicacao_detalhes);
+            if (ultimaMat.possui_alergias_detalhes) preencher('mat_alergias_detalhe', ultimaMat.possui_alergias_detalhes);
+
+            // === Responsável (se menor de 18 anos) ===
+            const rawNasc = currentStudentData.data_nascimento || ultimaMat.data_nascimento || document.getElementById('mat_nasc')?.value;
+            const idadeAtual = rawNasc ? calcularIdade(rawNasc) : currentStudentData.idade;
+            const isMenor = (idadeAtual !== null && idadeAtual !== undefined) ? (idadeAtual < 18) : false;
+            const blocoResp = document.getElementById('blocoResponsavel');
+            blocoResp.style.display = isMenor ? 'block' : 'none';
+            document.getElementById('mat_resp_cpf').required = isMenor;
+            document.getElementById('mat_resp_nome').required = isMenor;
+            if (isMenor) {
+                preencher('mat_resp_cpf', formatarCPF(ultimaMat.resp_cpf || ''));
+                preencher('mat_resp_nome', ultimaMat.resp_nome);
+                preencher('mat_resp_whatsapp', ultimaMat.resp_whatsapp);
+            }
+
+            // Carrega as Cidades e os Núcleos com Await Garantido
+            await carregarCidadesDoProjeto(projId);
+
+            irParaPasso(1);
+            window.scrollTo({ top: 40, behavior: 'smooth' });
+        }
+
+        // ── LÓGICA INFALÍVEL DE CIDADE -> NÚCLEOS (Bairro + Modalidade em Quadradinhos) ──
+        async function carregarCidadesDoProjeto(projId) {
+            const selectCid = document.getElementById('select_cidade_filtro');
+            const container = document.getElementById('nucleosCardsContainer');
+
+            selectCid.innerHTML = '<option value="">Carregando cidades disponíveis…</option>';
+            container.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center;"><i data-lucide="loader-2" class="spin" style="width: 20px; height: 20px; margin-bottom: 6px; color: var(--c-verde);"></i><p>Carregando núcleos oficiais...</p></div>';
+            if (window.lucide) lucide.createIcons();
+
+            // Garante o carregamento dos caches antes de filtrar
+            await garantirCachesCarregados();
+
+            const nucleos = (_cacheNucleos && _cacheNucleos.length > 0) ? _cacheNucleos : [...NUCLEOS_CATALOGO_OFICIAL];
+            const espacos = (_cacheEspacos && _cacheEspacos.length > 0) ? _cacheEspacos : [...ESPACOS_CATALOGO_OFICIAL];
+
+            function resolverCidadeDoNucleo(n) {
+                const esp = espacos.find(e => 
+                    (n.espaco_id && e.id == n.espaco_id) || 
+                    (n.bairro_id && e.id == n.bairro_id) || 
+                    (n.nome && e.nome && n.nome.trim().toLowerCase() === e.nome.trim().toLowerCase())
+                );
+                return (esp?.cidade && String(esp.cidade).trim()) || (n.cidade && String(n.cidade).trim()) || "Campos dos Goytacazes";
+            }
+
+            // Filtra os núcleos pertencentes ao projeto
+            const pIdNum = parseInt(projId);
+            let nucleosDoProj = nucleos.filter(n => !pIdNum || parseInt(n.projeto_id) === pIdNum);
+
+            // Se porventura a lista estiver vazia por filtro rígido, traz todos os núcleos de apoio da instituição
+            if (nucleosDoProj.length === 0) {
+                nucleosDoProj = nucleos;
+            }
+
+            // Coleta cidades únicas de forma limpa
+            const cidadesSet = new Set();
+            nucleosDoProj.forEach(n => {
+                const c = resolverCidadeDoNucleo(n);
+                if (c) cidadesSet.add(c);
+            });
+
+            const cidadesArr = Array.from(cidadesSet);
+            if (cidadesArr.length === 0) cidadesArr.push("Campos dos Goytacazes");
+
+            // Ordena colocando Campos dos Goytacazes primeiro se existir
+            cidadesArr.sort((a, b) => {
+                if (a.toLowerCase().includes('campos')) return -1;
+                if (b.toLowerCase().includes('campos')) return 1;
+                return a.localeCompare(b);
+            });
+
+            selectCid.innerHTML = '<option value="">Selecione a cidade do treino…</option>';
+            cidadesArr.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                selectCid.appendChild(opt);
+            });
+
+            // Se houver apenas 1 cidade ou se o aluno for de Campos, seleciona automaticamente
+            if (cidadesArr.length === 1) {
+                selectCid.value = cidadesArr[0];
+                renderizarQuadradinhosNucleos(cidadesArr[0], projId);
+            } else {
+                // Seleciona Campos dos Goytacazes como padrão se existir para este projeto
+                const campos = cidadesArr.find(c => c.toLowerCase().includes('campos'));
+                if (campos) {
+                    selectCid.value = campos;
+                    renderizarQuadradinhosNucleos(campos, projId);
+                } else {
+                    selectCid.value = cidadesArr[0];
+                    renderizarQuadradinhosNucleos(cidadesArr[0], projId);
+                }
+            }
+
+            selectCid.onchange = () => {
+                renderizarQuadradinhosNucleos(selectCid.value, projId);
+            };
+        }
+
+        function renderizarQuadradinhosNucleos(cidadeEscolhida, projId) {
+            const container = document.getElementById('nucleosCardsContainer');
+            if (!cidadeEscolhida) {
+                container.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">Selecione a cidade acima para visualizar os núcleos disponíveis.</div>';
+                return;
+            }
+
+            const nucleos = (_cacheNucleos && _cacheNucleos.length > 0) ? _cacheNucleos : [...NUCLEOS_CATALOGO_OFICIAL];
+            const espacos = (_cacheEspacos && _cacheEspacos.length > 0) ? _cacheEspacos : [...ESPACOS_CATALOGO_OFICIAL];
+            const modalidades = (_cacheModalidades && _cacheModalidades.length > 0) ? _cacheModalidades : [];
+
+            const modMap = {};
+            modalidades.forEach(m => { if (m.id && m.nome) modMap[m.id] = m.nome; });
+
+            function resolverEspaco(n) {
+                return espacos.find(e => 
+                    (n.espaco_id && String(e.id) === String(n.espaco_id)) || 
+                    (n.bairro_id && String(e.id) === String(n.bairro_id)) || 
+                    (n.nome && e.nome && n.nome.trim().toLowerCase() === e.nome.trim().toLowerCase())
+                );
+            }
+
+            function resolverCidade(n) {
+                const esp = resolverEspaco(n);
+                return (esp && esp.cidade && String(esp.cidade).trim()) || (n.cidade && String(n.cidade).trim()) || "Campos dos Goytacazes";
+            }
+
+            const pIdNum = parseInt(projId);
+
+            // NÍVEL 1: Filtra núcleos por projeto E pela cidade selecionada
+            let filtrados = nucleos.filter(n => {
+                const matchProj = (!pIdNum || parseInt(n.projeto_id) === pIdNum);
+                const cid = resolverCidade(n);
+                const matchCid = String(cid).trim().toLowerCase() === String(cidadeEscolhida).trim().toLowerCase();
+                return matchProj && matchCid;
+            });
+
+            // NÍVEL 2 (Prioridade Cidade): Se este projeto específico não tiver núcleos próprios nesta cidade,
+            // traz TODOS os núcleos ativos do instituto nesta cidade para o aluno poder se inscrever!
+            if (filtrados.length === 0) {
+                filtrados = nucleos.filter(n => {
+                    const cid = resolverCidade(n);
+                    return String(cid).trim().toLowerCase() === String(cidadeEscolhida).trim().toLowerCase();
+                });
+            }
+
+            // NÍVEL 3 (Fallback Projeto): Se ainda não houver núcleos nesta cidade, traz os núcleos deste projeto em outras cidades
+            if (filtrados.length === 0) {
+                filtrados = nucleos.filter(n => (!pIdNum || parseInt(n.projeto_id) === pIdNum));
+            }
+
+            // NÍVEL 4 (Fallback Instituto): Mostra todos os núcleos do instituto
+            if (filtrados.length === 0) {
+                filtrados = nucleos;
+            }
+
+            // NÍVEL 5 (Garantia Absoluta): Se mesmo assim estiver vazio, injeta o catálogo oficial completo
+            if (filtrados.length === 0) {
+                filtrados = [...NUCLEOS_CATALOGO_OFICIAL];
+            }
+
+            container.innerHTML = '';
+            filtrados.forEach((n, idx) => {
+                const esp = resolverEspaco(n);
+                const bairroNome = (esp?.bairro && esp.bairro !== 'temp') ? esp.bairro : (n.bairro && n.bairro !== 'temp' ? n.bairro : (esp?.nome || n.nome || 'Núcleo Central'));
+                const modId = n.modalidade_id || esp?.modalidade_id;
+                const modNome = n.modalidade_nome || modMap[modId] || MODALIDADES_FALLBACK[modId] || 'Futebol / Esportes';
+                const refLocal = n.ponto_referencia || esp?.ponto_referencia || esp?.endereco || esp?.rua || 'Núcleo Oficial GASCTPNA';
+
+                const card = document.createElement('div');
+                card.className = 'nucleo-square-tile';
+                card.setAttribute('data-id', n.id);
+                card.innerHTML = `
+                    <div class="tile-check-pill">✓</div>
+                    <span class="tile-mod-badge">${modNome}</span>
+                    <div class="tile-bairro-title">${bairroNome}</div>
+                    <div class="tile-ref-info">
+                        <i data-lucide="map-pin" style="width: 12px; height: 12px; color: var(--c-marrom-claro); flex-shrink: 0;"></i>
+                        <span>${refLocal}</span>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.nucleo-square-tile').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+
+                    // Armazena valores nos campos ocultos
+                    document.getElementById('hidden_nucleo_id').value = n.id;
+                    document.getElementById('hidden_nucleo_nome').value = n.nome || bairroNome;
+                    if (document.getElementById('hidden_modalidade_id')) {
+                        document.getElementById('hidden_modalidade_id').value = n.modalidade_id || '';
+                    }
+                    document.getElementById('hidden_modalidade_nome').value = modNome;
+                    document.getElementById('hidden_bairro_escolhido').value = bairroNome;
+
+                    // Renderiza perguntas adicionais configuradas para a modalidade/projeto
+                    atualizarPerguntasExtrasDaModalidade(n.modalidade_id, modNome);
+                });
+
+                // Auto-seleciona o primeiro núcleo se houver apenas 1
+                if (filtrados.length === 1 && idx === 0) {
+                    setTimeout(() => card.click(), 40);
+                }
+
+                container.appendChild(card);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ── Configuração das Pílulas de Saúde Sim / Não ──
+        function setHealthOption(qId, val) {
+            const box = document.querySelector(`.health-question-box[data-q="${qId}"]`);
+            if (!box) return;
+
+            const btns = box.querySelectorAll('.pill-btn-yn');
+            btns.forEach(b => {
+                b.classList.remove('active-nao', 'active-sim');
+                if (b.textContent.trim() === val) {
+                    b.classList.add(val === 'Sim' ? 'active-sim' : 'active-nao');
+                }
+            });
+
+            const hiddenField = box.querySelector('input[type="hidden"]');
+            if (hiddenField) hiddenField.value = val;
+
+            const detailsWrap = document.getElementById('details_' + qId);
+            if (detailsWrap) {
+                detailsWrap.style.display = (val === 'Sim') ? 'block' : 'none';
+                const input = detailsWrap.querySelector('input:not([type="file"])');
+                if (input && val === 'Sim') setTimeout(() => input.focus(), 60);
+            }
+        }
+
+        // ── Navegação entre Etapas do Formulário ──
+        function setupFormNavigation() {
+            const btnPrev = document.getElementById('btnPrevStep');
+            const btnNext = document.getElementById('btnNextStep');
+            const form = document.getElementById('formMatriculaGASCTPNA');
+
+            btnPrev.addEventListener('click', () => {
+                if (currentFormStep > 1) {
+                    irParaPasso(currentFormStep - 1);
+                }
+            });
+
+            btnNext.addEventListener('click', () => {
+                if (validarPassoAtual(currentFormStep)) {
+                    irParaPasso(currentFormStep + 1);
+                }
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                for (let s = 1; s <= totalFormSteps; s++) {
+                    if (!validarPassoAtual(s)) {
+                        irParaPasso(s);
+                        return;
+                    }
+                }
+
+                const btnSubmit = document.getElementById('btnSubmitEnroll');
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<i data-lucide="loader-2" class="spin" style="width:18px;height:18px;"></i> Enviando Matrícula...';
+                if (window.lucide) lucide.createIcons();
+
+                const formData = new FormData(form);
+                const payload = Object.fromEntries(formData.entries());
+
+                // Enriquecimento do payload institucional
+                payload.instituto = 'GASCTPNA';
+                payload.instituicao = 'GASCTPNA';
+                payload.aluno_nome = payload.nome;
+                payload.aluno_cpf = payload.cpf.replace(/\D/g, '');
+                payload.cpf = payload.aluno_cpf;
+                payload.origem = 'portal_matricula_minimalista';
+                payload.timestamp = new Date().toISOString();
+                delete payload.email_confirm;
+
+                // Coleta de respostas das perguntas complementares/extras
+                const respostasExtras = {};
+                document.querySelectorAll('#containerPerguntasExtras [data-extra-field]').forEach(input => {
+                    const qId = input.getAttribute('data-extra-id');
+                    const titulo = input.getAttribute('data-extra-titulo');
+                    if (input.type === 'radio') {
+                        if (input.checked) {
+                            respostasExtras[qId] = { titulo: titulo, resposta: input.value };
+                        }
+                    } else if (input.value && input.value.trim()) {
+                        respostasExtras[qId] = { titulo: titulo, resposta: input.value.trim() };
+                    }
+                });
+                payload.respostas_extras = JSON.stringify(respostasExtras);
+
+                // Garante que data_nascimento e idade enviadas sejam consistentes
+                if (payload.data_nascimento) {
+                    const matchAno = payload.data_nascimento.match(/(?:19|20)\d{2}/);
+                    if (!matchAno && currentStudentData?.data_nascimento) {
+                        payload.data_nascimento = formatarDataInput(currentStudentData.data_nascimento);
+                    }
+                } else if (currentStudentData?.data_nascimento) {
+                    payload.data_nascimento = formatarDataInput(currentStudentData.data_nascimento);
+                }
+                const idEnvio = calcularIdade(payload.data_nascimento);
+                payload.idade = (idEnvio !== null && idEnvio !== undefined) ? idEnvio : (currentStudentData?.idade || null);
+
+                try {
+                    const resp = await fetch(API.enviarMatricula, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const json = await resp.json().catch(() => ({}));
+                    const numMatricula = json.id || json.matricula || json.n_inscricao || Math.floor(100000 + Math.random() * 900000);
+
+                    // Exibe tela final de sucesso
+                    document.getElementById('formEnrollmentWrapper').style.display = 'none';
+                    const paneSucesso = document.getElementById('paneSucessoFinal');
+                    paneSucesso.style.display = 'block';
+
+                    document.getElementById('sucessoNumeroMatricula').textContent = `Matrícula Oficial: #${numMatricula}`;
+                    payload.id = numMatricula;
+
+                    document.getElementById('btnBaixarPDFSucesso').onclick = () => {
+                        gerarFichaPDFOficialGASCTPNA(payload);
+                    };
+
+                    window.scrollTo({ top: 40, behavior: 'smooth' });
+
+                } catch(err) {
+                    console.error('Erro ao enviar matrícula:', err);
+                    alert('Houve uma falha na conexão com o servidor. Verifique sua conexão e tente novamente.');
+                } finally {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i data-lucide="check-circle" style="width:18px;height:18px;"></i> Concluir Matrícula';
+                    if (window.lucide) lucide.createIcons();
+                }
+            });
+        }
+
+        function irParaPasso(passo) {
+            currentFormStep = passo;
+            const panes = document.querySelectorAll('.form-pane');
+            panes.forEach((el, idx) => {
+                el.classList.toggle('active', (idx + 1) === passo);
+            });
+
+            const pct = (passo / totalFormSteps) * 100;
+            document.getElementById('formProgressBar').style.width = `${pct}%`;
+            document.getElementById('formStepIndicatorLabel').textContent = `Etapa ${passo} de ${totalFormSteps}`;
+
+            const btnPrev = document.getElementById('btnPrevStep');
+            const btnNext = document.getElementById('btnNextStep');
+            const btnSubmit = document.getElementById('btnSubmitEnroll');
+
+            btnPrev.style.visibility = passo === 1 ? 'hidden' : 'visible';
+
+            if (passo === totalFormSteps) {
+                btnNext.style.display = 'none';
+                btnSubmit.style.display = 'inline-flex';
+            } else {
+                btnNext.style.display = 'inline-flex';
+                btnSubmit.style.display = 'none';
+            }
+
+            window.scrollTo({ top: 60, behavior: 'smooth' });
+        }
+
+        function validarPassoAtual(passo) {
+            const stepEl = document.querySelector(`.form-pane[data-step="${passo}"]`);
+            if (!stepEl) return true;
+
+            // Validação de Telefone / WhatsApp e Faixa Etária na Etapa 1
+            if (passo === 1) {
+                // Validação de Faixa Etária do Projeto Selecionado
+                const nascVal = document.getElementById('mat_nasc')?.value;
+                if (nascVal && currentSelectedProject) {
+                    const idadeCalculada = calcularIdade(nascVal);
+                    if (idadeCalculada !== null && idadeCalculada >= 0 && idadeCalculada <= 120) {
+                        const min = currentSelectedProject.idade_min;
+                        const max = currentSelectedProject.idade_max;
+                        if (min !== undefined && max !== undefined && (idadeCalculada < min || idadeCalculada > max)) {
+                            alert(`Atenção: A data de nascimento informada indica que o participante tem ${idadeCalculada} anos.\nO projeto selecionado (${currentSelectedProject.nome}) é destinado a participantes de ${min} a ${max} anos.`);
+                            document.getElementById('mat_nasc').focus();
+                            return false;
+                        }
+                    }
+                }
+
+                const w = document.getElementById('mat_whatsapp');
+                if (w && w.value) {
+                    const digits = w.value.replace(/\D/g, '');
+                    if (digits.length < 10) {
+                        alert('Por favor, informe um telefone/WhatsApp válido com DDD (mínimo 10 dígitos).');
+                        w.focus();
+                        return false;
+                    }
+                }
+
+                // Validação de E-mail Obrigatório e Confirmação Dupla
+                const emailInput = document.getElementById('mat_email');
+                const confirmInput = document.getElementById('mat_email_confirm');
+                const emailVal = (emailInput?.value || '').trim();
+                const confirmVal = (confirmInput?.value || '').trim();
+
+                if (!emailVal) {
+                    alert('Por favor, preencha o campo de E-mail para Contato.');
+                    emailInput?.focus();
+                    return false;
+                }
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailVal)) {
+                    alert('Por favor, informe um endereço de e-mail válido (ex: nome@exemplo.com).');
+                    emailInput?.focus();
+                    return false;
+                }
+                if (!confirmVal) {
+                    alert('Por favor, confirme seu e-mail repetindo-o no campo de confirmação.');
+                    confirmInput?.focus();
+                    return false;
+                }
+                if (emailVal.toLowerCase() !== confirmVal.toLowerCase()) {
+                    alert('Os e-mails informados não conferem.\nPor favor, certifique-se de que digitou exatamente o mesmo endereço nos dois campos.');
+                    confirmInput?.focus();
+                    return false;
+                }
+
+                // Validação de Responsável Legal (se participante menor de idade)
+                const blocoResp = document.getElementById('blocoResponsavel');
+                if (blocoResp && blocoResp.style.display !== 'none') {
+                    const respCpfEl = document.getElementById('mat_resp_cpf');
+                    const cleanRespCpf = (respCpfEl?.value || '').replace(/\D/g, '');
+                    if (cleanRespCpf.length !== 11) {
+                        alert('Por favor, informe o CPF completo do responsável legal (11 dígitos).');
+                        respCpfEl?.focus();
+                        return false;
+                    }
+                    const respNomeEl = document.getElementById('mat_resp_nome');
+                    if (!respNomeEl?.value.trim()) {
+                        alert('Por favor, informe o nome completo do responsável legal.');
+                        respNomeEl?.focus();
+                        return false;
+                    }
+                }
+
+                // Se "Sem número" estiver marcado ou S/N informado, o complemento é obrigatório
+                const chkSemNum = document.getElementById('mat_sem_numero');
+                const numVal = (document.getElementById('mat_numero')?.value || '').trim().toUpperCase();
+                const isSemNum = (chkSemNum && chkSemNum.checked) || numVal === 'S/N' || numVal === 'SN' || numVal.includes('SEM N');
+                const compInput = document.getElementById('mat_complemento');
+                if (isSemNum && compInput && !compInput.value.trim()) {
+                    alert('Para endereços sem número oficial (S/N), o preenchimento do Complemento é obrigatório (ex: Bloco, Apto, Casa, Ponto de referência).');
+                    compInput.focus();
+                    return false;
+                }
+            }
+
+            // Validação da Etapa 3 (Núcleo Selecionado & Perguntas Complementares)
+            if (passo === 3) {
+                const nId = document.getElementById('hidden_nucleo_id').value;
+                if (!nId) {
+                    alert('Por favor, clique em um dos quadradinhos de núcleo disponíveis.');
+                    return false;
+                }
+
+                // Validação de perguntas extras tipo radio obrigatórias
+                const extraRadios = stepEl.querySelectorAll('input[type="radio"][data-extra-field][required]');
+                const pendingRadios = new Set();
+                extraRadios.forEach(r => {
+                    const checked = stepEl.querySelector(`input[name="${r.name}"]:checked`);
+                    if (!checked && !pendingRadios.has(r.name)) {
+                        pendingRadios.add(r.name);
+                    }
+                });
+                if (pendingRadios.size > 0) {
+                    alert('Por favor, responda a todas as perguntas complementares obrigatórias (*).');
+                    return false;
+                }
+            }
+
+            const inputs = stepEl.querySelectorAll('input[required], select[required]');
+            for (let input of inputs) {
+                // Ignora campos que estejam dentro de blocos ocultos (ex: dados do responsável para alunos maiores de 18)
+                if (input.offsetParent === null && input.type !== 'hidden') continue;
+
+                if (input.type === 'checkbox' && !input.checked) {
+                    alert('É necessário concordar com a Declaração Institucional e o Termo da LGPD para concluir a matrícula.');
+                    input.focus();
+                    return false;
+                }
+                if (!input.value.trim()) {
+                    alert('Por favor, preencha todos os campos obrigatórios (*).');
+                    input.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // ── Atualização Dinâmica de Idade e Responsável Legal ──
+        function setupNascimentoListener() {
+            const nascInput = document.getElementById('mat_nasc');
+            if (!nascInput) return;
+
+            const handleNascChange = () => {
+                if (!nascInput.value) {
+                    const blocoResp = document.getElementById('blocoResponsavel');
+                    if (blocoResp) blocoResp.style.display = 'none';
+                    const respNome = document.getElementById('mat_resp_nome');
+                    const respCpf = document.getElementById('mat_resp_cpf');
+                    if (respNome) respNome.required = false;
+                    if (respCpf) respCpf.required = false;
+                    return;
+                }
+                const idade = calcularIdade(nascInput.value);
+                if (idade !== null && idade >= 0 && idade <= 120) {
+                    if (currentStudentData) currentStudentData.idade = idade;
+                    const isMenor = idade < 18;
+                    const blocoResp = document.getElementById('blocoResponsavel');
+                    if (blocoResp) blocoResp.style.display = isMenor ? 'block' : 'none';
+                    const respNome = document.getElementById('mat_resp_nome');
+                    const respCpf = document.getElementById('mat_resp_cpf');
+                    if (respNome) respNome.required = isMenor;
+                    if (respCpf) respCpf.required = isMenor;
+                }
+            };
+
+            nascInput.addEventListener('change', handleNascChange);
+            nascInput.addEventListener('input', handleNascChange);
+        }
+
+        // ── Upload Opcional de Documentos / Fotos (Base64) ──
+        let _docDropzoneFiles = [];
+
+        function resetDocDropzone() {
+            _docDropzoneFiles = [];
+            const list = document.getElementById('dropzone-files-list');
+            if (list) list.innerHTML = '';
+            const countMsg = document.getElementById('dropzone-count-msg');
+            if (countMsg) countMsg.style.display = 'none';
+            const hiddenBase64 = document.getElementById('documentos_base64');
+            if (hiddenBase64) hiddenBase64.value = '';
+            const fileInput = document.getElementById('doc_file_input');
+            if (fileInput) fileInput.value = '';
+        }
+
+        function setupDocDropzone() {
+            const dropzone = document.getElementById('doc-dropzone');
+            const fileInput = document.getElementById('doc_file_input');
+            const list = document.getElementById('dropzone-files-list');
+            const countMsg = document.getElementById('dropzone-count-msg');
+            const hiddenBase64 = document.getElementById('documentos_base64');
+            if (!dropzone || !fileInput || !list) return;
+
+            _docDropzoneFiles = [];
+
+            function syncFiles() {
+                if (countMsg) {
+                    countMsg.textContent = _docDropzoneFiles.length > 0 ? `${_docDropzoneFiles.length} arquivo(s) selecionado(s) de até 6` : '';
+                    countMsg.style.display = _docDropzoneFiles.length > 0 ? 'block' : 'none';
+                }
+
+                if (_docDropzoneFiles.length === 0) {
+                    if (hiddenBase64) hiddenBase64.value = '';
+                    return;
+                }
+
+                const promises = _docDropzoneFiles.map(file => {
+                    return new Promise(resolve => {
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            resolve({
+                                nome: file.name,
+                                tipo: file.type,
+                                base64: e.target.result
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                });
+
+                Promise.all(promises).then(base64List => {
+                    if (hiddenBase64) {
+                        hiddenBase64.value = JSON.stringify(base64List);
+                    }
+                });
+            }
+
+            function renderList() {
+                list.innerHTML = '';
+                _docDropzoneFiles.forEach((f, i) => {
+                    const chip = document.createElement('div');
+                    chip.className = 'file-chip';
+                    
+                    const span = document.createElement('span');
+                    span.title = f.name;
+                    span.textContent = f.name;
+
+                    const btnRemove = document.createElement('button');
+                    btnRemove.type = 'button';
+                    btnRemove.innerHTML = '&times;';
+                    btnRemove.title = 'Remover arquivo';
+                    btnRemove.onclick = (e) => {
+                        e.stopPropagation();
+                        _docDropzoneFiles.splice(i, 1);
+                        renderList();
+                        syncFiles();
+                    };
+
+                    chip.appendChild(span);
+                    chip.appendChild(btnRemove);
+                    list.appendChild(chip);
+                });
+                syncFiles();
+            }
+
+            function adicionarArquivos(files) {
+                Array.from(files).forEach(f => {
+                    if (_docDropzoneFiles.length >= 6) {
+                        alert('Limite máximo de 6 documentos/fotos atingido.');
+                        return;
+                    }
+                    if (!f.type.startsWith('image/') && f.type !== 'application/pdf') {
+                        alert(`Arquivo "${f.name}" não suportado. Envie apenas fotos (JPG, PNG) ou arquivos PDF.`);
+                        return;
+                    }
+                    _docDropzoneFiles.push(f);
+                });
+                renderList();
+            }
+
+            dropzone.onclick = () => fileInput.click();
+            fileInput.onchange = function() {
+                if (this.files) adicionarArquivos(this.files);
+                this.value = '';
+            };
+
+            dropzone.ondragover = (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = '#1b5e20';
+                dropzone.style.background = '#f0fdf4';
+            };
+            dropzone.ondragleave = () => {
+                dropzone.style.borderColor = '#319244';
+                dropzone.style.background = '#fdfbf7';
+            };
+            dropzone.ondrop = (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = '#319244';
+                dropzone.style.background = '#fdfbf7';
+                if (e.dataTransfer && e.dataTransfer.files) {
+                    adicionarArquivos(e.dataTransfer.files);
+                }
+            };
+        }
+
+        // ── Auto-busca de CEP via ViaCEP ──
+        function setupCEPAutoLookup() {
+            const cepInput = document.getElementById('mat_cep');
+            if (!cepInput) return;
+
+            cepInput.addEventListener('blur', async () => {
+                const cep = cepInput.value.replace(/\D/g, '');
+                if (cep.length === 8) {
+                    try {
+                        const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                        const d = await r.json();
+                        if (!d.erro) {
+                            if (d.logradouro) document.getElementById('mat_endereco').value = d.logradouro;
+                            if (d.bairro) document.getElementById('mat_bairro').value = d.bairro;
+                            if (d.localidade) document.getElementById('mat_cidade').value = d.localidade;
+                            if (d.uf && document.getElementById('mat_uf')) document.getElementById('mat_uf').value = d.uf.toUpperCase();
+                            if (d.complemento && document.getElementById('mat_complemento') && !document.getElementById('mat_complemento').value) {
+                                document.getElementById('mat_complemento').value = d.complemento;
+                            }
+                            document.getElementById('mat_numero').focus();
+                        }
+                    } catch(e) {
+                        console.warn('Falha no ViaCEP:', e);
+                    }
+                }
+            });
+        }
+
+        // ── Resetar para Nova Consulta ──
+        function resetarParaConsulta() {
+            document.getElementById('participantHub').style.display = 'none';
+            document.getElementById('formEnrollmentWrapper').style.display = 'none';
+            document.getElementById('paneSucessoFinal').style.display = 'none';
+            document.getElementById('cardConsultaCPF').style.display = 'block';
+
+            currentStudentData = null;
+            currentMatriculasList = [];
+            currentSelectedProject = null;
+            currentFormStep = 1;
+            const form = document.getElementById('formMatriculaGASCTPNA');
+            if (form) form.reset();
+
+            document.getElementById('inputCPF').value = '';
+            document.getElementById('btnClearCPF').style.display = 'none';
+            esconderFeedback();
+            atualizarEstadoSemNumero('');
+            toggleComplementoObrigatorio(false);
+            setHealthOption('docs', 'Não');
+            if (typeof resetDocDropzone === 'function') resetDocDropzone();
+            if (document.getElementById('mat_complemento')) document.getElementById('mat_complemento').value = '';
+            document.getElementById('inputCPF').focus();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ── Alternar Obrigatoriedade do Complemento ──
+        function toggleComplementoObrigatorio(obrigatorio) {
+            const comp = document.getElementById('mat_complemento');
+            const hint = document.getElementById('hint_mat_complemento');
+            if (!comp) return;
+
+            if (obrigatorio) {
+                comp.required = true;
+                comp.setAttribute('required', 'required');
+                comp.placeholder = 'Ex: Casa 2, Apto 101, Ao lado da igreja... (obrigatório se S/N)';
+                if (hint) {
+                    hint.innerHTML = '<span class="req" style="color:var(--c-laranja,#e05d2b); font-weight:700;">* (obrigatório se sem número)</span>';
+                }
+            } else {
+                comp.required = false;
+                comp.removeAttribute('required');
+                comp.placeholder = 'Apto, Bloco, Casa...';
+                if (hint) {
+                    hint.innerHTML = '<span style="font-size:11px;font-weight:normal;color:var(--text-muted);">(opcional)</span>';
+                }
+            }
+        }
+
+        // ── Tratamento da Opção "Sem número" ──
+        function setupSemNumero() {
+            const chk = document.getElementById('mat_sem_numero');
+            const input = document.getElementById('mat_numero');
+            if (!chk || !input) return;
+
+            chk.addEventListener('change', () => {
+                if (chk.checked) {
+                    input.value = 'S/N';
+                    input.readOnly = true;
+                    input.style.backgroundColor = '#fbf9f6';
+                    toggleComplementoObrigatorio(true);
+                    const comp = document.getElementById('mat_complemento');
+                    if (comp && !comp.value.trim()) comp.focus();
+                } else {
+                    if (input.value === 'S/N' || input.value === 'Sem número') {
+                        input.value = '';
+                    }
+                    input.readOnly = false;
+                    input.style.backgroundColor = '';
+                    toggleComplementoObrigatorio(false);
+                    input.focus();
+                }
+            });
+
+            input.addEventListener('input', () => {
+                const str = input.value.trim().toUpperCase();
+                if (str === 'S/N' || str === 'SN' || str === 'SEM NUMERO' || str === 'SEM NÚMERO') {
+                    chk.checked = true;
+                    toggleComplementoObrigatorio(true);
+                } else if (chk.checked) {
+                    chk.checked = false;
+                    toggleComplementoObrigatorio(false);
+                }
+            });
+        }
+
+        function atualizarEstadoSemNumero(val) {
+            const chk = document.getElementById('mat_sem_numero');
+            const input = document.getElementById('mat_numero');
+            if (!chk || !input) return;
+            const str = String(val || '').trim().toUpperCase();
+            if (str === 'S/N' || str === 'SN' || str === 'SEM NUMERO' || str === 'SEM NÚMERO') {
+                chk.checked = true;
+                input.value = 'S/N';
+                input.readOnly = true;
+                input.style.backgroundColor = '#fbf9f6';
+                toggleComplementoObrigatorio(true);
+            } else {
+                chk.checked = false;
+                input.readOnly = false;
+                input.style.backgroundColor = '';
+                toggleComplementoObrigatorio(false);
+            }
+        }
+
+        // ── EMISSÃO DA FICHA OFICIAL DE MATRÍCULA EM PDF (2 PÁGINAS) ──
+        async function emitirFichaOficialPDF(matId) {
+            const win = window.open('', '_blank');
+            if (win) {
+                win.document.write('<!DOCTYPE html><html><head><title>Gerando Ficha GASCTPNA...</title></head><body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:90vh;"><div style="text-align:center;"><h2>⏳ Gerando Ficha Oficial de Matrícula...</h2><p style="color:#666;">Buscando registros autenticados da GASCTPNA.</p></div></body></html>');
+                win.document.close();
+            }
+
+            try {
+                let matData = currentMatriculasList.find(m => String(m.id) === String(matId));
+                if (!matData) {
+                    const resp = await fetch(`${API.buscarMatriculaId}?id=${encodeURIComponent(matId)}`);
+                    const json = await resp.json();
+                    matData = Array.isArray(json) ? json[0] : (json?.dados || json);
+                }
+                gerarFichaPDFOficialGASCTPNA(matData || { id: matId }, win);
+            } catch(e) {
+                console.error('Erro ao emitir PDF:', e);
+                let fallback = currentMatriculasList.find(m => String(m.id) === String(matId)) || { id: matId };
+                gerarFichaPDFOficialGASCTPNA(fallback, win);
+            }
+        }
+
+        function gerarFichaPDFOficialGASCTPNA(d, winTarget) {
+            const win = winTarget || window.open('', '_blank');
+            if (!win) {
+                alert('Por favor, permita pop-ups no seu navegador para emitir a Ficha de Matrícula em PDF.');
+                return;
+            }
+
+            const resolvido = resolverDadosMatricula(d);
+            const numMatricula = String(d.id || d.matricula || d.n_inscricao || '000000');
+            const projNome = resolvido.projNome;
+            const nucNome = resolvido.nucNome;
+            const modNome = resolvido.modNome;
+            const turno = d.turno && !['A','B','C','D'].includes(d.turno) ? d.turno : 'A Definir';
+
+            const nAluno = d.aluno_nome || d.nome || currentStudentData?.nome || 'Não informado';
+            const cAluno = formatarCPF(d.aluno_cpf || d.cpf || currentStudentData?.cpf || '');
+            
+            // Sanitização de Data de Nascimento e Idade (corrige anos anômalos da base)
+            let rawDNasc = d.data_nascimento || '';
+            let rawIdade = d.idade;
+
+            let anoValido = false;
+            if (rawDNasc) {
+                const yearMatch = rawDNasc.match(/(?:19|20)\d{2}/);
+                if (yearMatch) anoValido = true;
+            }
+
+            if (!anoValido || rawIdade > 120 || rawIdade < 1 || !rawIdade) {
+                if (currentStudentData?.data_nascimento && /(?:19|20)\d{2}/.test(currentStudentData.data_nascimento)) {
+                    rawDNasc = currentStudentData.data_nascimento;
+                    rawIdade = currentStudentData.idade || calcularIdade(rawDNasc);
+                } else if (rawDNasc) {
+                    rawIdade = calcularIdade(rawDNasc);
+                }
+            }
+
+            let dNasc = rawDNasc;
+            if (/^\d{4}-\d{2}-\d{2}/.test(rawDNasc)) {
+                const p = rawDNasc.slice(0, 10).split('-');
+                if (parseInt(p[0], 10) > 1920) {
+                    dNasc = `${p[2]}/${p[1]}/${p[0]}`;
+                } else if (currentStudentData?.data_nascimento) {
+                    dNasc = currentStudentData.data_nascimento;
+                }
+            }
+
+            let idadeFinal = (rawIdade && rawIdade >= 1 && rawIdade <= 120) ? rawIdade : null;
+            if (!idadeFinal) {
+                const cIdade = calcularIdade(dNasc);
+                if (cIdade !== null && cIdade >= 1 && cIdade <= 120) {
+                    idadeFinal = cIdade;
+                } else if (currentStudentData?.idade && currentStudentData.idade >= 1 && currentStudentData.idade <= 120) {
+                    idadeFinal = currentStudentData.idade;
+                }
+            }
+            const idade = idadeFinal ? `${idadeFinal} anos` : 'Não informada';
+            const sexo = d.sexo || 'Não informado';
+
+            const tel = d.whatsapp || d.telefone || '';
+            const email = d.email || '';
+            const compStr = d.complemento ? ` (${d.complemento})` : '';
+            const end = `${d.endereco || ''}, ${d.numero || ''}${compStr} - ${d.bairro || ''}, ${d.cidade || ''} / ${d.uf || 'RJ'}`;
+            const cep = d.cep || '';
+
+            const tCamisa = d.tamanho_camisa || 'M';
+            const tCalcado = d.tamanho_calcado || '---';
+            const tCalca = d.tamanho_calca || '38';
+
+            const uMed = d.uso_medicacao ? (d.uso_medicacao + (d.uso_medicacao_detalhes ? ': ' + d.uso_medicacao_detalhes : '')) : 'Não';
+            const pAlerg = d.possui_alergias ? (d.possui_alergias + (d.possui_alergias_detalhes ? ': ' + d.possui_alergias_detalhes : '')) : 'Não';
+            const pSaude = d.plano_saude ? (d.plano_saude + (d.plano_saude_detalhes ? ': ' + d.plano_saude_detalhes : '')) : 'Não';
+            const aMed = d.acompan_medico ? (d.acompan_medico + (d.acompan_medico_detalhes ? ': ' + d.acompan_medico_detalhes : '')) : 'Não';
+            const rFis = d.restricao_fisica ? (d.restricao_fisica + (d.restricao_fisica_detalhes ? ': ' + d.restricao_fisica_detalhes : '')) : 'Não';
+            const nEsp = d.necessidade_especial ? (d.necessidade_especial + (d.necessidade_especial_detalhes ? ': ' + d.necessidade_especial_detalhes : '')) : 'Não';
+
+            const nResp = d.resp_nome || '';
+            const cResp = formatarCPF(d.resp_cpf || '');
+            const parResp = d.resp_parentesco || '';
+
+            const qrUrl = 'https://gasctpna.plataformaintegra.com.br/autenticador.html?id=' + numMatricula + '&inst=gasctpna';
+            const qrImg = 'https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=' + encodeURIComponent(qrUrl);
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+            const dataHoraHoje = new Date().toLocaleString('pt-BR');
+            const createdAtStr = d.created_at ? new Date(d.created_at).toLocaleString('pt-BR') : dataHoraHoje;
+            const updatedAtStr = d.updated_at ? new Date(d.updated_at).toLocaleString('pt-BR') : dataHoraHoje;
+            const protocolo = 'INT-' + numMatricula.padStart(6, '0') + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+            // Extração de perguntas e respostas complementares
+            let extrasObj = {};
+            if (d.respostas_extras) {
+                try {
+                    extrasObj = typeof d.respostas_extras === 'string' ? JSON.parse(d.respostas_extras) : d.respostas_extras;
+                } catch(e) {
+                    extrasObj = {};
+                }
+            }
+            const extrasList = Object.values(extrasObj).filter(item => item && (item.titulo || item.pergunta) && item.resposta);
+
+            win.document.open();
+            win.document.write(`
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Ficha Oficial de Matrícula - ${numMatricula}</title>
+                    <style>
+                        @page { size: A4; margin: 8mm 10mm; }
+                        * { box-sizing: border-box; margin: 0; padding: 0; }
+                        body { font-family: sans-serif; font-size: 9pt; color: #000; line-height: 1.3; background: #fff; padding: 10px; }
+                        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2.5px solid #319244; padding-bottom: 6px; margin-bottom: 10px; }
+                        .logo-box { display: flex; align-items: center; gap: 8px; }
+                        .logo-box img { max-height: 38px; }
+                        .title-right { text-align: right; }
+                        .main-title { font-size: 13pt; font-weight: 800; color: #24640a; }
+                        .sub-title { font-size: 8.5pt; color: #5f4514; font-weight: 600; }
+                        .box { border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px; padding: 6px 10px; background: #fdfdfd; }
+                        .box-title { font-size: 8.5pt; font-weight: 800; color: #24640a; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; margin-bottom: 6px; text-transform: uppercase; }
+                        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 10px; }
+                        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+                        .f-item { font-size: 8.5pt; }
+                        .f-lbl { font-weight: 700; color: #5f4514; }
+                        .qr-row { display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1px dashed #319244; padding: 6px 10px; border-radius: 6px; margin-top: 6px; }
+                        .qr-row img { width: 54px; height: 54px; }
+                        .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+                        .sig-col { text-align: center; }
+                        .sig-line { border-top: 1.5px solid #333; margin-bottom: 4px; }
+                        .page-break { page-break-before: always; }
+                        @media print { .no-print { display: none !important; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="logo-box">
+                            <img src="https://plataformaintegra.com.br/logo_gasctpna.jpg" alt="GASCTPNA">
+                            <span style="font-weight:bold;color:#cbac69;">×</span>
+                            <img src="https://plataformaintegra.com.br/logo_integra_simbolo.gif" alt="INTEGRA">
+                        </div>
+                        <div class="title-right">
+                            <div class="main-title">FICHA OFICIAL DE MATRÍCULA</div>
+                            <div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA)</div>
+                        </div>
+                    </div>
+
+                    <div class="box" style="background:#eef7f0;border-color:#319244;">
+                        <div class="grid-3">
+                            <div class="f-item"><span class="f-lbl">Nº Matrícula:</span> <strong>#${numMatricula}</strong></div>
+                            <div class="f-item"><span class="f-lbl">Projeto:</span> <strong>${projNome}</strong></div>
+                            <div class="f-item"><span class="f-lbl">Modalidade:</span> <strong>${modNome}</strong></div>
+                            <div class="f-item"><span class="f-lbl">Núcleo:</span> ${nucNome}</div>
+                            <div class="f-item"><span class="f-lbl">Turno:</span> ${turno}</div>
+                            <div class="f-item"><span class="f-lbl">Data de Emissão:</span> ${dataHoje}</div>
+                        </div>
+                    </div>
+
+                    <div class="box">
+                        <div class="box-title">1. Dados Cadastrais do Participante</div>
+                        <div class="grid-3">
+                            <div class="f-item"><span class="f-lbl">Nome:</span> ${nAluno}</div>
+                            <div class="f-item"><span class="f-lbl">CPF:</span> ${cAluno}</div>
+                            <div class="f-item"><span class="f-lbl">Nascimento:</span> ${dNasc || '---'}</div>
+                            <div class="f-item"><span class="f-lbl">Idade:</span> ${idade}</div>
+                            <div class="f-item"><span class="f-lbl">Sexo:</span> ${sexo}</div>
+                            <div class="f-item"><span class="f-lbl">Telefone:</span> ${tel || '---'}</div>
+                        </div>
+                    </div>
+
+                    <div class="box">
+                        <div class="box-title">2. Endereço e Contato</div>
+                        <div class="grid-2">
+                            <div class="f-item"><span class="f-lbl">Endereço:</span> ${end}</div>
+                            <div class="f-item"><span class="f-lbl">CEP:</span> ${cep}</div>
+                            <div class="f-item"><span class="f-lbl">E-mail:</span> ${email || 'Não informado'}</div>
+                        </div>
+                    </div>
+
+                    <div class="box">
+                        <div class="box-title">3. Fardamento e Histórico de Saúde</div>
+                        <div class="grid-3">
+                            <div class="f-item"><span class="f-lbl">Camisa:</span> <strong>${tCamisa}</strong></div>
+                            <div class="f-item"><span class="f-lbl">Bermuda:</span> <strong>${tCalca}</strong></div>
+                            <div class="f-item"><span class="f-lbl">Calçado:</span> <strong>Nº ${tCalcado}</strong></div>
+                            <div class="f-item"><span class="f-lbl">Medicamento:</span> ${uMed}</div>
+                            <div class="f-item"><span class="f-lbl">Alergias:</span> ${pAlerg}</div>
+                            <div class="f-item"><span class="f-lbl">Plano de Saúde:</span> ${pSaude}</div>
+                            <div class="f-item"><span class="f-lbl">Tratamento Médico:</span> ${aMed}</div>
+                            <div class="f-item"><span class="f-lbl">Restrição Física:</span> ${rFis}</div>
+                            <div class="f-item"><span class="f-lbl">Necessidade Especial:</span> ${nEsp}</div>
+                        </div>
+                    </div>
+
+                    ${extrasList.length > 0 ? `
+                    <div class="box">
+                        <div class="box-title">4. Informações Complementares da Modalidade</div>
+                        <div class="grid-2">
+                            ${extrasList.map(item => `
+                                <div class="f-item"><span class="f-lbl">${escapeHTML(item.titulo || item.pergunta)}:</span> <strong>${escapeHTML(item.resposta)}</strong></div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    ${nResp ? `
+                    <div class="box">
+                        <div class="box-title">${extrasList.length > 0 ? '5' : '4'}. Responsável Legal (Menor de Idade)</div>
+                        <div class="grid-3">
+                            <div class="f-item"><span class="f-lbl">Nome Responsável:</span> ${nResp}</div>
+                            <div class="f-item"><span class="f-lbl">CPF:</span> ${cResp}</div>
+                            <div class="f-item"><span class="f-lbl">Parentesco:</span> ${parResp}</div>
+                        </div>
+                    </div>` : ''}
+
+                    <div class="qr-row">
+                        <img src="${qrImg}" alt="QR Autenticador">
+                        <div>
+                            <div style="font-weight:800;font-size:8.5pt;color:#24640a;">AUTENTICAÇÃO DIGITAL OFICIAL</div>
+                            <div style="font-size:7.5pt;color:#555;">Validação eletrônica da inscrição no banco de dados da instituição GASCTPNA.</div>
+                            <div style="font-size:7.5pt;font-family:monospace;color:#333;margin-top:2px;">${qrUrl}</div>
+                        </div>
+                    </div>
+
+                    <div class="page-break"></div>
+
+                    <div class="header">
+                        <div class="logo-box">
+                            <img src="https://plataformaintegra.com.br/logo_gasctpna.jpg" alt="GASCTPNA">
+                            <span style="font-weight:bold;color:#cbac69;">×</span>
+                            <img src="https://plataformaintegra.com.br/logo_integra_simbolo.gif" alt="INTEGRA">
+                        </div>
+                        <div class="title-right">
+                            <div class="main-title">DECLARAÇÃO DE RESPONSABILIDADE E TERMO DE PARTICIPAÇÃO</div>
+                            <div class="sub-title">Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza (GASCTPNA)</div>
+                        </div>
+                    </div>
+
+                    <div class="box" style="font-size:7.5pt;line-height:1.3;color:#333;text-align:justify;">
+                        <p style="margin-bottom:6px;">A presente Declaração de Responsabilidade estabelece as condições, direitos e deveres relacionados à participação nas atividades gratuitas promovidas pelo Grupo de Apoio Social aos Cultivadores da Terra e Preservação da Natureza – GASCTPNA, aplicando-se aos participantes maiores de idade e, no caso de menores de idade, aos seus respectivos pais ou responsáveis legais. Ao realizar a matrícula e aceitar eletronicamente este documento, o participante maior de idade ou seu responsável legal declara estar ciente e de acordo com as condições estabelecidas a seguir.</p>
+
+                        <p style="margin-bottom:4px;"><strong>1. AUTORIZAÇÃO PARA PARTICIPAÇÃO:</strong> Autorizo a participação do(a) aluno(a) nas atividades promovidas pelo GASCTPNA, incluindo atividades esportivas, educacionais, culturais, científicas, sociais, tecnológicas e demais ações compatíveis com os objetivos institucionais.</p>
+                        <p style="margin-bottom:6px;padding-left:10px;">§ 1º Fica autorizada a participação em atividades, eventos, apresentações, competições, visitas técnicas. § 2º Atividades externas serão previamente comunicadas. § 3º Despesas com transporte, alimentação e hospedagem em atividades externas serão de responsabilidade do aluno/responsável, salvo comunicação expressa. § 4º Em emergências, a equipe está autorizada a prestar os primeiros socorros e encaminhar a serviço de saúde.</p>
+
+                        <p style="margin-bottom:4px;"><strong>2. APTIDÃO, SEGURANÇA E RISCOS:</strong> Declaro que as informações de saúde são verdadeiras. Comprometo-me a informar qualquer restrição médica ou alergia.</p>
+                        <p style="margin-bottom:6px;padding-left:10px;">§ 1º Atestados podem ser solicitados. § 2º Ciente dos riscos inerentes (quedas, contusões). § 3º A instituição não se exime de falhas legais. § 4º A instituição adotará as medidas razoáveis de segurança.</p>
+
+                        <p style="margin-bottom:4px;"><strong>3. USO DE IMAGEM E VOZ:</strong> Autorizo o uso gratuito da imagem/voz em materiais institucionais para prestação de contas e transparência.</p>
+                        <p style="margin-bottom:6px;padding-left:10px;">§ 1º A autorização é dada pelo responsável (se menor). § 2º Uso restrito às finalidades descritas. § 3º Pode ser revogado mediante solicitação.</p>
+
+                        <p style="margin-bottom:4px;"><strong>4. TRATAMENTO DE DADOS PESSOAIS (LGPD):</strong> Ciente de que os dados serão tratados para finalidades pedagógicas, de prestação de contas e controle institucional, conforme Lei nº 13.709/2018.</p>
+                        <p style="margin-bottom:6px;padding-left:10px;">§ 1º Dados usados para relatórios, auditoria e fiscalização. § 2º Armazenados pelos prazos legais. § 3º Compartilhamento apenas com órgãos públicos ou parceiros por exigência legal. § 4º Direitos garantidos na Política de Privacidade.</p>
+
+                        <p style="margin-bottom:4px;"><strong>5. COMPROMISSO ESCOLAR:</strong> Responsabilidade do responsável legal em manter o aluno(a) matriculado(a) em ensino regular.</p>
+                        <p style="margin-bottom:6px;padding-left:10px;">§ 1º Participação no contraturno. § 2º Sujeito à comprovação de matrícula. § 3º Exige frequência mínima nas atividades.</p>
+
+                        <p style="margin-bottom:4px;"><strong>6. NORMAS DE PARTICIPAÇÃO E 7. MATERIAIS:</strong> O participante compromete-se a respeitar as orientações, zelar pelos uniformes/materiais e manter comportamento compatível.</p>
+
+                        <p style="margin-bottom:4px;"><strong>8. DECLARAÇÃO FINAL E ACEITE ELETRÔNICO:</strong> Declaro que as informações são verdadeiras. LI, COMPREENDI E ACEITO todas as condições aqui firmadas.</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;">
+                        <div style="border: 1.5px dashed #319244; background: #eef7f0; padding: 8px; border-radius: 6px;">
+                            <div style="font-weight: 800; font-size: 8.5pt; color: #24640a; margin-bottom: 4px;">✓ RESPONSÁVEL: — STATUS: VALIDADA</div>
+                            <ul style="list-style: none; font-size: 7.5pt; color: #333; line-height: 1.4;">
+                                <li>• LGPD ACEITO: ${createdAtStr}</li>
+                                <li>• Veracidade ACEITO: ${createdAtStr}</li>
+                                <li>• Origem do cadastro: Portal do Aluno</li>
+                                <li>• ID da Matrícula: #${numMatricula} | CPF: ${cAluno}</li>
+                                <li>• Protocolo: ${protocolo}</li>
+                                <li>• Aceite eletrônico: ${createdAtStr}</li>
+                            </ul>
+                            <div style="text-align: center; font-size: 7.5pt; font-weight: 800; color: #24640a; margin-top: 8px;">ACEITE DO RESPONSÁVEL / ALUNO</div>
+                        </div>
+
+                        <div style="border: 1.5px dashed #0284c7; background: #f0f9ff; padding: 8px; border-radius: 6px;">
+                            <div style="font-weight: 800; font-size: 8.5pt; color: #0369a1; margin-bottom: 4px;">✓ COORDENADOR: — DEFERIDO</div>
+                            <ul style="list-style: none; font-size: 7.5pt; color: #333; line-height: 1.4;">
+                                <li>• Triagem & Análise: Matrícula Deferida</li>
+                                <li>• Validação Institucional: Coordenador</li>
+                                <li>• Núcleo / Turma: ${nucNome}</li>
+                                <li>• Turno: ${turno}</li>
+                                <li>• Protocolo: ${protocolo}</li>
+                                <li>• Aceite do Coordenador: ${updatedAtStr} (Via Integra Central)</li>
+                            </ul>
+                            <div style="text-align: center; font-size: 7.5pt; font-weight: 800; color: #0369a1; margin-top: 8px;">ACEITE DO COORDENADOR INSTITUCIONAL</div>
+                        </div>
+                    </div>
+
+                    <div class="no-print" style="text-align:center;margin-top:30px;">
+                        <button onclick="window.print()" style="background:#319244;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:800;font-size:14px;cursor:pointer;">🖨️ Imprimir / Salvar em PDF</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        }
+
+        // ── Funções Utilitárias ──
+        function formatarTelefoneValor(val) {
+            if (!val) return '';
+            const v = String(val).replace(/\D/g, '').slice(0, 11);
+            if (v.length === 11) return `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7, 11)}`;
+            if (v.length === 10) return `(${v.slice(0, 2)}) ${v.slice(2, 6)}-${v.slice(6, 10)}`;
+            return val;
+        }
+
+        function formatarCPF(v) {
+            if (!v) return '';
+            const c = String(v).replace(/\D/g, '').slice(0, 11);
+            if (c.length !== 11) return v;
+            return c.slice(0, 3) + '.' + c.slice(3, 6) + '.' + c.slice(6, 9) + '-' + c.slice(9);
+        }
+
+        function formatarDataInput(dStr) {
+            if (!dStr) return '';
+            if (/^\d{4}-\d{2}-\d{2}/.test(dStr)) return dStr.slice(0, 10);
+            if (/^\d{2}\/\d{2}\/\d{4}/.test(dStr)) {
+                const parts = dStr.split('/');
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return dStr;
+        }
+
+        function calcularIdade(nasc) {
+            if (!nasc) return null;
+            let d;
+            if (nasc.includes('/')) {
+                const p = nasc.split('/');
+                d = new Date(p[2], p[1] - 1, p[0]);
+            } else {
+                d = new Date(nasc);
+            }
+            if (isNaN(d.getTime())) return null;
+            const diff = Date.now() - d.getTime();
+            return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        }
+
+        
+        // ── Funções de Apoio a Perguntas Complementares da Modalidade ──
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function atualizarPerguntasExtrasDaModalidade(modId, modNome) {
+            const container = document.getElementById('containerPerguntasExtras');
+            const fieldsWrap = document.getElementById('perguntasExtrasFields');
+            if (!container || !fieldsWrap) return;
+
+            const projId = document.getElementById('hidden_projeto_id')?.value;
+            const projObj = (currentProjectsList || []).find(p => String(p.id) === String(projId));
+
+            let perguntas = [];
+            if (projObj && projObj.perguntas_extras) {
+                try {
+                    perguntas = typeof projObj.perguntas_extras === 'string' 
+                        ? JSON.parse(projObj.perguntas_extras) 
+                        : projObj.perguntas_extras;
+                } catch(e) {
+                    perguntas = [];
+                }
+            }
+
+            if (!Array.isArray(perguntas) || perguntas.length === 0) {
+                container.style.display = 'none';
+                fieldsWrap.innerHTML = '';
+                return;
+            }
+
+            // Filtra perguntas: gerais OU específicas da modalidade selecionada
+            const aplicaveis = perguntas.filter(q => {
+                if (!q.modalidade_id || q.modalidade_id === 'todas') return true;
+                if (modId && String(q.modalidade_id) === String(modId)) return true;
+                if (modNome && q.modalidade_nome && String(q.modalidade_nome).trim().toLowerCase() === String(modNome).trim().toLowerCase()) return true;
+                return false;
+            });
+
+            if (aplicaveis.length === 0) {
+                container.style.display = 'none';
+                fieldsWrap.innerHTML = '';
+                return;
+            }
+
+            // Preserva respostas já preenchidas
+            const respostasAtuais = {};
+            document.querySelectorAll('#perguntasExtrasFields [data-extra-field]').forEach(input => {
+                const qId = input.getAttribute('data-extra-id');
+                if (input.type === 'radio') {
+                    if (input.checked) respostasAtuais[qId] = input.value;
+                } else {
+                    if (input.value) respostasAtuais[qId] = input.value;
+                }
+            });
+
+            fieldsWrap.innerHTML = '';
+            aplicaveis.forEach((q, idx) => {
+                const itemBox = document.createElement('div');
+                itemBox.className = 'form-group';
+                itemBox.style.marginBottom = '14px';
+
+                const qId = q.id || `extra_q_${idx}`;
+                const reqBadge = q.obrigatorio ? '<span class="req">*</span>' : '<span style="font-size: 11px; font-weight: normal; color: var(--c-marrom-claro);">(opcional)</span>';
+                const ajudaHtml = q.ajuda ? `<div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">${escapeHTML(q.ajuda)}</div>` : '';
+                const valorAnterior = respostasAtuais[qId] || '';
+
+                let inputHtml = '';
+                if (q.tipo === 'select') {
+                    inputHtml = `
+                        <select id="extra_${qId}" data-extra-field="true" data-extra-id="${qId}" data-extra-titulo="${escapeQuotes(q.titulo)}" class="field-select" ${q.obrigatorio ? 'required' : ''}>
+                            <option value="">Selecione uma opção…</option>
+                            ${(q.opcoes || []).map(opt => `<option value="${escapeQuotes(opt)}" ${valorAnterior === opt ? 'selected' : ''}>${escapeHTML(opt)}</option>`).join('')}
+                        </select>
+                    `;
+                } else if (q.tipo === 'radio') {
+                    inputHtml = `
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;">
+                            ${(q.opcoes || []).map((opt, oIdx) => `
+                                <label style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1.5px solid var(--border-pencil); border-radius: 8px; cursor: pointer; font-size: 13px; background: #fff; transition: all 0.2s ease;">
+                                    <input type="radio" name="extra_radio_${qId}" data-extra-field="true" data-extra-id="${qId}" data-extra-titulo="${escapeQuotes(q.titulo)}" value="${escapeQuotes(opt)}" ${valorAnterior === opt ? 'checked' : ''} ${q.obrigatorio ? 'required' : ''} style="accent-color: var(--c-verde);">
+                                    <span>${escapeHTML(opt)}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    `;
+                } else if (q.tipo === 'number') {
+                    inputHtml = `
+                        <input type="number" id="extra_${qId}" data-extra-field="true" data-extra-id="${qId}" data-extra-titulo="${escapeQuotes(q.titulo)}" class="field-input" placeholder="Informe o valor numérico" value="${escapeQuotes(valorAnterior)}" ${q.obrigatorio ? 'required' : ''}>
+                    `;
+                } else {
+                    inputHtml = `
+                        <input type="text" id="extra_${qId}" data-extra-field="true" data-extra-id="${qId}" data-extra-titulo="${escapeQuotes(q.titulo)}" class="field-input" placeholder="Sua resposta" value="${escapeQuotes(valorAnterior)}" ${q.obrigatorio ? 'required' : ''}>
+                    `;
+                }
+
+                itemBox.innerHTML = `
+                    <label class="field-label" for="extra_${qId}">
+                        ${escapeHTML(q.titulo)} ${reqBadge}
+                    </label>
+                    ${ajudaHtml}
+                    <div style="margin-top: 4px;">
+                        ${inputHtml}
+                    </div>
+                `;
+
+                fieldsWrap.appendChild(itemBox);
+            });
+
+            container.style.display = 'block';
+        }
+
+        function escapeQuotes(str) {
+            if (!str) return '';
+            return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

@@ -2359,6 +2359,9 @@
             document.getElementById('hidden_projeto_id').value = projId;
             document.getElementById('hidden_projeto_nome').value = projNome;
 
+            // Aplica regras de exibição / ocultação das 7 perguntas de saúde nativas para este projeto
+            aplicarOcultacaoPerguntasNativas(projObj);
+
             // Reseta perguntas complementares da modalidade
             atualizarPerguntasExtrasDaModalidade(null, null);
 
@@ -3739,6 +3742,48 @@
                 .replace(/'/g, '&#039;');
         }
 
+        // ── Aplica Ocultação das 7 Perguntas Nativas de Saúde conforme configuração do projeto ──
+        function aplicarOcultacaoPerguntasNativas(projObj) {
+            let nativasOcultas = [];
+            if (projObj && projObj.perguntas_extras) {
+                try {
+                    const parsed = typeof projObj.perguntas_extras === 'string'
+                        ? JSON.parse(projObj.perguntas_extras)
+                        : projObj.perguntas_extras;
+                    if (Array.isArray(parsed)) {
+                        const cfg = parsed.find(p => p && (p.is_config_nativas === true || p.id === 'config_nativas_ocultas'));
+                        if (cfg && Array.isArray(cfg.nativas_ocultas)) {
+                            nativasOcultas = cfg.nativas_ocultas;
+                        }
+                    }
+                } catch(e) {
+                    nativasOcultas = [];
+                }
+            }
+
+            const mapaNativas = {
+                'uso_medicacao': 'med',
+                'possui_alergias': 'alerg',
+                'plano_saude': 'plano',
+                'acompan_medico': 'trat',
+                'restricao_fisica': 'rest',
+                'necessidade_especial': 'esp',
+                'laudo_medico': 'docs'
+            };
+
+            Object.entries(mapaNativas).forEach(([campo, qKey]) => {
+                const box = document.querySelector(`.health-question-box[data-q="${qKey}"]`);
+                if (!box) return;
+                const oculta = nativasOcultas.includes(campo) || nativasOcultas.includes(qKey);
+                if (oculta) {
+                    box.style.display = 'none';
+                    setHealthOption(qKey, 'Não');
+                } else {
+                    box.style.display = '';
+                }
+            });
+        }
+
         function atualizarPerguntasExtrasDaModalidade(modId, modNome) {
             const container = document.getElementById('containerPerguntasExtras');
             const fieldsWrap = document.getElementById('perguntasExtrasFields');
@@ -3764,8 +3809,9 @@
                 return;
             }
 
-            // Filtra perguntas: gerais OU específicas da modalidade selecionada (ignora ocultas)
+            // Filtra perguntas: gerais OU específicas da modalidade selecionada (ignora ocultas e config de nativas)
             const aplicaveis = perguntas.filter(q => {
+                if (q.is_config_nativas || q.id === 'config_nativas_ocultas') return false;
                 if (q.oculto === true || q.ativo === false) return false;
                 if (!q.modalidade_id || q.modalidade_id === 'todas') return true;
                 if (modId && String(q.modalidade_id) === String(modId)) return true;

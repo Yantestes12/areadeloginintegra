@@ -693,6 +693,191 @@
             .fields-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
         }
 
+        /* ── MODALIDADES ESPORTIVAS ESTÉTICAS COM ÍCONE ANIMADO (PINTADO A LÁPIS) ── */
+        .modalidades-sports-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        @media(min-width: 480px) {
+            .modalidades-sports-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media(min-width: 768px) {
+            .modalidades-sports-grid { grid-template-columns: 1fr 1fr 1fr; }
+        }
+
+        .modalidade-sport-card {
+            background: #ffffff;
+            border: 1.5px solid var(--border-pencil);
+            border-radius: var(--radius-input);
+            padding: 12px 14px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .modalidade-sport-card:hover {
+            border-color: var(--c-verde);
+            background: #fafdfa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(49, 146, 68, 0.08);
+        }
+
+        .modalidade-sport-card.selected {
+            border-color: var(--c-verde);
+            background: rgba(49, 146, 68, 0.06);
+            box-shadow: 0 0 0 2px rgba(49, 146, 68, 0.25);
+        }
+
+        .mod-icon-wrapper {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(49, 146, 68, 0.09);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .modalidade-sport-card.selected .mod-icon-wrapper {
+            background: rgba(49, 146, 68, 0.18);
+            transform: scale(1.05);
+        }
+
+        .mod-info-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mod-title {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--c-verde-escuro);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.25;
+        }
+
+        .mod-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .mod-check-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border-pencil);
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            color: transparent;
+            transition: var(--transition);
+        }
+
+        .modalidade-sport-card.selected .mod-check-badge {
+            background: var(--c-verde);
+            border-color: var(--c-verde);
+            color: #ffffff;
+        }
+
+        /* ── ANIMAÇÕES COM EFEITO SALTANDO / Bouncing SUAVE ── */
+        @keyframes ballBounceAnim {
+            0%, 100% { transform: translateY(0) scale(1); }
+            35% { transform: translateY(-8px) scale(1.12) rotate(6deg); }
+            65% { transform: translateY(-3px) scale(1.04) rotate(-3deg); }
+        }
+
+        @keyframes weightPulseAnim {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.18) rotate(-4deg); }
+        }
+
+        @keyframes runFastAnim {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(4px) skewX(-6deg); }
+        }
+
+        @keyframes punchAnim {
+            0%, 100% { transform: translateX(0) scale(1); }
+            30% { transform: translateX(5px) rotate(8deg) scale(1.15); }
+        }
+
+        @keyframes danceAnim {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg) translateY(-2px); }
+            75% { transform: rotate(8deg) translateY(-2px); }
+        }
+
+        @keyframes swimAnim {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(3px) translateY(-3px); }
+        }
+
+        .modalidade-sport-card:hover .anim-bounce-ball,
+        .modalidade-sport-card.selected .anim-bounce-ball {
+            display: inline-block;
+            animation: ballBounceAnim 0.75s cubic-bezier(0.28, 0.84, 0.42, 1) infinite;
+        }
+
+        .modalidade-sport-card:hover .anim-pulse-weight,
+        .modalidade-sport-card.selected .anim-pulse-weight {
+            display: inline-block;
+            animation: weightPulseAnim 0.85s ease-in-out infinite;
+        }
+
+        .modalidade-sport-card:hover .anim-run-fast,
+        .modalidade-sport-card.selected .anim-run-fast {
+            display: inline-block;
+            animation: runFastAnim 0.65s ease-in-out infinite;
+        }
+
+        .modalidade-sport-card:hover .anim-punch,
+        .modalidade-sport-card.selected .anim-punch {
+            display: inline-block;
+            animation: punchAnim 0.65s ease-in-out infinite;
+        }
+
+        .modalidade-sport-card:hover .anim-dance,
+        .modalidade-sport-card.selected .anim-dance {
+            display: inline-block;
+            animation: danceAnim 0.85s ease-in-out infinite;
+        }
+
+        .modalidade-sport-card:hover .anim-swim,
+        .modalidade-sport-card.selected .anim-swim {
+            display: inline-block;
+            animation: swimAnim 0.85s ease-in-out infinite;
+        }
+
+        .modalidade-sport-card:hover .anim-martial,
+        .modalidade-sport-card.selected .anim-martial {
+            display: inline-block;
+            animation: weightPulseAnim 0.85s ease-in-out infinite;
+        }
+
+        .modalidade-sport-card:hover .anim-skate,
+        .modalidade-sport-card.selected .anim-skate {
+            display: inline-block;
+            animation: runFastAnim 0.65s ease-in-out infinite;
+        }
+
         /* ── QUADRADINHOS DE NÚCLEO (BAIRRO + MODALIDADE INTEGRADA) ── */
         .nucleos-tiles-grid {
             display: grid;
@@ -1364,10 +1549,10 @@
                     </div>
                 </div>
 
-                <!-- ETAPA 3: Cidade, Núcleo e Uniforme -->
+                <!-- ETAPA 3: Cidade, Modalidade, Núcleo e Uniforme -->
                 <div class="form-pane" data-step="3">
-                    <h3 class="pane-title">3. Escolha da Cidade e Núcleo</h3>
-                    <p class="pane-subtitle">Selecione o local de treino e os tamanhos do uniforme oficial.</p>
+                    <h3 class="pane-title">3. Escolha da Modalidade e Local de Treino</h3>
+                    <p class="pane-subtitle">Selecione sua modalidade esportiva, o núcleo de treino e os tamanhos do uniforme oficial.</p>
 
                     <!-- 1. Pergunta a Cidade Primeiro -->
                     <div class="form-group">
@@ -1379,14 +1564,26 @@
                         </select>
                     </div>
 
-                    <!-- 2. Quadradinhos de Núcleos (Bairro + Modalidade) -->
-                    <div id="blocoQuadradinhosNucleos" style="margin-top: 14px;">
+                    <!-- 2. Seleção Estética da Modalidade Esportiva -->
+                    <div id="blocoModalidadesEsportivas" style="margin-top: 16px;">
                         <label class="field-label">
-                            2. Clique no <strong>Núcleo / Bairro com a Modalidade</strong> desejada: <span class="req">*</span>
+                            2. Selecione a <strong>Modalidade Esportiva</strong> desejada: <span class="req">*</span>
+                        </label>
+                        <div class="modalidades-sports-grid" id="modalidadesCardsContainer">
+                            <div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">
+                                Selecione a cidade acima para visualizar as modalidades disponíveis.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Quadradinhos de Núcleos (Apenas da modalidade escolhida) -->
+                    <div id="blocoQuadradinhosNucleos" style="margin-top: 18px; display: none;">
+                        <label class="field-label">
+                            3. Escolha o <strong>Núcleo / Bairro</strong> disponível para esta modalidade: <span class="req">*</span>
                         </label>
                         <div class="nucleos-tiles-grid" id="nucleosCardsContainer">
                             <div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">
-                                Selecione a cidade acima para visualizar os núcleos disponíveis.
+                                Selecione uma modalidade esportiva acima para visualizar os núcleos disponíveis.
                             </div>
                         </div>
                     </div>
@@ -2313,28 +2510,105 @@
             // Se houver apenas 1 cidade ou se o aluno for de Campos, seleciona automaticamente
             if (cidadesArr.length === 1) {
                 selectCid.value = cidadesArr[0];
-                renderizarQuadradinhosNucleos(cidadesArr[0], projId);
+                carregarModalidadesDaCidade(cidadesArr[0], projId);
             } else {
                 // Seleciona Campos dos Goytacazes como padrão se existir para este projeto
                 const campos = cidadesArr.find(c => c.toLowerCase().includes('campos'));
                 if (campos) {
                     selectCid.value = campos;
-                    renderizarQuadradinhosNucleos(campos, projId);
+                    carregarModalidadesDaCidade(campos, projId);
                 } else {
                     selectCid.value = cidadesArr[0];
-                    renderizarQuadradinhosNucleos(cidadesArr[0], projId);
+                    carregarModalidadesDaCidade(cidadesArr[0], projId);
                 }
             }
 
             selectCid.onchange = () => {
-                renderizarQuadradinhosNucleos(selectCid.value, projId);
+                carregarModalidadesDaCidade(selectCid.value, projId);
             };
         }
 
-        function renderizarQuadradinhosNucleos(cidadeEscolhida, projId) {
-            const container = document.getElementById('nucleosCardsContainer');
+
+        // ── Helper de Ícones e Animações de Modalidades Esportivas ──
+        function obterIconeModalidade(nome) {
+            const n = (nome || '').toLowerCase();
+            if (n.includes('futebol de campo') || n.includes('futebol society') || n.includes('campo')) {
+                return { emoji: '⚽', classe: 'anim-bounce-ball' };
+            }
+            if (n.includes('futsal') || n.includes('futebol de salão')) {
+                return { emoji: '⚽', classe: 'anim-bounce-ball' };
+            }
+            if (n.includes('funcional') || n.includes('treinamento funcional') || n.includes('crossfit') || n.includes('musculação')) {
+                return { emoji: '🏋️', classe: 'anim-pulse-weight' };
+            }
+            if (n.includes('corrida') || n.includes('atletismo') || n.includes('maratona')) {
+                return { emoji: '🏃', classe: 'anim-run-fast' };
+            }
+            if (n.includes('jiu-jitsu') || n.includes('jiu jitsu') || n.includes('judô') || n.includes('judo') || n.includes('karatê') || n.includes('karate') || n.includes('taekwondo') || n.includes('luta')) {
+                return { emoji: '🥋', classe: 'anim-martial' };
+            }
+            if (n.includes('boxe') || n.includes('muay thai') || n.includes('kickboxing')) {
+                return { emoji: '🥊', classe: 'anim-punch' };
+            }
+            if (n.includes('vôlei') || n.includes('voleibol') || n.includes('volei')) {
+                return { emoji: '🏐', classe: 'anim-bounce-ball' };
+            }
+            if (n.includes('basquete') || n.includes('basquetebol')) {
+                return { emoji: '🏀', classe: 'anim-bounce-ball' };
+            }
+            if (n.includes('natação') || n.includes('natacao') || n.includes('hidroginástica') || n.includes('aquático')) {
+                return { emoji: '🏊', classe: 'anim-swim' };
+            }
+            if (n.includes('ginástica') || n.includes('ginastica') || n.includes('pilates') || n.includes('yoga') || n.includes('alongamento')) {
+                return { emoji: '🤸', classe: 'anim-bounce-ball' };
+            }
+            if (n.includes('balé') || n.includes('bale') || n.includes('dança') || n.includes('danca') || n.includes('zumba') || n.includes('ritmos')) {
+                return { emoji: '💃', classe: 'anim-dance' };
+            }
+            if (n.includes('capoeira')) {
+                return { emoji: '🤸‍♂️', classe: 'anim-martial' };
+            }
+            if (n.includes('skate') || n.includes('patins')) {
+                return { emoji: '🛹', classe: 'anim-skate' };
+            }
+            if (n.includes('tênis') || n.includes('tenis') || n.includes('beach tennis') || n.includes('padel')) {
+                return { emoji: '🎾', classe: 'anim-bounce-ball' };
+            }
+            if (n.includes('ciclismo') || n.includes('bike') || n.includes('bicicleta')) {
+                return { emoji: '🚴', classe: 'anim-run-fast' };
+            }
+            if (n.includes('handebol')) {
+                return { emoji: '🤾', classe: 'anim-bounce-ball' };
+            }
+            if (n.includes('xadrez') || n.includes('dama')) {
+                return { emoji: '♟️', classe: 'anim-pulse-weight' };
+            }
+            if (n.includes('surf') || n.includes('bodyboard')) {
+                return { emoji: '🏄', classe: 'anim-swim' };
+            }
+            return { emoji: '🏅', classe: 'anim-pulse-weight' };
+        }
+
+        // ── ETAPA 3: CARREGA MODALIDADES REAIS DA CIDADE (Cards Elegantes com Ícone Animado) ──
+        function carregarModalidadesDaCidade(cidadeEscolhida, projId) {
+            const modContainer = document.getElementById('modalidadesCardsContainer');
+            const nucBloco = document.getElementById('blocoQuadradinhosNucleos');
+            const nucContainer = document.getElementById('nucleosCardsContainer');
+
+            // Limpa seleções anteriores para não manter dados inconsistentes
+            document.getElementById('hidden_nucleo_id').value = '';
+            document.getElementById('hidden_nucleo_nome').value = '';
+            if (document.getElementById('hidden_modalidade_id')) {
+                document.getElementById('hidden_modalidade_id').value = '';
+            }
+            document.getElementById('hidden_modalidade_nome').value = '';
+            document.getElementById('hidden_bairro_escolhido').value = '';
+            if (nucBloco) nucBloco.style.display = 'none';
+            if (nucContainer) nucContainer.innerHTML = '';
+            atualizarPerguntasExtrasDaModalidade(null, null);
+
             if (!cidadeEscolhida) {
-                container.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">Selecione a cidade acima para visualizar os núcleos disponíveis.</div>';
+                modContainer.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">Selecione a cidade acima para carregar as modalidades disponíveis.</div>';
                 return;
             }
 
@@ -2368,36 +2642,115 @@
                 return matchProj && matchCid;
             });
 
-            // NÍVEL 2 (Prioridade Cidade): Se este projeto específico não tiver núcleos próprios nesta cidade,
-            // traz TODOS os núcleos ativos do instituto nesta cidade para o aluno poder se inscrever!
+            // Fallbacks inteligentes para garantir disponibilidade real
             if (filtrados.length === 0) {
                 filtrados = nucleos.filter(n => {
                     const cid = resolverCidade(n);
                     return String(cid).trim().toLowerCase() === String(cidadeEscolhida).trim().toLowerCase();
                 });
             }
-
-            // NÍVEL 3 (Fallback Projeto): Se ainda não houver núcleos nesta cidade, traz os núcleos deste projeto em outras cidades
             if (filtrados.length === 0) {
                 filtrados = nucleos.filter(n => (!pIdNum || parseInt(n.projeto_id) === pIdNum));
             }
-
-            // NÍVEL 4 (Fallback Instituto): Mostra todos os núcleos do instituto
             if (filtrados.length === 0) {
                 filtrados = nucleos;
             }
-
-            // NÍVEL 5 (Garantia Absoluta): Se mesmo assim estiver vazio, injeta o catálogo oficial completo
             if (filtrados.length === 0) {
                 filtrados = [...NUCLEOS_CATALOGO_OFICIAL];
             }
 
+            // Agrupa por Modalidades REAIS que de fato existem nos núcleos filtrados
+            const modalidadesMap = new Map();
+            filtrados.forEach(n => {
+                const esp = resolverEspaco(n);
+                const modId = n.modalidade_id || esp?.modalidade_id;
+                const modNome = n.modalidade_nome || modMap[modId] || MODALIDADES_FALLBACK[modId] || 'Futebol de Campo';
+                const key = modId ? String(modId) : modNome.trim().toLowerCase();
+
+                if (!modalidadesMap.has(key)) {
+                    modalidadesMap.set(key, {
+                        id: modId,
+                        nome: modNome,
+                        nucleos: []
+                    });
+                }
+                modalidadesMap.get(key).nucleos.push(n);
+            });
+
+            const modalidadesArr = Array.from(modalidadesMap.values());
+            if (modalidadesArr.length === 0) {
+                modContainer.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">Nenhuma modalidade esportiva disponível para esta localidade.</div>';
+                return;
+            }
+
+            modContainer.innerHTML = '';
+            modalidadesArr.forEach((mod, idx) => {
+                const iconInfo = obterIconeModalidade(mod.nome);
+                const qtdNuc = mod.nucleos.length;
+                const subtitulo = `${qtdNuc} local${qtdNuc > 1 ? 'is' : ''} de treino`;
+
+                const card = document.createElement('div');
+                card.className = 'modalidade-sport-card';
+                card.setAttribute('data-mod-id', mod.id || '');
+                card.innerHTML = `
+                    <div class="mod-icon-wrapper">
+                        <span class="mod-icon-symbol ${iconInfo.classe}">${iconInfo.emoji}</span>
+                    </div>
+                    <div class="mod-info-wrap">
+                        <div class="mod-title">${escapeHTML(mod.nome)}</div>
+                        <div class="mod-subtitle">${subtitulo}</div>
+                    </div>
+                    <div class="mod-check-badge">✓</div>
+                `;
+
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.modalidade-sport-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+
+                    // Armazena modalidade nos campos ocultos
+                    if (document.getElementById('hidden_modalidade_id')) {
+                        document.getElementById('hidden_modalidade_id').value = mod.id || '';
+                    }
+                    document.getElementById('hidden_modalidade_nome').value = mod.nome;
+
+                    // Exibe e preenche os núcleos EXCLUSIVOS desta modalidade
+                    nucBloco.style.display = 'block';
+                    renderizarNucleosDaModalidade(mod.nucleos, mod.id, mod.nome, espacos);
+
+                    // Atualiza perguntas adicionais configuradas para a modalidade/projeto
+                    atualizarPerguntasExtrasDaModalidade(mod.id, mod.nome);
+
+                    // Scroll suave para a escolha do núcleo
+                    setTimeout(() => {
+                        nucBloco.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 80);
+                });
+
+                modContainer.appendChild(card);
+
+                // Auto-seleciona se houver apenas 1 modalidade
+                if (modalidadesArr.length === 1 && idx === 0) {
+                    setTimeout(() => card.click(), 50);
+                }
+            });
+        }
+
+        // ── RENDERIZAÇÃO DOS NÚCLEOS EXCLUSIVOS DA MODALIDADE ESCOLHIDA ──
+        function renderizarNucleosDaModalidade(nucleosDaMod, modId, modNome, espacos) {
+            const container = document.getElementById('nucleosCardsContainer');
             container.innerHTML = '';
-            filtrados.forEach((n, idx) => {
+
+            function resolverEspaco(n) {
+                return (espacos || []).find(e => 
+                    (n.espaco_id && String(e.id) === String(n.espaco_id)) || 
+                    (n.bairro_id && String(e.id) === String(n.bairro_id)) || 
+                    (n.nome && e.nome && n.nome.trim().toLowerCase() === e.nome.trim().toLowerCase())
+                );
+            }
+
+            nucleosDaMod.forEach((n, idx) => {
                 const esp = resolverEspaco(n);
                 const bairroNome = (esp?.bairro && esp.bairro !== 'temp') ? esp.bairro : (n.bairro && n.bairro !== 'temp' ? n.bairro : (esp?.nome || n.nome || 'Núcleo Central'));
-                const modId = n.modalidade_id || esp?.modalidade_id;
-                const modNome = n.modalidade_nome || modMap[modId] || MODALIDADES_FALLBACK[modId] || 'Futebol / Esportes';
                 const refLocal = n.ponto_referencia || esp?.ponto_referencia || esp?.endereco || esp?.rua || 'Núcleo Oficial GASCTPNA';
 
                 const card = document.createElement('div');
@@ -2405,11 +2758,11 @@
                 card.setAttribute('data-id', n.id);
                 card.innerHTML = `
                     <div class="tile-check-pill">✓</div>
-                    <span class="tile-mod-badge">${modNome}</span>
-                    <div class="tile-bairro-title">${bairroNome}</div>
+                    <span class="tile-mod-badge">${escapeHTML(modNome)}</span>
+                    <div class="tile-bairro-title">${escapeHTML(bairroNome)}</div>
                     <div class="tile-ref-info">
                         <i data-lucide="map-pin" style="width: 12px; height: 12px; color: var(--c-marrom-claro); flex-shrink: 0;"></i>
-                        <span>${refLocal}</span>
+                        <span>${escapeHTML(refLocal)}</span>
                     </div>
                 `;
 
@@ -2417,21 +2770,13 @@
                     document.querySelectorAll('.nucleo-square-tile').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
 
-                    // Armazena valores nos campos ocultos
                     document.getElementById('hidden_nucleo_id').value = n.id;
                     document.getElementById('hidden_nucleo_nome').value = n.nome || bairroNome;
-                    if (document.getElementById('hidden_modalidade_id')) {
-                        document.getElementById('hidden_modalidade_id').value = n.modalidade_id || '';
-                    }
-                    document.getElementById('hidden_modalidade_nome').value = modNome;
                     document.getElementById('hidden_bairro_escolhido').value = bairroNome;
-
-                    // Renderiza perguntas adicionais configuradas para a modalidade/projeto
-                    atualizarPerguntasExtrasDaModalidade(n.modalidade_id, modNome);
                 });
 
-                // Auto-seleciona o primeiro núcleo se houver apenas 1
-                if (filtrados.length === 1 && idx === 0) {
+                // Auto-seleciona se houver apenas 1 núcleo para a modalidade
+                if (nucleosDaMod.length === 1 && idx === 0) {
                     setTimeout(() => card.click(), 40);
                 }
 
@@ -2688,11 +3033,17 @@
                 }
             }
 
-            // Validação da Etapa 3 (Núcleo Selecionado & Perguntas Complementares)
+            // Validação da Etapa 3 (Modalidade, Núcleo Selecionado & Perguntas Complementares)
             if (passo === 3) {
-                const nId = document.getElementById('hidden_nucleo_id').value;
+                const modNome = document.getElementById('hidden_modalidade_nome')?.value;
+                if (!modNome) {
+                    alert('Por favor, selecione uma modalidade esportiva desejada.');
+                    return false;
+                }
+
+                const nId = document.getElementById('hidden_nucleo_id')?.value;
                 if (!nId) {
-                    alert('Por favor, clique em um dos quadradinhos de núcleo disponíveis.');
+                    alert('Por favor, escolha o núcleo / local de treino para a modalidade selecionada.');
                     return false;
                 }
 

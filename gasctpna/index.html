@@ -2294,20 +2294,34 @@
                 projetos.forEach(p => {
                     if (p.ativo === false || p.ativo === 0) return;
 
-                    const min = p.idade_min !== null && p.idade_min !== undefined ? parseInt(p.idade_min) : 6;
-                    const max = p.idade_max !== null && p.idade_max !== undefined ? parseInt(p.idade_max) : 18;
-                    const naFaixa = (idade === null || idade === undefined) ? true : (idade >= min && idade <= max);
+                    const min = (p.idade_min !== null && p.idade_min !== undefined && p.idade_min !== '') ? parseInt(p.idade_min) : null;
+                    const max = (p.idade_max !== null && p.idade_max !== undefined && p.idade_max !== '') ? parseInt(p.idade_max) : null;
+                    
+                    let naFaixa = true;
+                    if (idade !== null && idade !== undefined) {
+                        if (min !== null && idade < min) naFaixa = false;
+                        if (max !== null && idade > max) naFaixa = false;
+                    }
+
                     const jaInscrito = idsInscritos.map(Number).includes(parseInt(p.id))
                         || projetosComMatricula.has(String(p.id));
 
                     const card = document.createElement('div');
                     card.className = 'project-tile' + (!naFaixa || jaInscrito ? ' disabled' : '');
 
-                    let statusBadge = `<span class="badge-age-tag">Faixa: ${min} a ${max} anos</span>`;
+                    let statusBadge = '';
                     if (jaInscrito) {
                         statusBadge = `<span class="badge-already-enrolled"><i data-lucide="check" style="width: 12px; height: 12px;"></i> Já Inscrito</span>`;
                     } else if (!naFaixa) {
                         statusBadge = `<span class="badge-age-tag" style="color: var(--c-marrom-verm); border-color: rgba(137,57,6,0.2);">Idade fora da faixa</span>`;
+                    } else if (min !== null && max !== null) {
+                        statusBadge = `<span class="badge-age-tag">Faixa: ${min} a ${max} anos</span>`;
+                    } else if (min !== null) {
+                        statusBadge = `<span class="badge-age-tag">Faixa: a partir de ${min} anos</span>`;
+                    } else if (max !== null) {
+                        statusBadge = `<span class="badge-age-tag">Faixa: até ${max} anos</span>`;
+                    } else {
+                        statusBadge = `<span class="badge-age-tag">Livre (Todas as Idades)</span>`;
                     }
 
                     card.innerHTML = `
@@ -2343,11 +2357,17 @@
         // ── Iniciar Matrícula em Projeto Específico ──
         async function iniciarMatriculaNoProjeto(projId, projNome) {
             const projObj = (currentProjectsList || []).find(p => String(p.id) === String(projId));
+            const minRaw = projObj?.idade_min;
+            const maxRaw = projObj?.idade_max;
+            const idadeMin = (minRaw !== null && minRaw !== undefined && minRaw !== '') ? parseInt(minRaw) : null;
+            const idadeMax = (maxRaw !== null && maxRaw !== undefined && maxRaw !== '') ? parseInt(maxRaw) : null;
+
             currentSelectedProject = { 
                 id: projId, 
                 nome: projNome,
-                idade_min: (projObj && projObj.idade_min !== null && projObj.idade_min !== undefined) ? parseInt(projObj.idade_min) : 6,
-                idade_max: (projObj && projObj.idade_max !== null && projObj.idade_max !== undefined) ? parseInt(projObj.idade_max) : 18
+                idade_min: idadeMin,
+                idade_max: idadeMax,
+                dados: projObj
             };
 
             // Oculta hub e exibe formulário
@@ -2958,10 +2978,19 @@
                 if (nascVal && currentSelectedProject) {
                     const idadeCalculada = calcularIdade(nascVal);
                     if (idadeCalculada !== null && idadeCalculada >= 0 && idadeCalculada <= 120) {
-                        const min = currentSelectedProject.idade_min;
-                        const max = currentSelectedProject.idade_max;
-                        if (min !== undefined && max !== undefined && (idadeCalculada < min || idadeCalculada > max)) {
-                            alert(`Atenção: A data de nascimento informada indica que o participante tem ${idadeCalculada} anos.\nO projeto selecionado (${currentSelectedProject.nome}) é destinado a participantes de ${min} a ${max} anos.`);
+                        const min = (currentSelectedProject.idade_min !== null && currentSelectedProject.idade_min !== undefined && currentSelectedProject.idade_min !== '') ? Number(currentSelectedProject.idade_min) : null;
+                        const max = (currentSelectedProject.idade_max !== null && currentSelectedProject.idade_max !== undefined && currentSelectedProject.idade_max !== '') ? Number(currentSelectedProject.idade_max) : null;
+
+                        const foraMin = min !== null && !isNaN(min) && idadeCalculada < min;
+                        const foraMax = max !== null && !isNaN(max) && idadeCalculada > max;
+
+                        if (foraMin || foraMax) {
+                            let msgFaixa = '';
+                            if (min !== null && max !== null) msgFaixa = `de ${min} a ${max} anos`;
+                            else if (min !== null) msgFaixa = `a partir de ${min} anos`;
+                            else if (max !== null) msgFaixa = `até ${max} anos`;
+
+                            alert(`Atenção: A data de nascimento informada indica que o participante tem ${idadeCalculada} anos.\nO projeto selecionado (${currentSelectedProject.nome}) é destinado a participantes ${msgFaixa}.`);
                             document.getElementById('mat_nasc').focus();
                             return false;
                         }

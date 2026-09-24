@@ -1864,13 +1864,11 @@
             const vagasTotais = vagasBase + vagasReserva; // Limite máximo absoluto (vagas + 10% reserva)
             const inscritos = (n && Number(n.inscritos) > 0) ? Number(n.inscritos) : 0;
             
-            const aceitando = Boolean(n) && (n.aceitando_vagas !== false && n.aceitando_vagas !== 'false' && n.aceitando_vagas !== 0);
-            
-            // Esgotado se atingiu/superou vagasTotais OU se aceitando_vagas estiver desligado
-            const esgotado = !aceitando || (inscritos >= vagasTotais);
+            // Esgotado apenas se atingiu/superou o limite máximo de vagasTotais (vagas base + 10% reserva)
+            const esgotado = (vagasTotais > 0 && inscritos >= vagasTotais);
             
             // Cadastro de reserva se atingiu as vagas regulares mas ainda há espaço nos 10%
-            const emReserva = aceitando && !esgotado && (inscritos >= vagasBase);
+            const emReserva = !esgotado && (vagasBase > 0 && inscritos >= vagasBase);
             
             const vagasRestantes = Math.max(0, vagasTotais - inscritos);
             const vagasRegularesRestantes = Math.max(0, vagasBase - inscritos);
@@ -1880,7 +1878,6 @@
                 vagasReserva,
                 vagasTotais,
                 inscritos,
-                aceitando,
                 esgotado,
                 emReserva,
                 vagasRestantes,

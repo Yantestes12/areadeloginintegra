@@ -3529,9 +3529,8 @@ window.dadosRecentesCPF = null;
                     var vagasReserva = Math.ceil(vagasBase * 0.10);
                     var vagasTotais = vagasBase + vagasReserva;
                     var totalInscritos = (n.inscritos !== null && n.inscritos !== undefined && n.inscritos !== '') ? parseInt(n.inscritos) : parseInt(n.qtd_matriculados || 0);
-                    var aceitando = (n.aceitando_vagas !== false && n.aceitando_vagas !== 'false' && n.aceitando_vagas !== 0);
-                    var isLotado = !aceitando || (vagasTotais > 0 && totalInscritos >= vagasTotais);
-                    var emReserva = aceitando && !isLotado && (totalInscritos >= vagasBase);
+                    var isLotado = (vagasTotais > 0 && totalInscritos >= vagasTotais);
+                    var emReserva = !isLotado && (vagasBase > 0 && totalInscritos >= vagasBase);
                     var vagasRestantes = Math.max(0, vagasTotais - totalInscritos);
                     var vagasRegularesRestantes = Math.max(0, vagasBase - totalInscritos);
                     

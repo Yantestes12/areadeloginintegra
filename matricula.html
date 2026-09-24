@@ -3525,14 +3525,24 @@ window.dadosRecentesCPF = null;
                 listaNucleos.innerHTML = '';
                 
                 filtrados.forEach(function(n) {
-                    var totalVagas = (n.vagas !== null && n.vagas !== undefined && n.vagas !== '') ? parseInt(n.vagas) : parseInt(n.vagas_por_nucleo || 0);
+                    var vagasBase = (n.vagas !== null && n.vagas !== undefined && n.vagas !== '') ? parseInt(n.vagas) : parseInt(n.vagas_por_nucleo || 100);
+                    var vagasReserva = Math.ceil(vagasBase * 0.10);
+                    var vagasTotais = vagasBase + vagasReserva;
                     var totalInscritos = (n.inscritos !== null && n.inscritos !== undefined && n.inscritos !== '') ? parseInt(n.inscritos) : parseInt(n.qtd_matriculados || 0);
-                    var vagasRestantes = totalVagas > 0 ? (totalVagas - totalInscritos) : null;
-                    var isLotado = (totalVagas > 0 && vagasRestantes <= 0);
-                    n.vagas = totalVagas;
+                    var aceitando = (n.aceitando_vagas !== false && n.aceitando_vagas !== 'false' && n.aceitando_vagas !== 0);
+                    var isLotado = !aceitando || (vagasTotais > 0 && totalInscritos >= vagasTotais);
+                    var emReserva = aceitando && !isLotado && (totalInscritos >= vagasBase);
+                    var vagasRestantes = Math.max(0, vagasTotais - totalInscritos);
+                    var vagasRegularesRestantes = Math.max(0, vagasBase - totalInscritos);
+                    
+                    n.vagas = vagasBase;
+                    n.vagasReserva = vagasReserva;
+                    n.vagasTotais = vagasTotais;
                     n.matriculados = totalInscritos;
                     n.vagasRestantes = vagasRestantes;
+                    n.vagasRegularesRestantes = vagasRegularesRestantes;
                     n.lotado = isLotado;
+                    n.emReserva = emReserva;
                     
                     var turnos = [];
                     if (n.turnos_calculados) {
@@ -3551,7 +3561,7 @@ window.dadosRecentesCPF = null;
                 });
 
                 var hintNucleo = document.getElementById('hint-nucleo');
-                if (filtrados.length === 1) {
+                if (filtrados.length === 1 && !filtrados[0].lotado) {
                     var n = filtrados[0];
                     if (hidNucleo) hidNucleo.value = n.id;
                     if (listaNucleos) listaNucleos.style.display = 'none';
@@ -3597,7 +3607,7 @@ window.dadosRecentesCPF = null;
                         
                         if (n.lotado) {
                             var lotadoBadge = document.createElement('div');
-                            lotadoBadge.textContent = 'VAGAS ESGOTADAS';
+                            lotadoBadge.textContent = 'VAGAS ESGOTADAS (' + n.matriculados + '/' + n.vagasTotais + ')';
                             lotadoBadge.style.fontSize = '10.5px';
                             lotadoBadge.style.fontWeight = '900';
                             lotadoBadge.style.color = '#fff';
@@ -3607,10 +3617,21 @@ window.dadosRecentesCPF = null;
                             lotadoBadge.style.display = 'inline-block';
                             lotadoBadge.style.marginTop = '6px';
                             textWrap.appendChild(lotadoBadge);
+                        } else if (n.emReserva) {
+                            var reservaBadge = document.createElement('div');
+                            reservaBadge.textContent = 'CADASTRO DE RESERVA (' + n.vagasRestantes + ' restante' + (n.vagasRestantes > 1 ? 's' : '') + ')';
+                            reservaBadge.style.fontSize = '10.5px';
+                            reservaBadge.style.fontWeight = '800';
+                            reservaBadge.style.color = '#7a5813';
+                            reservaBadge.style.background = '#fef3c7';
+                            reservaBadge.style.padding = '3px 7px';
+                            reservaBadge.style.borderRadius = '4px';
+                            reservaBadge.style.display = 'inline-block';
+                            reservaBadge.style.marginTop = '6px';
+                            textWrap.appendChild(reservaBadge);
                         } else if (n.vagas > 0) {
                             var vagasInfo = document.createElement('div');
-                            var disponiveis = n.vagasRestantes !== null ? n.vagasRestantes : n.vagas;
-                            vagasInfo.textContent = 'Vagas disponíveis: ' + disponiveis + ' de ' + n.vagas;
+                            vagasInfo.textContent = 'Vagas disponíveis: ' + n.vagasRegularesRestantes + ' de ' + n.vagas;
                             vagasInfo.style.fontSize = '11.5px';
                             vagasInfo.style.color = 'var(--primary-hover)';
                             vagasInfo.style.fontWeight = '700';

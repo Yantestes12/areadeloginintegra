@@ -948,6 +948,53 @@
             border-radius: var(--radius-pill);
         }
 
+        .nucleo-square-tile.esgotado {
+            opacity: 0.62;
+            background: #fbf9f6;
+            border-color: #e2dbce;
+            cursor: not-allowed;
+        }
+
+        .nucleo-square-tile.esgotado:hover {
+            border-color: #d1c7b7;
+            background: #f8f5f0;
+        }
+
+        .tile-vagas-badge {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2.5px 7px;
+            border-radius: var(--radius-pill);
+            display: inline-flex;
+            align-items: center;
+            gap: 3.5px;
+            line-height: 1.2;
+        }
+
+        .tile-vagas-abertas {
+            background: rgba(49, 146, 68, 0.12);
+            color: #24640a;
+            border: 1px solid rgba(49, 146, 68, 0.25);
+        }
+
+        .tile-vagas-reserva {
+            background: rgba(203, 172, 105, 0.2);
+            color: #7a5813;
+            border: 1px solid rgba(203, 172, 105, 0.4);
+        }
+
+        .tile-vagas-esgotadas {
+            background: rgba(185, 28, 28, 0.1);
+            color: #b91c1c;
+            border: 1px solid rgba(185, 28, 28, 0.25);
+        }
+
+        .tile-vagas-sua-vaga {
+            background: rgba(41, 127, 106, 0.14);
+            color: #297f6a;
+            border: 1px solid rgba(41, 127, 106, 0.3);
+        }
+
         .tile-bairro-title {
             font-size: 14.5px;
             font-weight: 800;
@@ -1809,6 +1856,37 @@
         let currentSelectedProject = null;
         let currentFormStep = 1;
         const totalFormSteps = 4;
+
+        // ── REGRA DE VAGAS: CAPACIDADE BASE + 10% DE CADASTRO DE RESERVA ──
+        function calcularVagasNucleo(n) {
+            const vagasBase = (n && Number(n.vagas) > 0) ? Number(n.vagas) : (currentSelectedProject?.vagas_por_nucleo ? Number(currentSelectedProject.vagas_por_nucleo) : 100);
+            const vagasReserva = Math.ceil(vagasBase * 0.10);
+            const vagasTotais = vagasBase + vagasReserva; // Limite máximo absoluto (vagas + 10% reserva)
+            const inscritos = (n && Number(n.inscritos) > 0) ? Number(n.inscritos) : 0;
+            
+            const aceitando = Boolean(n) && (n.aceitando_vagas !== false && n.aceitando_vagas !== 'false' && n.aceitando_vagas !== 0);
+            
+            // Esgotado se atingiu/superou vagasTotais OU se aceitando_vagas estiver desligado
+            const esgotado = !aceitando || (inscritos >= vagasTotais);
+            
+            // Cadastro de reserva se atingiu as vagas regulares mas ainda há espaço nos 10%
+            const emReserva = aceitando && !esgotado && (inscritos >= vagasBase);
+            
+            const vagasRestantes = Math.max(0, vagasTotais - inscritos);
+            const vagasRegularesRestantes = Math.max(0, vagasBase - inscritos);
+            
+            return {
+                vagasBase,
+                vagasReserva,
+                vagasTotais,
+                inscritos,
+                aceitando,
+                esgotado,
+                emReserva,
+                vagasRestantes,
+                vagasRegularesRestantes
+            };
+        }
 
         // Dicionário padrão de modalidades (fallback seguro)
         const MODALIDADES_FALLBACK = {
@@ -2771,17 +2849,47 @@
                 );
             }
 
-            nucleosDaMod.forEach((n, idx) => {
+            const ativos = (nucleosDaMod || []).filter(n => n.ativo !== false && n.ativo !== 0 && n.ativo !== 'false');
+            if (ativos.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 13px; padding: 20px; text-align: center; border: 1.5px dashed var(--border-pencil); border-radius: var(--radius-input);">Nenhum núcleo ativo com vagas abertas para esta modalidade no momento.</div>';
+                return;
+            }
+
+            ativos.forEach((n, idx) => {
                 const esp = resolverEspaco(n);
                 const bairroNome = (esp?.bairro && esp.bairro !== 'temp') ? esp.bairro : (n.bairro && n.bairro !== 'temp' ? n.bairro : (esp?.nome || n.nome || 'Núcleo Central'));
                 const refLocal = n.ponto_referencia || esp?.ponto_referencia || esp?.endereco || esp?.rua || 'Núcleo Oficial GASCTPNA';
 
+                const infoVagas = calcularVagasNucleo(n);
+
+                // Verifica se aluno já está matriculado neste mesmo núcleo em modo de edição
+                const modoEdicaoAtivo = (document.getElementById('hidden_modo_edicao')?.value === 'true');
+                const matriculaEditandoId = document.getElementById('hidden_matricula_id')?.value;
+                const matOriginal = (currentMatriculasList || []).find(m => String(m.id) === String(matriculaEditandoId) || String(m.matricula) === String(matriculaEditandoId)) || window._ultimoPayloadMatricula;
+                const mesmoNucleoJaMatriculado = modoEdicaoAtivo && matOriginal && String(matOriginal.nucleo_id) === String(n.id);
+
+                const esgotadoParaAluno = infoVagas.esgotado && !mesmoNucleoJaMatriculado;
+
+                let badgeVagasHtml = '';
+                if (mesmoNucleoJaMatriculado) {
+                    badgeVagasHtml = `<span class="tile-vagas-badge tile-vagas-sua-vaga"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> Sua vaga atual mantida</span>`;
+                } else if (infoVagas.esgotado) {
+                    badgeVagasHtml = `<span class="tile-vagas-badge tile-vagas-esgotadas"><i data-lucide="ban" style="width: 11px; height: 11px;"></i> Vagas Esgotadas (${infoVagas.inscritos}/${infoVagas.vagasTotais})</span>`;
+                } else if (infoVagas.emReserva) {
+                    badgeVagasHtml = `<span class="tile-vagas-badge tile-vagas-reserva"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> Cadastro de Reserva (${infoVagas.vagasRestantes} restante${infoVagas.vagasRestantes > 1 ? 's' : ''})</span>`;
+                } else {
+                    badgeVagasHtml = `<span class="tile-vagas-badge tile-vagas-abertas"><i data-lucide="check" style="width: 11px; height: 11px;"></i> ${infoVagas.vagasRegularesRestantes} vaga${infoVagas.vagasRegularesRestantes > 1 ? 's' : ''} disponível${infoVagas.vagasRegularesRestantes > 1 ? 's' : ''}</span>`;
+                }
+
                 const card = document.createElement('div');
-                card.className = 'nucleo-square-tile';
+                card.className = 'nucleo-square-tile' + (esgotadoParaAluno ? ' esgotado' : '');
                 card.setAttribute('data-id', n.id);
                 card.innerHTML = `
-                    <div class="tile-check-pill">✓</div>
-                    <span class="tile-mod-badge">${escapeHTML(modNome)}</span>
+                    <div class="tile-check-pill">${esgotadoParaAluno ? '✕' : '✓'}</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
+                        <span class="tile-mod-badge">${escapeHTML(modNome)}</span>
+                        ${badgeVagasHtml}
+                    </div>
                     <div class="tile-bairro-title">${escapeHTML(bairroNome)}</div>
                     <div class="tile-ref-info">
                         <i data-lucide="map-pin" style="width: 12px; height: 12px; color: var(--c-marrom-claro); flex-shrink: 0;"></i>
@@ -2790,6 +2898,11 @@
                 `;
 
                 card.addEventListener('click', () => {
+                    if (esgotadoParaAluno) {
+                        alert(`As vagas para o núcleo "${bairroNome}" estão totalmente esgotadas (${infoVagas.inscritos} inscritos para o limite máximo de ${infoVagas.vagasTotais}, incluindo 10% de cadastro de reserva).\n\nPor favor, escolha outro núcleo ou modalidade disponível.`);
+                        return;
+                    }
+
                     document.querySelectorAll('.nucleo-square-tile').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
 
@@ -2798,8 +2911,8 @@
                     document.getElementById('hidden_bairro_escolhido').value = bairroNome;
                 });
 
-                // Auto-seleciona se houver apenas 1 núcleo para a modalidade
-                if (nucleosDaMod.length === 1 && idx === 0) {
+                // Auto-seleciona se houver apenas 1 núcleo para a modalidade E NÃO estiver esgotado
+                if (ativos.length === 1 && idx === 0 && !esgotadoParaAluno) {
                     setTimeout(() => card.click(), 40);
                 }
 
@@ -2905,6 +3018,30 @@
                 const idEnvio = calcularIdade(payload.data_nascimento);
                 payload.idade = (idEnvio !== null && idEnvio !== undefined) ? idEnvio : (currentStudentData?.idade || null);
 
+                // Validação final de vagas antes do envio (vagas base + 10% reserva)
+                const nucleoAlvoId = payload.nucleo_id || document.getElementById('hidden_nucleo_id')?.value;
+                if (nucleoAlvoId) {
+                    const todosNucleos = (_cacheNucleos && _cacheNucleos.length > 0) ? _cacheNucleos : [...NUCLEOS_CATALOGO_OFICIAL];
+                    const nAlvo = todosNucleos.find(n => String(n.id) === String(nucleoAlvoId));
+                    if (nAlvo) {
+                        const info = calcularVagasNucleo(nAlvo);
+                        const modoEdicaoAtivo = (document.getElementById('hidden_modo_edicao')?.value === 'true');
+                        const matriculaEditandoId = document.getElementById('hidden_matricula_id')?.value;
+                        const matOriginal = (currentMatriculasList || []).find(m => String(m.id) === String(matriculaEditandoId) || String(m.matricula) === String(matriculaEditandoId)) || window._ultimoPayloadMatricula;
+                        const mesmoNucleoJaMatriculado = modoEdicaoAtivo && matOriginal && String(matOriginal.nucleo_id) === String(nucleoAlvoId);
+
+                        if (info.esgotado && !mesmoNucleoJaMatriculado) {
+                            alert(`Não foi possível concluir a matrícula: As vagas para o núcleo "${nAlvo.nome || 'selecionado'}" estão totalmente esgotadas (${info.inscritos}/${info.vagasTotais}, incluindo 10% de cadastro de reserva).\n\nPor favor, retorne à etapa de escolha e selecione outro núcleo.`);
+                            btnSubmit.disabled = false;
+                            btnSubmit.innerHTML = '<i data-lucide="check-circle" style="width:18px;height:18px;"></i> Concluir Matrícula';
+                            if (window.lucide) lucide.createIcons();
+                            irParaPasso(3);
+                            return;
+                        }
+                        payload.tipo_vaga = info.emReserva ? 'reserva' : 'regular';
+                    }
+                }
+
                 try {
                     const resp = await fetch(API.enviarMatricula, {
                         method: 'POST',
@@ -2913,6 +3050,14 @@
                     });
                     const json = await resp.json().catch(() => ({}));
                     const numMatricula = json.id || json.matricula || json.n_inscricao || Math.floor(100000 + Math.random() * 900000);
+
+                    // Incrementa contagem de inscritos no cache local para bloqueio imediato
+                    if (nucleoAlvoId && _cacheNucleos) {
+                        const nCached = _cacheNucleos.find(n => String(n.id) === String(nucleoAlvoId));
+                        if (nCached) {
+                            nCached.inscritos = (Number(nCached.inscritos) || 0) + 1;
+                        }
+                    }
 
                     // Exibe tela final de sucesso
                     document.getElementById('formEnrollmentWrapper').style.display = 'none';
@@ -3077,6 +3222,22 @@
                 if (!nId) {
                     alert('Por favor, escolha o núcleo / local de treino para a modalidade selecionada.');
                     return false;
+                }
+
+                // Valida se o núcleo escolhido possui vagas (capacidade base + 10% reserva)
+                const todosNucleos = (_cacheNucleos && _cacheNucleos.length > 0) ? _cacheNucleos : [...NUCLEOS_CATALOGO_OFICIAL];
+                const nucleoEscolhido = todosNucleos.find(n => String(n.id) === String(nId));
+                if (nucleoEscolhido) {
+                    const infoVagas = calcularVagasNucleo(nucleoEscolhido);
+                    const modoEdicaoAtivo = (document.getElementById('hidden_modo_edicao')?.value === 'true');
+                    const matriculaEditandoId = document.getElementById('hidden_matricula_id')?.value;
+                    const matOriginal = (currentMatriculasList || []).find(m => String(m.id) === String(matriculaEditandoId) || String(m.matricula) === String(matriculaEditandoId)) || window._ultimoPayloadMatricula;
+                    const mesmoNucleoJaMatriculado = modoEdicaoAtivo && matOriginal && String(matOriginal.nucleo_id) === String(nId);
+
+                    if (infoVagas.esgotado && !mesmoNucleoJaMatriculado) {
+                        alert(`Atenção: O núcleo "${nucleoEscolhido.nome || 'selecionado'}" atingiu a capacidade máxima (${infoVagas.inscritos}/${infoVagas.vagasTotais} vagas preenchidas, incluindo 10% de cadastro de reserva) e não pode receber novas inscrições.\n\nPor favor, escolha outro núcleo ou modalidade esportiva.`);
+                        return false;
+                    }
                 }
 
                 // Validação de perguntas extras tipo radio obrigatórias
